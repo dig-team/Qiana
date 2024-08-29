@@ -48,3 +48,6 @@ The Bibtex code for citing Qiana will be added here once the proceedings are rel
 
 # License
 The demo code in this repository is available under the MIT license. See the LICENSE.md file.
+
+# Acknowledgments
+This work was funded by the [NoRDF project](https://nordf.telecom-paris.fr/fr/) (ANR-20-CHIA-0012-01).
