@@ -1,6 +1,17 @@
+# Qiana
+Qiana is first and foremost a logic framework for contextual reasoning.
+It presents itself as a set of axiom schemes within standard first-order logic. Together, these axioms allow to operate a form of higher-order reasoning within first-order logic. \
+In Qiana, this trick is used to implement contextual statements through a special $ist$ predicate.
+$ist(c, \varphi)$ means that $\varphi$ is true in context $c$.
+Qiana also comes with software that takes as input a given finite first-order theory $H$ and outputs another theory that is equisatisfiable with the closure of $H$ under the schemes of Qiana. 
+Concretely, this software allows to perform automated theorem proving on arbitrary (finite) Qiana theories. 
+To perform the theorem proving step you need a compatible theorem prover such as [Vampire](https://vprover.github.io/).
+
+# Repository structure
 This repository contains all available materials relative to the Qiana logic as of August 2024.
 This notably includes:
-1. The long form of the article "Qiana: A First-Order Formalism to Quantify over Contexts and Formulas", with appendices not included in the KR2024 publication.
+1. The long form of the article "Qiana: A First-Order Formalism to Quantify over Contexts and Formulas", which explains what Qiana is and how it works in details.
+The longform includes appendices not included in the KR2024 publication.
 2. The demo code to compute the Qiana closure of a given input first-order theory.
 
 The article is available in the "publication" folder while the rest of the repository is dedicated to the demo code.
