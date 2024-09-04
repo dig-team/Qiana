@@ -16,7 +16,7 @@ The longform includes appendices not included in the KR2024 publication.
 
 The article is available in the "publication" folder while the rest of the repository is dedicated to the demo code.
 
-# Runing the code
+# Running the code
 This demo code computes the Qiana closure of a given input theory. 
 Both the input and the output are presented in TPTP format.
 
