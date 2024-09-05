@@ -7,6 +7,14 @@ Qiana also comes with software that takes as input a given finite first-order th
 Concretely, this software allows to perform automated theorem proving on arbitrary (finite) Qiana theories. 
 To perform the theorem proving step you need a compatible theorem prover such as [Vampire](https://vprover.github.io/).
 
+For example, here is the same statement in natural language, in the Qiana formal logic, and in the TPTP syntax used as input for the software.
+
+- Romeo believes that Juliet is dead
+
+- $\textit{ist}(\textit{Romeo}, \underline{\textit{dead}(\textit{Juliet})})$
+
+- ist(Romeo, q_dead(q_Juliet))
+
 # Repository structure
 This repository contains all available materials relative to the Qiana logic as of August 2024.
 This notably includes:
@@ -26,7 +34,12 @@ The quotation of the usual first-order operators are available as "q_And", "q_No
 
 In this example code, the total number of quoted variables is set to 3+the number of variables used in the input. 
 
-To call the example code with input in the file "input.p" to output the qiana closure in the file "output.p", on a linux machine you can run
+To run the demo code on the provided example input, run
+```
+python3 Qiana.py input-example.p output.p
+```
+
+In general, to call the example code with input in the file "input.p" to output the qiana closure in the file "output.p", on a linux machine you can run
 
 ```
 python3 Qiana.py input.p output.p
@@ -37,14 +50,28 @@ On a windows machine you can run
 python Qiana.py input.p output.p
 ```
 
-To run the demo code on the provided example input, run
-```
-python3 Qiana.py input-example.p output.p
-```
+# Author information
 
-# Citing
+Qiana is the product of the work of the following members of the NoRDF project:
+- [Simon Coumes](https://perso.eleves.ens-rennes.fr/people/simon.coumes/index.html)
+- [Pierre-Henri Paris](https://phparis.net/)
+- [Fabian Suchanek](https://suchanek.name/)
+
+With help from the following non-member of the project:
+- [François Schwarzentruber](https://people.irisa.fr/Francois.Schwarzentruber/)
+
+# Citing Qiana
 Qiana is awaiting publication in the proceedings of the KR2024 conference. 
 The Bibtex code for citing Qiana will be added here once the proceedings are released.
+
+```
+@article { Qiana, 
+    author   = "Coumes, Simon and Paris, Pierre-Henri and Schwarzentruber, François and Suchanek, Fabian",
+    title    = "Qiana: A First-Order Formalism to Quantify over Contexts and Formulas",
+    journal = "Proceedings of KR 2024",
+    year     = 2024
+}
+```
 
 # License
 The demo code in this repository is available under the MIT license. See the LICENSE.md file.
