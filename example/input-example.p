@@ -7,7 +7,7 @@ fof(h1,axiom,
 fof(h2,axiom,
     ! [X,Y] : (
     (madLove(X,Y) & ist(bel(X),q_dead(quote(Y)))) =>
-    dead(Y)
+    dead(X)
 )).
 
 fof(h3,axiom,
