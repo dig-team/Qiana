@@ -3,15 +3,17 @@ import os
 
 from reasoner import callSolver
 from qianaExtension import qianaClosure
+from htmlGeneration import getHtml
 
 if __name__ == "__main__":
     # path = sys.argv[1]
     with open("/home/sipirate/Documents/Doc_Divers/NoRDF/Qiana/Qiana_dig-team/example/input-example.p", "r") as f:
         prompt = f.read()
     closureOfInput : str = os.linesep.join(qianaClosure(prompt))
-    jsonOutput = "".join([step.toJson() for step in callSolver(closureOfInput)[1]])
-    with open("/home/sipirate/Documents/Doc_Divers/NoRDF/Qiana/Qiana_dig-team/example/output-example.json", "w") as f:
-        f.write(jsonOutput)
+    foundContradiction, reasoningSteps = callSolver(closureOfInput)
+    htmlOutput = getHtml(reasoningSteps)
+    with open("/home/sipirate/Documents/Doc_Divers/NoRDF/Qiana/Qiana_dig-team/example/output-example.html", "w") as f:
+        f.write(htmlOutput)
     # path = "/home/sipirate/Documents/Doc_Divers/NoRDF/Qiana/Qiana_dig-team/example/input-example-contradiction.p"
     # f = open(path,"r")
     # prompt = f.read()

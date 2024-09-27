@@ -1,0 +1,215 @@
+<html>
+<head>
+<title>Reasoning steps</title>
+</head>
+<body>
+<p>669. $false<br>Previous steps: <div style="margin-left: 20px;">
+<details>
+<summary>608</summary>
+<p>608. 3 | 4<br>Previous steps: <div style="margin-left: 20px;">
+<details>
+<summary>607</summary>
+<p>607. dead(X1) | ~dead(X0)<br>Previous steps: <div style="margin-left: 20px;">
+<details>
+<summary>467</summary>
+<p>467. dead(X1) | ~dead(X0) | ~equals(X0,X1)<br>Previous steps: <div style="margin-left: 20px;">
+<details>
+<summary>396</summary>
+<p>396. ! [X0,X1] : (((dead(X0) | ~dead(X1)) & (dead(X1) | ~dead(X0))) | ~equals(X0,X1))<br>Previous steps: <div style="margin-left: 20px;">
+<details>
+<summary>281</summary>
+<p>281. ! [X0,X1] : ((dead(X0) <=> dead(X1)) | ~equals(X0,X1))<br>Previous steps: <div style="margin-left: 20px;">
+<details>
+<summary>144</summary>
+<p>144. ! [X0,X1] : (equals(X0,X1) => (dead(X0) <=> dead(X1)))<br>Previous steps: <div style="margin-left: 20px;">
+<details>
+<summary>24</summary>
+<p>24. ! [X8,X9] : (equals(X8,X9) => (dead(X8) <=> dead(X9)))<br></p></details>
+</div</p></details>
+</div</p></details>
+</div</p></details>
+</div</p><details>
+<summary>460</summary>
+<p>460. equals(X0,X1)<br>Previous steps: <div style="margin-left: 20px;">
+<details>
+<summary>275</summary>
+<p>275. ! [X0,X1,X2] : ((equals(X0,X2) | ~equals(X1,X2)) & equals(X0,X1))<br>Previous steps: <div style="margin-left: 20px;">
+<details>
+<summary>140</summary>
+<p>140. ! [X0,X1,X2] : ((equals(X1,X2) => equals(X0,X2)) & equals(X0,X1))<br>Previous steps: <div style="margin-left: 20px;">
+<details>
+<summary>19</summary>
+<p>19. ! [X0,X1,X7] : ((equals(X1,X7) => equals(X0,X7)) & equals(X0,X1))<br></p></details>
+</div</p></details>
+</div</p></details>
+</div</p></details>
+</div</p><details>
+<summary>604</summary>
+<p>604. 4 <=> ! [X0] : dead(X0)<br></p><details>
+<summary>601</summary>
+<p>601. 3 <=> ! [X1] : ~dead(X1)<br></p></details>
+</div</p><details>
+<summary>665</summary>
+<p>665. ~3<br>Previous steps: <div style="margin-left: 20px;">
+<details>
+<summary>656</summary>
+<p>656. $false <- (3)<br>Previous steps: <div style="margin-left: 20px;">
+<details>
+<summary>652</summary>
+<p>652. ~wft(X1) <- (3)<br>Previous steps: <div style="margin-left: 20px;">
+<details>
+<summary>651</summary>
+<p>651. dead(eval(X1)) | ~wft(X1)<br>Previous steps: <div style="margin-left: 20px;">
+<details>
+<summary>645</summary>
+<p>645. truthPredicate(X0)<br>Previous steps: <div style="margin-left: 20px;">
+<details>
+<summary>644</summary>
+<p>644. ist(X9,X10)<br>Previous steps: <div style="margin-left: 20px;">
+<details>
+<summary>640</summary>
+<p>640. ~ist(X3,X4) | ist(X3,X5)<br>Previous steps: <div style="margin-left: 20px;">
+<details>
+<summary>452</summary>
+<p>452. ist(X0,q_Not(q_Not(X1))) | ~ist(X0,X1)<br>Previous steps: <div style="margin-left: 20px;">
+<details>
+<summary>391</summary>
+<p>391. ! [X0,X1] : ((ist(X0,q_Not(q_Not(X1))) | ~ist(X0,X1)) & (ist(X0,X1) | ~ist(X0,q_Not(q_Not(X1)))))<br>Previous steps: <div style="margin-left: 20px;">
+<details>
+<summary>134</summary>
+<p>134. ! [X0,X1] : (ist(X0,q_Not(q_Not(X1))) <=> ist(X0,X1))<br>Previous steps: <div style="margin-left: 20px;">
+<details>
+<summary>14</summary>
+<p>14. ! [X2,X3] : (ist(X2,q_Not(q_Not(X3))) <=> ist(X2,X3))<br></p></details>
+</div</p></details>
+</div</p></details>
+</div</p><details>
+<summary>458</summary>
+<p>458. ~ist(X0,q_Not(X2)) | ist(X0,X3)<br>Previous steps: <div style="margin-left: 20px;">
+<details>
+<summary>394</summary>
+<p>394. ! [X0,X1,X2,X3] : ((ist(X0,X3) | ~ist(X0,q_Not(X2))) & ist(X1,q_Or(X2,X3)))<br>Previous steps: <div style="margin-left: 20px;">
+<details>
+<summary>274</summary>
+<p>274. ! [X3,X0,X1,X2] : ((ist(X3,X2) | ~ist(X3,q_Not(X1))) & ist(X0,q_Or(X1,X2)))<br>Previous steps: <div style="margin-left: 20px;">
+<details>
+<summary>139</summary>
+<p>139. ! [X3,X0,X1,X2] : ((ist(X3,q_Not(X1)) => ist(X3,X2)) & ist(X0,q_Or(X1,X2)))<br>Previous steps: <div style="margin-left: 20px;">
+<details>
+<summary>138</summary>
+<p>138. ! [X3] : ! [X0,X1,X2] : ((ist(X3,q_Not(X1)) => ist(X3,X2)) & ist(X0,q_Or(X1,X2)))<br>Previous steps: <div style="margin-left: 20px;">
+<details>
+<summary>137</summary>
+<p>137. ! [X0,X1,X2] : ((ist(X3,q_Not(X1)) => ist(X3,X2)) & ist(X0,q_Or(X1,X2)))<br>Previous steps: <div style="margin-left: 20px;">
+<details>
+<summary>17</summary>
+<p>17. ! [X2,X3,X4] : ((ist(X6,q_Not(X3)) => ist(X6,X4)) & ist(X2,q_Or(X3,X4)))<br></p></details>
+</div</p></details>
+</div</p></details>
+</div</p></details>
+</div</p></details>
+</div</p></details>
+</div</p></details>
+</div</p><details>
+<summary>457</summary>
+<p>457. ist(X1,q_Or(X2,X3))<br>Previous steps: <div style="margin-left: 20px;">
+<details>
+<summary>394</summary>
+<p>394. ! [X0,X1,X2,X3] : ((ist(X0,X3) | ~ist(X0,q_Not(X2))) & ist(X1,q_Or(X2,X3)))<br>Previous steps: <div style="margin-left: 20px;">
+<details>
+<summary>274</summary>
+<p>274. ! [X3,X0,X1,X2] : ((ist(X3,X2) | ~ist(X3,q_Not(X1))) & ist(X0,q_Or(X1,X2)))<br>Previous steps: <div style="margin-left: 20px;">
+<details>
+<summary>139</summary>
+<p>139. ! [X3,X0,X1,X2] : ((ist(X3,q_Not(X1)) => ist(X3,X2)) & ist(X0,q_Or(X1,X2)))<br>Previous steps: <div style="margin-left: 20px;">
+<details>
+<summary>138</summary>
+<p>138. ! [X3] : ! [X0,X1,X2] : ((ist(X3,q_Not(X1)) => ist(X3,X2)) & ist(X0,q_Or(X1,X2)))<br>Previous steps: <div style="margin-left: 20px;">
+<details>
+<summary>137</summary>
+<p>137. ! [X0,X1,X2] : ((ist(X3,q_Not(X1)) => ist(X3,X2)) & ist(X0,q_Or(X1,X2)))<br>Previous steps: <div style="margin-left: 20px;">
+<details>
+<summary>17</summary>
+<p>17. ! [X2,X3,X4] : ((ist(X6,q_Not(X3)) => ist(X6,X4)) & ist(X2,q_Or(X3,X4)))<br></p></details>
+</div</p></details>
+</div</p></details>
+</div</p></details>
+</div</p></details>
+</div</p></details>
+</div</p></details>
+</div</p><details>
+<summary>438</summary>
+<p>438. ~ist(say(friar),X0) | truthPredicate(X0)<br>Previous steps: <div style="margin-left: 20px;">
+<details>
+<summary>268</summary>
+<p>268. ! [X0] : (truthPredicate(X0) | ~ist(say(friar),X0))<br>Previous steps: <div style="margin-left: 20px;">
+<details>
+<summary>1</summary>
+<p>1. ! [X0] : (ist(say(friar),X0) => truthPredicate(X0))<br></p></details>
+</div</p></details>
+</div</p></details>
+</div</p><details>
+<summary>568</summary>
+<p>568. ~truthPredicate(q_dead(X0)) | dead(eval(X0)) | ~wft(X0)<br>Previous steps: <div style="margin-left: 20px;">
+<details>
+<summary>416</summary>
+<p>416. ! [X0] : (((truthPredicate(q_dead(X0)) | ~dead(eval(X0))) & (dead(eval(X0)) | ~truthPredicate(q_dead(X0)))) | ~wft(X0))<br>Previous steps: <div style="margin-left: 20px;">
+<details>
+<summary>380</summary>
+<p>380. ! [X0] : ((truthPredicate(q_dead(X0)) <=> dead(eval(X0))) | ~wft(X0))<br>Previous steps: <div style="margin-left: 20px;">
+<details>
+<summary>258</summary>
+<p>258. ! [X0] : (wft(X0) => (truthPredicate(q_dead(X0)) <=> dead(eval(X0))))<br>Previous steps: <div style="margin-left: 20px;">
+<details>
+<summary>122</summary>
+<p>122. ! [X13] : (wft(X13) => (truthPredicate(q_dead(X13)) <=> dead(eval(X13))))<br></p></details>
+</div</p></details>
+</div</p></details>
+</div</p></details>
+</div</p></details>
+</div</p><details>
+<summary>602</summary>
+<p>602. ~dead(X1) <- (3)<br>Previous steps: <div style="margin-left: 20px;">
+<details>
+<summary>601</summary>
+<p>601. 3 <=> ! [X1] : ~dead(X1)<br></p></details>
+</div</p></details>
+</div</p><details>
+<summary>561</summary>
+<p>561. wft(q_x0)<br>Previous steps: <div style="margin-left: 20px;">
+<details>
+<summary>116</summary>
+<p>116. wft(q_x0)<br></p></details>
+</div</p></details>
+</div</p></details>
+</div</p><details>
+<summary>668</summary>
+<p>668. ~4<br>Previous steps: <div style="margin-left: 20px;">
+<details>
+<summary>666</summary>
+<p>666. $false <- (4)<br>Previous steps: <div style="margin-left: 20px;">
+<details>
+<summary>605</summary>
+<p>605. dead(X0) <- (4)<br>Previous steps: <div style="margin-left: 20px;">
+<details>
+<summary>604</summary>
+<p>604. 4 <=> ! [X0] : dead(X0)<br></p></details>
+</div</p><details>
+<summary>447</summary>
+<p>447. ~dead(juliet)<br>Previous steps: <div style="margin-left: 20px;">
+<details>
+<summary>131</summary>
+<p>131. ~dead(juliet)<br>Previous steps: <div style="margin-left: 20px;">
+<details>
+<summary>11</summary>
+<p>11. ~dead(juliet)<br>Previous steps: <div style="margin-left: 20px;">
+<details>
+<summary>10</summary>
+<p>10. dead(juliet)<br></p></details>
+</div</p></details>
+</div</p></details>
+</div</p></details>
+</div</p></details>
+</div</p></details>
+</div</p></body>
+</html>
