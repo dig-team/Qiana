@@ -7,15 +7,15 @@
             "request": "launch",
             "program": "${file}",
             "console": "integratedTerminal",
-            "cwd": "${workspaceFolder}/code",
+            "cwd": "${workspaceFolder}/src",
         },
         {
             "name": "main",
             "type": "debugpy",
             "request": "launch",
-            "program": "${workspaceFolder}/code/main.py",
+            "program": "${workspaceFolder}/src/main.py",
             "console": "integratedTerminal",
-            "cwd": "${workspaceFolder}/code",
+            "cwd": "${workspaceFolder}/src",
         }
     ]
 }
