@@ -9,6 +9,8 @@ from htmlGeneration import getHtml
 def basicTPTPtoHtml(input: str) -> str:
     """
     Takes as input the tptpt representation of a set of formulas and returns the html representation of the reasoning steps performed to find a contradiction on the qiana closure of input.
+    @param input: str - the tptp representation of a set of formulas (not necessarily closed under qiana)
+    @return: str - the html representation of the reasoning steps performed to find a contradiction on the qiana closure of input
     """
     closureOfInput : str = os.linesep.join(qianaClosure(input))
     foundContradiction, reasoningSteps = callSolver(closureOfInput)
