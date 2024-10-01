@@ -6,7 +6,7 @@ from reasoner import callSolver
 from qianaExtension import qianaClosure
 from htmlGeneration import getHtml
 
-def basicTPTPtoHtml(input: str) -> str:
+def basicTPTPtoHtml(input: str, variableNumber = None) -> str:
     """
     Takes as input the tptpt representation of a set of formulas and returns the html representation of the reasoning steps performed to find a contradiction on the qiana closure of input.
     @param input: str - the tptp representation of a set of formulas (not necessarily closed under qiana)

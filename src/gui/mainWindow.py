@@ -1,6 +1,6 @@
 import sys
 from PyQt6.QtCore import QUrl
-from PyQt6.QtWidgets import QVBoxLayout, QHBoxLayout, QMainWindow, QTextEdit, QMenuBar, QWidget, QPushButton
+from PyQt6.QtWidgets import QVBoxLayout, QHBoxLayout, QMainWindow, QTextEdit, QMenuBar, QWidget, QPushButton, QLineEdit
 from PyQt6.QtWebEngineWidgets import QWebEngineView
 
 from pipeline import basicTPTPtoHtml
@@ -9,6 +9,9 @@ import examples
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
+        
+        self.variableNumber = None # For simplicity's sake, the number of variables decided by the user is saved within the window. If none, the default value is used.
+
         self.setWindowTitle("Simple PyQt6 Window")
         self.setGeometry(100, 100, 800, 600)
 
@@ -30,12 +33,15 @@ class MainWindow(QMainWindow):
 
         self.menubar.computeHtml.clicked.connect(self.computeHtml)
 
+    def setVariableNumber(self, number : int):
+        self.variableNumber = number
+
     def setTPTP(self, tptp : str):
         self.editor.setPlainText(tptp)
 
     def computeHtml(self):
         tptp = self.editor.toPlainText()
-        html = basicTPTPtoHtml(tptp)
+        html = basicTPTPtoHtml(tptp, self.variableNumber)
         self.display.setHtml(html)
     
 
@@ -45,15 +51,21 @@ class _MenuBar(QWidget):
         self.menus = QMenuBar()
         self.exampleMenu = self.menus.addMenu("Examples")
         self.computeHtml = QPushButton("Compute HTML")
+        self.textFieldVariableNumber = QLineEdit("Optional: custom number of variables")
+        self.setVariableNumber = QPushButton("Ok")
+
 
         self.layout1 = QHBoxLayout()
         self.layout1.addWidget(self.menus)
+        self.layout1.addWidget(self.textFieldVariableNumber)
+        self.layout1.addWidget(self.setVariableNumber)
         self.layout1.addWidget(self.computeHtml)
         self.computeHtml.setFixedSize(120, 40)
         self.setLayout(self.layout1)
 
     def connectToWindow(self, window : MainWindow):
         self.computeHtml.clicked.connect(window.computeHtml)
+        self.setVariableNumber.clicked.connect(lambda : window.setVariableNumber(int(self.textFieldVariableNumber.text())))
         self._fillEXamples(window)
 
     def _fillEXamples(self, window : MainWindow):
