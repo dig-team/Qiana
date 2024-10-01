@@ -20,6 +20,8 @@ class MainWindow(QMainWindow):
         self.layout2 = QHBoxLayout()
         self.layout2.addWidget(self.editor)
         self.layout2.addWidget(self.display)
+        self.layout2.setStretch(0, 1)
+        self.layout2.setStretch(1, 1)
         centralWidget = QWidget()
         self.setCentralWidget(centralWidget)
         centralWidget.setLayout(self.layout2)
