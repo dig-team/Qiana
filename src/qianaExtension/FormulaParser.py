@@ -21,6 +21,7 @@ niceOperators = {
     "→": Formulas.IMPLIES,
     "↔": Formulas.EQV,
     "¬": Formulas.NOT,
+    "~": Formulas.NOT,
     "&": Formulas.AND,
 }
 
@@ -121,7 +122,7 @@ def readFormula(s: str, pos: list[int]) -> Formula:
             variables.append(item)
         readGivenItem(s, pos, ":")
         return Forall(variables, readFormula(s, pos))
-    if item == "¬":
+    if item == "¬" or item == "~":
         return Not(readFormula(s, pos))
     if item == "fof":
         readGivenItem(s, pos, "(")

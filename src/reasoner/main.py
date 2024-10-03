@@ -8,25 +8,20 @@ import json
 from reasoner.vampireParser import TPTPOutputParser
 from interfaceTypes import ReasoningStep
 
-def main(inputJson):
-    """Main function. Should receive json text as string and outputs a pair. The first element is a boolean true if the set of formulas is SAT. The second is the corresponding full vampire output, in JSON format following the standard set by test/exampleOutput.json. """
-    dbo = Dbo()
-    inputData = json.loads(inputJson)
-    dbo.update(inputData)
-    isCoherent = dbo.testCoherence()
-    if isCoherent:
-        return isCoherent, "{ \"NodeList\":[],\n \"finalNode\":\"\"}" # No Json output if we did not find a contradiction
-    return (isCoherent,dbo.fullCallVampire()) # Currently twice as slow as it needs to be
-
-def getThree(formulas : str) -> Tuple[bool, List[ReasoningStep]]:
+def getThree(formulas : str) -> Tuple[bool, List[ReasoningStep], str]:
+    """
+    Call solver and parse its output
+    @param formulas: str - the tptp representation of a set of formulas
+    @return: Tuple[bool, List[ReasoningStep], str] - a tuple containing a boolean indicating if a contradiction was found, the reasoning steps performed to find the contradiction, and the raw TPTP output of the reasoning
+    """
     args = ["./reasoner/vampire", "--output_mode", "smtcomp"]
     result = subprocess.run(args, input=formulas, text=True, capture_output=True)
     if result.stdout == "sat\n":
-        return(False, [])
+        return(False, [], result.stdout)
     else:
         args = ["./reasoner/vampire"]
         result = subprocess.run(args, input=formulas, text=True, capture_output=True)
-        return(True, TPTPOutputParser(result.stdout))
+        return(True, TPTPOutputParser(result.stdout), result.stdout)
 
 if __name__ == "__main__":
     # path = sys.argv[1]

@@ -4,7 +4,7 @@ import os
 
 from reasoner import callSolver
 from qianaExtension import qianaClosure
-from htmlGeneration import getHtml
+from htmlGeneration import getHtmlFromSteps, getHtmlNoContradiction
 
 def basicTPTPtoHtml(input: str, variableNumber = None) -> str:
     """
@@ -14,13 +14,8 @@ def basicTPTPtoHtml(input: str, variableNumber = None) -> str:
     """
     variableNumber = 3 if variableNumber is None else variableNumber
     closureOfInput : str = os.linesep.join(qianaClosure(input, variableNumber))
-    foundContradiction, reasoningSteps = callSolver(closureOfInput)
-    return getHtml(reasoningSteps)
-
-if __name__ == "__main__":
-    # path = sys.argv[1]
-    with open("/home/sipirate/Documents/Doc_Divers/NoRDF/Qiana/Qiana_dig-team/example/input-example.p", "r") as f:
-        prompt = f.read()
-    htmlOutput = basicTPTPtoHtml(prompt)
-    with open("/home/sipirate/Documents/Doc_Divers/NoRDF/Qiana/Qiana_dig-team/example/output-example.html", "w") as f:
-        f.write(htmlOutput)
+    foundContradiction, reasoningSteps, vampireOutput = callSolver(closureOfInput)
+    if foundContradiction:
+        return getHtmlFromSteps(reasoningSteps)
+    else:
+        return getHtmlNoContradiction(vampireOutput)

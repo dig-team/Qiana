@@ -6,6 +6,7 @@ def testCoherence(formulaList):
     prompt = listToPrompt(formulaList)
     args = ["./reasoner/vampire", "--output_mode", "smtcomp"]
     result = subprocess.run(args, input=prompt, text=True, capture_output=True)
+    print("PRINTING RESULT", result.stdout)
     return result.stdout == "sat\n"
 
 def fullCallVampire(formulaList):

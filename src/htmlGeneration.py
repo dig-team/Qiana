@@ -3,7 +3,11 @@ import os
 
 from interfaceTypes import ReasoningStep
 
-def getHtml(steps : List[ReasoningStep]) -> str:
+def getHtmlNoContradiction(vampireOutput : str) -> str:
+    return vampireOutput
+
+
+def getHtmlFromSteps(steps : List[ReasoningStep]) -> str:
     """Returns the html representation of the reasoning steps"""
     idToStep = {step.id:step for step in steps}
     html = "<html>\n<head>\n<title>Reasoning steps</title>\n</head>\n<body>\n"
@@ -30,7 +34,7 @@ def _getStepHtml(step : ReasoningStep, idToStep : Dict[str, ReasoningStep]) -> s
     
     if not step.Parents : return step.toLightText()
     html = f'<details>\n<summary>{step.toLightText()}</summary>\n'
-    html += '<div style="margin-left: 20px;">\n'
+    html += '<div style="margin-left: 10px;">\n'
     for parentId in step.Parents:
         parent = idToStep[parentId]
         html += _getStepHtml(parent, idToStep)

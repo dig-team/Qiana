@@ -2,9 +2,6 @@ import subprocess
 import os
 from gui import startGUI
 
-from reasoner import callSolver
-from qianaExtension import qianaClosure
-from htmlGeneration import getHtml
 
 # if __name__ == "__main__":
 #     # path = sys.argv[1]
