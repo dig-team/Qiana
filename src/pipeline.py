@@ -15,6 +15,8 @@ def basicTPTPtoHtml(input: str, variableNumber = None) -> str:
     variableNumber = 3 if variableNumber is None else variableNumber
     closureOfInput : str = os.linesep.join(qianaClosure(input, variableNumber))
     foundContradiction, reasoningSteps = callSolver(closureOfInput)
+    for step in reasoningSteps:
+        print("Step",step)
     return getHtml(reasoningSteps)
 
 if __name__ == "__main__":

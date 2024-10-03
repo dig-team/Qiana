@@ -6,9 +6,9 @@ from interfaceTypes import ReasoningStep
 def _parseParentBlock(parentBlock : str) -> Tuple[str,List[str]]:
     """Parses the parent block of a line and returns the name of the transformation and the list of parent ids"""
     if not any(char.isdigit() for char in parentBlock): return parentBlock, []
-    if not 1 + parentBlock.find("rectify"): parentBlock, [] # If we find the word rectify in the parent block, the rule is a numbered instance of rectfy
+    if not 1 + parentBlock.find("rectify"): parentBlock, [] # If we find the word rectify in the parent block, the rule is a numbered instance of rectify
     indexLastSpace = parentBlock.rfind(" ")
-    transformation, parents = parentBlock[:indexLastSpace-1], parentBlock[indexLastSpace+1:].split(",")
+    transformation, parents = parentBlock[:indexLastSpace], parentBlock[indexLastSpace+1:].split(",")
     return transformation, parents
 
 def _lineTest(line : str) -> Tuple[bool,Union[None,ReasoningStep]]:
