@@ -19,7 +19,7 @@ class ReasoningStep():
         return self.id + ". " + self.text + " [" + self.transformation + " " + ",".join(self.Parents) + "]"
     
     def toLightText(self):
-        return f'{self.id} [{self.transformation}] {self.text}'
+        return f'{self.id}. {self.text}'
     
     def GetJsonFile(steps : List["ReasoningStep"]):
         if len(steps) == 0: return "{ \"NodeList\":[],\n \"finalNode\":\"\"}"
