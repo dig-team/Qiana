@@ -69,8 +69,11 @@ def isQuotedVariable(s: str) -> str:
 class Signature:
     """Contains predicates, functions, and quoted functions each with their arity, as well as variables, constants, and quoted constants"""
 
-    def __init__(self, *formulas: Formula):
-        """Creates a signature matching a list of formulas"""
+    def __init__(self, formulas: Formula, numberVariables: int = 3) -> None:
+        """Creates a signature matching a list of formulas
+        @param formulas: List of formulas
+        @param numberVariables: Number of quoted variables to add on top of the ones already present in the formulas
+        """
         # Print formulas for user
         print(f"  Creating signature for {len(formulas)} formulas...")
 
@@ -103,7 +106,7 @@ class Signature:
 
         # Create variable quotations, make sure we have 3 more than the total number of vars from the initial set of formulas
         #
-        self.quotedVariables.update(["q_VAR_" + str(i) for i in range(3)])
+        self.quotedVariables.update(["q_VAR_" + str(i) for i in range(numberVariables)])
 
         # Remove special elements
         self.predicates.pop("ist", None)

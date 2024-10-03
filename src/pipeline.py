@@ -12,7 +12,8 @@ def basicTPTPtoHtml(input: str, variableNumber = None) -> str:
     @param input: str - the tptp representation of a set of formulas (not necessarily closed under qiana)
     @return: str - the html representation of the reasoning steps performed to find a contradiction on the qiana closure of input
     """
-    closureOfInput : str = os.linesep.join(qianaClosure(input))
+    variableNumber = 3 if variableNumber is None else variableNumber
+    closureOfInput : str = os.linesep.join(qianaClosure(input, variableNumber))
     foundContradiction, reasoningSteps = callSolver(closureOfInput)
     return getHtml(reasoningSteps)
 

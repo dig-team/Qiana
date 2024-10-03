@@ -11,9 +11,14 @@ import qianaExtension.FormulaParser as FormulaParser
 import qianaExtension.Formulas as Formulas
 import qianaExtension.Schemes as Schemes
 
-def getOutput(inputTPTPT : str) -> List[str]:
+def getOutput(inputTPTPT : str, numberVariables : int = 3) -> List[str]:
+    """
+    @param inputTPTPT: str - the tptpt representation of a set of formulas, this is a series of tptp formulas
+    @param numberVariables: int - the number of quoted variables to add in additions to the ones already in inputTPTPT
+    @return: List[str] - the tptp representation of the qiana closure of the input
+    """
     inputFormulas : List[Formulas.Formula] = FormulaParser.readFormulasFromData(inputTPTPT)
-    signature = Formulas.Signature(*inputFormulas)
+    signature = Formulas.Signature(inputFormulas, numberVariables)
     output = []
     counter = 0
     for formula in inputFormulas:

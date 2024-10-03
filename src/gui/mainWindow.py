@@ -33,8 +33,11 @@ class MainWindow(QMainWindow):
 
         self.menubar.computeHtml.clicked.connect(self.computeHtml)
 
-    def setVariableNumber(self, number : int):
-        self.variableNumber = number
+    def setVariableNumber(self, number : str):
+        try:
+            self.variableNumber = int(number)
+        except ValueError:
+            pass
 
     def setTPTP(self, tptp : str):
         self.editor.setPlainText(tptp)
@@ -43,6 +46,24 @@ class MainWindow(QMainWindow):
         tptp = self.editor.toPlainText()
         html = basicTPTPtoHtml(tptp, self.variableNumber)
         self.display.setHtml(html)
+
+    def expandHtml(self):
+        self.display.page().runJavaScript("""
+            var x = document.getElementsByTagName("details");
+            var i;
+            for (i = 0; i < x.length; i++) {
+                x[i].setAttribute("open", "true");
+            } 
+           """)
+
+    def collapseHtml(self):
+        self.display.page().runJavaScript("""
+            var x = document.getElementsByTagName("details");
+            var i;
+            for (i = 0; i < x.length; i++) {
+                x[i].open = false;
+            } 
+           """)
     
 
 class _MenuBar(QWidget):
@@ -50,10 +71,10 @@ class _MenuBar(QWidget):
         super().__init__()
         self.menus = QMenuBar()
         self.exampleMenu = self.menus.addMenu("Examples")
+        self.toolsMenu = self.menus.addMenu("Tools")
         self.computeHtml = QPushButton("Compute HTML")
         self.textFieldVariableNumber = QLineEdit("Optional: custom number of variables")
         self.setVariableNumber = QPushButton("Ok")
-
 
         self.layout1 = QHBoxLayout()
         self.layout1.addWidget(self.menus)
@@ -65,9 +86,16 @@ class _MenuBar(QWidget):
 
     def connectToWindow(self, window : MainWindow):
         self.computeHtml.clicked.connect(window.computeHtml)
-        self.setVariableNumber.clicked.connect(lambda : window.setVariableNumber(int(self.textFieldVariableNumber.text())))
+        self.setVariableNumber.clicked.connect(lambda : window.setVariableNumber(self.textFieldVariableNumber.text()))
         self._fillEXamples(window)
+        self._fillTools(window)
 
     def _fillEXamples(self, window : MainWindow):
         example1Action = self.exampleMenu.addAction("Romeo and Juliet")
         example1Action.triggered.connect(lambda : window.setTPTP(examples.Example_RJbasic))
+
+    def _fillTools(self, window : MainWindow):
+        expandAction = self.toolsMenu.addAction("Expand formula tree")
+        expandAction.triggered.connect(window.expandHtml)
+        collapseAction = self.toolsMenu.addAction("Collapse formula tree")
+        collapseAction.triggered.connect(window.collapseHtml)
