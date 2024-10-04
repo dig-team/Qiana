@@ -1,10 +1,12 @@
 import sys
-from PyQt6.QtCore import QUrl
-from PyQt6.QtWidgets import QVBoxLayout, QHBoxLayout, QMainWindow, QTextEdit, QMenuBar, QWidget, QPushButton, QLineEdit
-from PyQt6.QtWebEngineWidgets import QWebEngineView
+from PySide6.QtCore import QUrl
+from PySide6.QtWidgets import QVBoxLayout, QHBoxLayout, QMainWindow, QTextEdit, QMenuBar, QWidget, QPushButton, QLineEdit
+from PySide6.QtWebEngineWidgets import QWebEngineView
 
 from pipeline import basicTPTPtoHtml
+
 import examples
+from gui import DisplayOptions
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -12,7 +14,7 @@ class MainWindow(QMainWindow):
         
         self.variableNumber = None # For simplicity's sake, the number of variables decided by the user is saved within the window. If none, the default value is used.
 
-        self.setWindowTitle("Simple PyQt6 Window")
+        self.setWindowTitle("Simple PySide6 Window")
         self.setGeometry(100, 100, 800, 600)
 
         self.menubar = _MenuBar()
@@ -20,8 +22,7 @@ class MainWindow(QMainWindow):
         self.menubar.connectToWindow(self)
 
         self.editor = QTextEdit()
-        self.display = QWebEngineView()
-        self.display.setHtml("<h1>Display</h1>")
+        self.display = DisplayOptions()
         self.layout2 = QHBoxLayout()
         self.layout2.addWidget(self.editor)
         self.layout2.addWidget(self.display)
@@ -48,23 +49,10 @@ class MainWindow(QMainWindow):
         self.display.setHtml(html)
 
     def expandHtml(self):
-        self.display.page().runJavaScript("""
-            var x = document.getElementsByTagName("details");
-            var i;
-            for (i = 0; i < x.length; i++) {
-                x[i].setAttribute("open", "true");
-            } 
-           """)
+        self.display.expandHtml()
 
     def collapseHtml(self):
-        self.display.page().runJavaScript("""
-            var x = document.getElementsByTagName("details");
-            var i;
-            for (i = 0; i < x.length; i++) {
-                x[i].open = false;
-            } 
-           """)
-    
+        self.display.collapseHtml()    
 
 class _MenuBar(QWidget):
     def __init__(self):

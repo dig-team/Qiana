@@ -41,7 +41,7 @@ To run the demo code on the provided example input, run
 python3 Qiana.py ../example/input-example.p output.p
 ```
 ## Requirements
-In some system you might need to install libxcb-cursor-dev to run PyQt6 graphical applications, which is useful for the GUI of Qiana.
+In some system you might need to install libxcb-cursor-dev to run PySide6 graphical applications, which is useful for the GUI of Qiana.
 Installing with apt
 ```
 sudo apt install libxcb-cursor-dev
