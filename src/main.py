@@ -26,13 +26,6 @@ from gui import startGUI
 #     #     print(result.stdout,"\n \n")
 #     #     print(TPTPOutputParser(result.stdout))
 
-from pipeline import basicTPTPtoHtml
 
 if __name__ == "__main__":
     startGUI()
-    # path = sys.argv[1]
-    with open("/home/sipirate/Documents/Doc_Divers/NoRDF/Qiana/Qiana_dig-team/example/input-example.p", "r") as f:
-        prompt = f.read()
-    htmlOutput = basicTPTPtoHtml(prompt)
-    with open("/home/sipirate/Documents/Doc_Divers/NoRDF/Qiana/Qiana_dig-team/example/output-example.html", "w") as f:
-        f.write(htmlOutput)

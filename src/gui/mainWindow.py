@@ -3,10 +3,10 @@ from PySide6.QtCore import QUrl
 from PySide6.QtWidgets import QVBoxLayout, QHBoxLayout, QMainWindow, QTextEdit, QMenuBar, QWidget, QPushButton, QLineEdit
 from PySide6.QtWebEngineWidgets import QWebEngineView
 
-from pipeline import basicTPTPtoHtml
+from pipeline import Pipeline
 
 import examples
-from gui import DisplayOptions
+from gui import DisplayOptions, Settings
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -32,27 +32,29 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(centralWidget)
         centralWidget.setLayout(self.layout2)
 
-        self.menubar.computeHtml.clicked.connect(self.computeHtml)
-
     def setVariableNumber(self, number : str):
-        try:
-            self.variableNumber = int(number)
-        except ValueError:
-            pass
+        self.variableNumber = number
 
     def setTPTP(self, tptp : str):
         self.editor.setPlainText(tptp)
 
-    def computeHtml(self):
+    def run(self):
         tptp = self.editor.toPlainText()
-        html = basicTPTPtoHtml(tptp, self.variableNumber)
-        self.display.setHtml(html)
+        pipeline = Pipeline()
+        pipeline.setVariableNumber(self.variableNumber)
+        pipeline.runCompute(tptp)
+        self.display.setHtml(pipeline.getHtmlTree())
+        self.display.setClosure(pipeline.getQianaClosure())
 
     def expandHtml(self):
         self.display.expandHtml()
 
     def collapseHtml(self):
         self.display.collapseHtml()    
+    
+    def openSettings(self):
+        self.settings = Settings()
+        self.settings.show()
 
 class _MenuBar(QWidget):
     def __init__(self):
@@ -60,7 +62,7 @@ class _MenuBar(QWidget):
         self.menus = QMenuBar()
         self.exampleMenu = self.menus.addMenu("Examples")
         self.toolsMenu = self.menus.addMenu("Tools")
-        self.computeHtml = QPushButton("Compute HTML")
+        self.runButton = QPushButton("Run")
         self.textFieldVariableNumber = QLineEdit("Optional: custom number of variables")
         self.setVariableNumber = QPushButton("Ok")
 
@@ -68,12 +70,12 @@ class _MenuBar(QWidget):
         self.layout1.addWidget(self.menus)
         self.layout1.addWidget(self.textFieldVariableNumber)
         self.layout1.addWidget(self.setVariableNumber)
-        self.layout1.addWidget(self.computeHtml)
-        self.computeHtml.setFixedSize(120, 40)
+        self.layout1.addWidget(self.runButton)
+        self.runButton.setFixedSize(120, 40)
         self.setLayout(self.layout1)
 
     def connectToWindow(self, window : MainWindow):
-        self.computeHtml.clicked.connect(window.computeHtml)
+        self.runButton.clicked.connect(window.run)
         self.setVariableNumber.clicked.connect(lambda : window.setVariableNumber(self.textFieldVariableNumber.text()))
         self._fillEXamples(window)
         self._fillTools(window)
@@ -87,3 +89,6 @@ class _MenuBar(QWidget):
         expandAction.triggered.connect(window.expandHtml)
         collapseAction = self.toolsMenu.addAction("Collapse formula tree")
         collapseAction.triggered.connect(window.collapseHtml)
+        openSettings = self.toolsMenu.addAction("Settings")
+        openSettings.triggered.connect(window.openSettings)
+

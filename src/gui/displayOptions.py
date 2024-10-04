@@ -9,6 +9,7 @@ class DisplayOptions(QTabWidget):
         super().__init__()
 
         self.closure = QTextEdit()
+        self.closure.setReadOnly(True)
         self.html = QWebEngineView()
 
         self.addTab(self.html, "ProofTree")
@@ -37,7 +38,6 @@ class DisplayOptions(QTabWidget):
                 x[i].open = false;
             } 
            """) 
-
 
 
 if __name__ == "__main__":
