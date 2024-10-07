@@ -1,0 +1,18 @@
+digraph "unsat_graph" {
+  vertex_0 [color=red, label="[]", shape=box, style=filled];
+  vertex_0 -> vertex_1 [label="demod", dir="back"];
+  vertex_1 [shape=box, label="truthPredicate sk_(3)\l", style=filled];
+  vertex_1 -> vertex_2 [label="s_sup-\l\{X0[0] → sk_[1]\}[0]\l", dir="back"];
+  vertex_2 [shape=box, label="forall X0. [truthPredicate X0 ∨ ¬ist (say friar) X0](0)\l", style=filled];
+  vertex_2 -> vertex_3 [label="cnf", dir="back"];
+  vertex_3 [color=yellow, shape=box, label="assert [file \"minimalContradiction.p\" \"h1\"]\l  ∀ X/44. ((ist (say friar) X/44) ⇒ (truthPredicate X/44)).\l", style=filled];
+  vertex_1 -> vertex_4 [label="s_sup-\l\{X0[0] → sk_[1]\}[1]\l", dir="back"];
+  vertex_4 [shape=box, label="ist (say friar) sk_(1)\l", style=filled];
+  vertex_4 -> vertex_5 [label="cnf", dir="back"];
+  vertex_5 [color=yellow, shape=box, label="assert [file \"minimalContradiction.p\" \"h2\"]\l  ¬ (∀ X/58. ((ist (say friar) X/58) ⇒ (truthPredicate X/58))).\l", style=filled];
+  vertex_0 -> vertex_6 [label="demod", dir="back"];
+  vertex_6 [shape=box, label="¬truthPredicate sk_(2)\l", style=filled];
+  vertex_6 -> vertex_5 [label="cnf", dir="back"];
+  }
+
+

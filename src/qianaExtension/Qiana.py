@@ -25,7 +25,7 @@ def getOutput(inputTPTPT : str, numberVariables : int = 3) -> List[str]:
         counter += 1
         output.append(f"fof(axiom_{counter},{formula.type},{formula})." + os.linesep)
     def writeOutput(identifier, formula):
-        output.append(f"fof({identifier},axiom,{formula})." + os.linesep)
+        output.append(f"fof({identifier},axiom,{formula}).")
     Schemes.outputSchemes(writeOutput, signature)
     return output
 
