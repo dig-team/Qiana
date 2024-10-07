@@ -12,8 +12,6 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         
-        self.variableNumber = None # For simplicity's sake, the number of variables decided by the user is saved within the window. If none, the default value is used.
-
         self.setWindowTitle("Simple PySide6 Window")
         self.setGeometry(100, 100, 800, 600)
 
@@ -41,7 +39,6 @@ class MainWindow(QMainWindow):
     def run(self):
         tptp = self.editor.toPlainText()
         pipeline = Pipeline()
-        pipeline.setVariableNumber(self.variableNumber)
         pipeline.runCompute(tptp)
         self.display.setHtml(pipeline.getHtmlTree())
         self.display.setClosure(pipeline.getQianaClosure())
@@ -53,8 +50,7 @@ class MainWindow(QMainWindow):
         self.display.collapseHtml()    
     
     def openSettings(self):
-        self.settings = Settings()
-        self.settings.show()
+        Settings.openSettings()
 
 class _MenuBar(QWidget):
     def __init__(self):
@@ -63,20 +59,15 @@ class _MenuBar(QWidget):
         self.exampleMenu = self.menus.addMenu("Examples")
         self.toolsMenu = self.menus.addMenu("Tools")
         self.runButton = QPushButton("Run")
-        self.textFieldVariableNumber = QLineEdit("Optional: custom number of variables")
-        self.setVariableNumber = QPushButton("Ok")
 
         self.layout1 = QHBoxLayout()
         self.layout1.addWidget(self.menus)
-        self.layout1.addWidget(self.textFieldVariableNumber)
-        self.layout1.addWidget(self.setVariableNumber)
         self.layout1.addWidget(self.runButton)
         self.runButton.setFixedSize(120, 40)
         self.setLayout(self.layout1)
 
     def connectToWindow(self, window : MainWindow):
         self.runButton.clicked.connect(window.run)
-        self.setVariableNumber.clicked.connect(lambda : window.setVariableNumber(self.textFieldVariableNumber.text()))
         self._fillEXamples(window)
         self._fillTools(window)
 

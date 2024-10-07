@@ -4,9 +4,9 @@ import os
 from reasoner import callSolver
 from qianaExtension import qianaClosure
 from htmlGeneration import getHtmlFromSteps, getHtmlNoContradiction
+from gui import Settings
 
 class Pipeline:
-    variableNumber : int | None
     qianaClosure : str | None
     htmlTree : str | None
 
@@ -21,21 +21,13 @@ class Pipeline:
         @param input: str - the tptp representation of a set of formulas (not necessarily closed under qiana)
         @return: str - the html representation of the reasoning steps performed to find a contradiction on the qiana closure of input
         """
-        variableNumber = 3 if self.variableNumber is None else self.variableNumber
+        variableNumber = Settings.getQuotedVarsNumber()
         self.qianaClosure : str = os.linesep.join(qianaClosure(input, variableNumber))
         foundContradiction, reasoningSteps, vampireOutput = callSolver(self.qianaClosure)
         if foundContradiction:
             self.htmlTree = getHtmlFromSteps(reasoningSteps)
         else:
             self.htmlTree = getHtmlNoContradiction(vampireOutput)
-
-    def setVariableNumber(self, number : str | None) -> None:
-        if number is None: return
-        try:
-            number = number.strip()
-            self.variableNumber = int(number)
-        except ValueError:
-            pass
 
     def getHtmlTree(self) -> str:
         return self.htmlTree
