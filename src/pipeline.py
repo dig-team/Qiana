@@ -1,4 +1,3 @@
-import subprocess
 import os
 
 from reasoner import callSolver
