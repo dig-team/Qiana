@@ -42,7 +42,7 @@ def outputSchemes(output: Callable[[str, Formulas.Formula], typing.Any], signatu
     output("schema_11", parse("∀tc, t1, t2. (ist(tc, t1∨t2) ∧ ist(c, ¬t1)) → ist(c, t2)"))
 
     output("schema_29", parse("∀x. equals(x, x)"))
-    output("schema_30", parse("∀x, y, z. equals(x, y) ∧ equals(y, z) → equals(x, z)"))
+    output("schema_30", parse("∀x, y, z. ((equals(x, y) ∧ equals(y, z)) → equals(x, z))"))
     output("schema_31", parse("∀x, y. equals(x, y) → equals(y, x)"))
 
     # Syntax:
@@ -112,6 +112,7 @@ def outputSchemes(output: Callable[[str, Formulas.Formula], typing.Any], signatu
     #             f"∀tn.(reach(t_AND)) → equals(eval({Formulas.quote(p)}(t_TERM)), {Formulas.quote(p)}(t_TERM))"
     #         ).expand(signature.predicates[p]),
     #     )
+
     output("schema_38", parse(f"∀t1, t2. equals(eval(q_And(t1, t2)), q_And(t1, t2))"))
     output(
         "schema_39", parse(f"∀t1, t2. equals(eval(q_Forall(t1, t2)), q_Forall(t1, t2))")
@@ -119,8 +120,9 @@ def outputSchemes(output: Callable[[str, Formulas.Formula], typing.Any], signatu
     output("schema_40", parse(f"∀t. equals(eval(q_Not(t)), q_Not(t))"))
 
     # Schema (41):
-    for c in signature.quotedVariables:
-        output("schema_41_" + c, parse(f"equals(eval({c}), {c})"))
+    for c in signature.constants:
+        output("schema_41_" + c, parse(f"equals(eval({Formulas.quote(c)}), {c})"))
+
     # Schema (42):
     for c in signature.quotedVariables:
         output("schema_42_" + c, parse(f"∀t. reach(t) → equals(sub({c}, t, {c}), t)"))
