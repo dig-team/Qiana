@@ -6,7 +6,7 @@ Internal representation of formulas
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import List
+from typing import List, Dict
 
 ###########################################################################################
 #                       Identifiers                                                       #
@@ -80,7 +80,7 @@ class Signature:
         # Gather the components of the formulas
         self.predicates = {}
         self.quotedVariables = set()
-        self.functions = {}
+        self.functions : Dict[str, int] = {} #Dict matching functions names to arities
         self.constants = set()
         self.quotedConstants = set()
         self.quotedFunctions = {}

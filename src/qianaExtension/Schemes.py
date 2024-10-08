@@ -4,13 +4,20 @@ Enumerates the schemes of Qiana
 """
 
 from typing import Callable
+import typing
 
 import qianaExtension.Formulas as Formulas
+from qianaExtension.SchemeFactory import SchemeFactory
 from qianaExtension.FormulaParser import parse
 
 
-def outputSchemes(output: Callable[[str], Formulas.Formula], signature):
+
+def outputSchemes(output: Callable[[str, Formulas.Formula], typing.Any], signature : Formulas.Signature):
     """Calls the output function for all schemes generated from the signature"""
+    
+    # Shorthands for extension modes passed to the SchemeFactory
+    argumentList = SchemeFactory.ExtensionModes.argumentList
+    predicateAND = SchemeFactory.ExtensionModes.predicateAND
 
     output("schema_6", parse("∀tc, t1, t2. ist(tc, t1∧t2) → ist(tc, t1)"))
     output("schema_7", parse("∀tc, t1, t2. ist(tc, t1∧t2) ↔ ist(tc, t2∧t1)"))
@@ -60,12 +67,28 @@ def outputSchemes(output: Callable[[str], Formulas.Formula], signature):
 
     # Schema (36):
     for f in signature.functions:
-        output(
-            "schema_36_" + f,
-            parse(
-                f"∀tn.(reach(t_AND)) → equals(eval({Formulas.quote(f)}(t_TERM)), {f}(eval(t_TERM)))"
-            ).expand(signature.functions[f]),
-        )
+        quoted_f : str = Formulas.quote(f)
+        def schema_36_instance(quotedFunArgsReach, quotedFunArgs, evalFunArgs):
+            return f"∀{quotedFunArgs}.({quotedFunArgsReach}) → equals(eval({quoted_f}({quotedFunArgs})), {f}({evalFunArgs}))"
+        def reachFromIndice(i):
+            return f"reach(t{i})"
+        def quotedFunArg(i):
+            return f"t{i}"
+        def evalFunArg(i):
+            return f"eval(t{i})"
+        indicesToStrings = [reachFromIndice, quotedFunArg, evalFunArg]
+        maxIndices = [signature.functions[f] for _ in range(3)]
+        modes = [predicateAND, argumentList, argumentList]
+        output(f"schema_36_{f}",parse(SchemeFactory.generateSchemeInstance(schema_36_instance, indicesToStrings, maxIndices, modes)))
+
+    # # OLD SCHEMA 36
+    # for f in signature.functions:
+    #     output(
+    #         "schema_36_" + f,
+    #         parse(
+    #             f"∀tn.(reach(t_AND)) → equals(eval({Formulas.quote(f)}(t_TERM)), {f}(eval(t_TERM)))"
+    #         ).expand(signature.functions[f]),
+    #     )
 
     # Schema (37):
     for p in signature.predicates:
