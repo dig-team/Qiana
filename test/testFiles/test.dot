@@ -1,18 +1,38 @@
 digraph "unsat_graph" {
   vertex_0 [color=red, label="[]", shape=box, style=filled];
   vertex_0 -> vertex_1 [label="demod", dir="back"];
-  vertex_1 [shape=box, label="truthPredicate sk_(3)\l", style=filled];
-  vertex_1 -> vertex_2 [label="s_sup-\l\{X0[0] → sk_[1]\}[0]\l", dir="back"];
-  vertex_2 [shape=box, label="forall X0. [truthPredicate X0 ∨ ¬ist (say friar) X0](0)\l", style=filled];
-  vertex_2 -> vertex_3 [label="cnf", dir="back"];
-  vertex_3 [color=yellow, shape=box, label="assert [file \"minimalContradiction.p\" \"h1\"]\l  ∀ X/44. ((ist (say friar) X/44) ⇒ (truthPredicate X/44)).\l", style=filled];
-  vertex_1 -> vertex_4 [label="s_sup-\l\{X0[0] → sk_[1]\}[1]\l", dir="back"];
-  vertex_4 [shape=box, label="ist (say friar) sk_(1)\l", style=filled];
-  vertex_4 -> vertex_5 [label="cnf", dir="back"];
-  vertex_5 [color=yellow, shape=box, label="assert [file \"minimalContradiction.p\" \"h2\"]\l  ¬ (∀ X/58. ((ist (say friar) X/58) ⇒ (truthPredicate X/58))).\l", style=filled];
-  vertex_0 -> vertex_6 [label="demod", dir="back"];
-  vertex_6 [shape=box, label="¬truthPredicate sk_(2)\l", style=filled];
-  vertex_6 -> vertex_5 [label="cnf", dir="back"];
+  vertex_1 [shape=box, label="dead juliet(182)\l", style=filled];
+  vertex_1 -> vertex_2 [label="s_sup-\l\{X0[0] → juliet[1], X1[0] → romeo[1]\}[0]\l", dir="back"];
+  vertex_2 [shape=box, label="forall X0 X1. [dead X0 ∨ ¬madLove X0 X1](179)\l", style=filled];
+  vertex_2 -> vertex_3 [label="demod\l\{X2[1] → bel X0[0], X3[1] → q_dead (q_quote X1)[0]\}[1]\l", dir="back"];
+  vertex_3 [shape=box, label="forall X2 X3. ist X2 X3(174)\l", style=filled];
+  vertex_3 -> vertex_4 [label="s_sup-\l\{X0[0] → q_Or X1 X2[1], X0[1] → X1[0]\}[0]\l", dir="back"];
+  vertex_4 [shape=box, label="forall X0 X1 X2. [¬ist X1 X0 ∨ ist X1 X2](170)\l", style=filled];
+  vertex_4 -> vertex_5 [label="s_sup-\l\{X0[1] → X0[0], X2[1] → q_Not X1[0]\}[1]\l", dir="back"];
+  vertex_5 [shape=box, label="forall X0 X1 X2. [ist X0 X1 ∨ ¬ist X0 (q_Not X2)](20)\l", style=filled];
+  vertex_5 -> vertex_6 [label="cnf", dir="back"];
+  vertex_6 [color=yellow, shape=box, label="assert [file \"QianaClosure_after37.p\" \"schema_11\"]\l  ∀ Tc/153 T1/155 T2/157.\l    (((ist C/159 (q_Not T1/155)) ⇒ (ist C/159 T2/157))\l     ∧ (ist Tc/153 (q_Or T1/155 T2/157))).\l", style=filled];
+  vertex_4 -> vertex_7 [label="s_sup-\l\{X0[1] → X0[0], X2[1] → q_Not X1[0]\}[0]\l", dir="back"];
+  vertex_7 [shape=box, label="forall X0 X1. [ist X0 (q_Not (q_Not X1)) ∨ ¬ist X0 X1](14)\l", style=filled];
+  vertex_7 -> vertex_8 [label="cnf", dir="back"];
+  vertex_8 [color=yellow, shape=box, label="assert [file \"QianaClosure_after37.p\" \"schema_8\"]\l  ∀ Tc/129 T1/131.\l    ((ist Tc/129 (q_Not (q_Not T1/131))) ≡ (ist Tc/129 T1/131)).\l", style=filled];
+  vertex_3 -> vertex_9 [label="s_sup-\l\{X0[0] → q_Or X1 X2[1], X0[1] → X1[0]\}[1]\l", dir="back"];
+  vertex_9 [shape=box, label="forall X0 X1 X2. ist X0 (q_Or X1 X2)(19)\l", style=filled];
+  vertex_9 -> vertex_6 [label="cnf", dir="back"];
+  vertex_2 -> vertex_10 [label="demod", dir="back"];
+  vertex_10 [shape=box, label="forall X0 X1.\l[dead X0 ∨ ¬madLove X0 X1 ∨ ¬ist (bel X0) (q_dead (q_quote X1))](1)\l", style=filled];
+  vertex_10 -> vertex_11 [label="cnf", dir="back"];
+  vertex_11 [color=yellow, shape=box, label="assert [file \"QianaClosure_after37.p\" \"axiom_2\"]\l  ∀ X/58 Y/60.\l    (((madLove X/58 Y/60) ∧ (ist (bel X/58) (q_dead (q_quote Y/60)))) ⇒\l     (dead X/58)).\l", style=filled];
+  vertex_1 -> vertex_12 [label="s_sup-\l\{X0[0] → juliet[1], X1[0] → romeo[1]\}[1]\l", dir="back"];
+  vertex_12 [shape=box, label="madLove juliet romeo(3)\l", style=filled];
+  vertex_12 -> vertex_13 [label="cnf", dir="back"];
+  vertex_13 [color=yellow, shape=box, label="assert [file \"QianaClosure_after37.p\" \"axiom_4\"] madLove juliet romeo.\l", style=filled];
+  vertex_0 -> vertex_14 [label="demod", dir="back"];
+  vertex_14 [shape=box, label="¬dead juliet(9)\l", style=filled];
+  vertex_14 -> vertex_15 [label="cnf", dir="back"];
+  vertex_15 [shape=box, label="negated_goal ¬ (dead juliet) # skolems: [].\l", style=filled];
+  vertex_15 -> vertex_16 [label="cnf.neg", dir="back"];
+  vertex_16 [color=green, shape=box, label="goal [file \"QianaClosure_after37.p\" \"axiom_10\"] dead juliet.\l", style=filled];
   }
 
 
