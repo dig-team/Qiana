@@ -39,7 +39,7 @@ def outputSchemes(output: Callable[[str, Formulas.Formula], typing.Any], signatu
         "schema_10",
         parse("∀tc, t1, t2, t3. ist(tc, (t1∧t2)∨t3) ↔ ist(tc, (t1∨t3)∧(t2∨t3))"),
     )
-    output("schema_11", parse("∀tc, t1, t2. ist(tc, t1∨t2) ∧ ist(c, ¬t1) → ist(c, t2)"))
+    output("schema_11", parse("∀tc, t1, t2. (ist(tc, t1∨t2) ∧ ist(c, ¬t1)) → ist(c, t2)"))
 
     output("schema_29", parse("∀x. equals(x, x)"))
     output("schema_30", parse("∀x, y, z. equals(x, y) ∧ equals(y, z) → equals(x, z)"))
