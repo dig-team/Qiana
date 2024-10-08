@@ -18,7 +18,7 @@ class SchemeFactory():
         @param schemeInstanceFromText: a function that takes a number l of string arguments and return the text of an instance of a scheme, ready to be parsed
         @param indicesToStrings: a list of l functions that take an index and return a string; each either a function argument or a predicate application (l is the same as in scheemInstanceFromText)
         @param maxIndices: a list of l integers, the i-th integer is the maximum value of indices in the text for the i-th argument of schemeInstanceFromText
-        @param modes: a list of l ExtensionModes, indicating for every 
+        @param modes: a list of l ExtensionModes, indicating for every element of indicesToStrings whether to extend it as a conjuntion or as a list of arguments
         @return: the text of the scheme instance
         """
         assert len(indicesToStrings) == len(maxIndices) == len(modes)
