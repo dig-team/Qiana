@@ -142,10 +142,11 @@ def outputSchemes(output: Callable[[str, Formulas.Formula], typing.Any], signatu
         for c in signature.constants:
             output(
                 "schema_43_" + cx + "_" + c,
-                parse(f"∀t. reach(t) → equals(sub({cx}, t, {Formulas.quote(c)}), {c})"),
+                parse(f"∀t. reach(t) → equals(sub({cx}, t, {Formulas.quote(c)}), {Formulas.quote(c)})"),
             )
 
     # Schema 45 TODO: check paper for 45 and 46
+    # Handles both quoted functions and quoted predicates
     for cx in signature.quotedVariables:
         for f in signature.quotedFunctions:
             output(
@@ -172,7 +173,7 @@ def outputSchemes(output: Callable[[str, Formulas.Formula], typing.Any], signatu
             output(
                 "schema_48_" + cx + "_" + cy,
                 parse(
-                    f"∀t1, t2. (reach(t1) ∧ reach(t2)) → equals(sub({cx}, t1, q_Forall({cy}, t2)), q_Forall({cy}, sub({cx}, t1, q_Forall({cy} , t2))))"
+                    f"∀t1, t2. (reach(t1) ∧ reach(t2)) → equals(sub({cx}, t1, q_Forall({cy}, t2)), q_Forall({cy}, sub({cx}, t1, t2)))"
                 ),
             )
 
@@ -241,7 +242,7 @@ def outputSchemes(output: Callable[[str, Formulas.Formula], typing.Any], signatu
     # Schema (61):
     output(
         "schema_61",
-        parse("∀ t1. reach(t1) → truthPredicate(q_Not(t1)) ↔ (¬truthPredicate(t1))"),
+        parse("∀ t1. reach(t1) → (truthPredicate(q_Not(t1)) ↔ (¬truthPredicate(t1)))"),
     )
 
     # Schema (62):
@@ -249,6 +250,6 @@ def outputSchemes(output: Callable[[str, Formulas.Formula], typing.Any], signatu
         output(
             "schema_62_" + cx,
             parse(
-                f"∀ t1. reach(t1) → truthPredicate(q_Forall({cx}, t1)) ↔ (∀x. truthPredicate(sub({cx}, quote(x), t1)))"
+                f"∀ t1. reach(t1) → (truthPredicate(q_Forall({cx}, t1)) ↔ (∀x. truthPredicate(sub({cx}, quote(x), t1))))"
             ),
         )

@@ -5,8 +5,8 @@ class SchemeFactory():
     """
     A purely static utility class providing utility functions to generate schemes.
     For use in schemes generation, this serves the same function as the "extand" method of the Formula type but is more general.
+    However the schemes it creates are more complex and less readable than those created by the "extand" method, so it is not recommended to use this class for schemes that can be created with "extand".
     """
-    # Makes the extand method redundant, but there is no need to go through the work of removing it, both utilities for scheme generation can coexist.
 
     class ExtensionModes(Enum):
         predicateAND = auto()
