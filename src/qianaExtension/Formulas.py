@@ -8,18 +8,6 @@ from __future__ import annotations
 from collections.abc import Mapping
 from typing import List, Dict, Iterable, Set
 
-###########################################################################################
-#                       Identifiers                                                       #
-###########################################################################################
-
-# Logical operators for formulas
-
-
-###########################################################################################
-#                       Formulas                                                          #
-###########################################################################################
-
-
 class Formula:
     """Represents a formula of an operator and constituent formulas"""
 
@@ -41,12 +29,10 @@ class Formula:
         FORALL: "q_Forall",
     }
 
-
     @staticmethod
     def isQuoted(s: str) -> bool:
         """TRUE if the symbol is quoted"""
         return s.startswith("q_")
-
 
     @staticmethod
     def isVariable(s: str) -> bool:
@@ -71,9 +57,15 @@ class Formula:
         if s.startswith("q_"):
             return s
         return Formula.OPERATORS.get(s, "q_" + s)
+    
+    def unquoteStr(s : str) -> str:
+        """Unquotes a logical symbol, predicate, or function, if the symbol is not quoted, raise an error"""
+        if s.startswith("q_"):
+            return s[2:]
+        raise Exception(f"Expected quoted string, not {s}")
 
     @staticmethod
-    def isQuotedVariable(s: str) -> str:
+    def isQuotedVariable(s: str) -> bool:
         """TRUE for quoted variables"""
         return s.startswith("q_") and Formula.isVariable(s[2:])
 
@@ -226,6 +218,10 @@ class Atom(Formula):
 
     def __str__(self) -> str:
         return self.operator + "(" + ", ".join([str(a) for a in self.args]) + ")"
+    
+    def getArity(self) -> int:
+        """Returns the arity of the predicate at the top of this atom"""
+        return len(self.args)
 
 
 def Ist(context: Term, formula: Formula) -> Atom:
@@ -245,6 +241,8 @@ def Equals(term1: Term, term2: Term) -> Atom:
 
 class Term:
     """Represents a term of a function symbol and arguments"""
+
+    function : str
 
     def __init__(self, function: str, *args: Term) -> None:
         Formula.checkIdentifier(function)
@@ -293,6 +291,10 @@ class Term:
     def quote(self) -> Term:
         """Quotes the formula except variables"""
         return Term(Formula.quoteStr(self.function), *[a.quote() for a in self.args])
+    
+    def getArity(self) -> int:
+        """Returns the arity of the function at the top of this term"""
+        return len(self.args)
 
     def __str__(self) -> str:
         if len(self.args) == 0:
@@ -328,6 +330,10 @@ class Variable(Term):
     def quote(self) -> Term:
         """Does nothing, returns self"""
         return self
+    
+    def getArity(self):
+        """By convention, variables have arity 0"""
+        return 0
 
     def instantiate(self, instantiation: Mapping[Variable, Term]) -> Formula:
         """Instantiates the term with variables. Not needed, just for future use."""
