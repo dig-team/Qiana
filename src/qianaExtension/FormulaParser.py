@@ -7,8 +7,7 @@ from __future__ import annotations
 
 from typing import List
 
-import qianaExtension.Formulas as Formulas
-from qianaExtension.Formulas import Atom, Forall, Formula, Not, Term, Variable
+from qianaExtension.Formulas import Formula, Atom, Forall, Formula, Not, Term, Variable
 
 ###########################################################################################
 #                       Parsing terms                                                     #
@@ -16,13 +15,13 @@ from qianaExtension.Formulas import Atom, Forall, Formula, Not, Term, Variable
 
 # Maps Latex and TPTP operators to the ones we use in the code.
 niceOperators = {
-    "∨": Formulas.OR,
-    "∧": Formulas.AND,
-    "→": Formulas.IMPLIES,
-    "↔": Formulas.EQV,
-    "¬": Formulas.NOT,
-    "~": Formulas.NOT,
-    "&": Formulas.AND,
+    "∨": Formula.OR,
+    "∧": Formula.AND,
+    "→": Formula.IMPLIES,
+    "↔": Formula.EQV,
+    "¬": Formula.NOT,
+    "~": Formula.NOT,
+    "&": Formula.AND,
 }
 
 
@@ -36,9 +35,9 @@ def readItem(s: str, pos: list[int]) -> str:
         while pos[0] < len(s) and s[pos[0]] != "\n":
             pos[0] += 1
         return readItem(s, pos)
-    if Formulas.isIdentifier(s[pos[0]]):
+    if Formula.isIdentifier(s[pos[0]]):
         start = pos[0]
-        while pos[0] < len(s) and Formulas.isIdentifier(s[pos[0]]):
+        while pos[0] < len(s) and Formula.isIdentifier(s[pos[0]]):
             pos[0] += 1
         return s[start : pos[0]]
     pos[0] += 1
@@ -57,7 +56,7 @@ def readGivenItem(s: str, pos: list[int], item: str):
 def readTerm(s: str, pos: list[int]) -> Term:
     """Parses the next term out of the string, updates the position"""
     predicate = readItem(s, pos)
-    Formulas.checkIdentifier(predicate)
+    Formula.checkIdentifier(predicate)
     if predicate == "ist":
         readGivenItem(s, pos, "(")
         context = readTerm(s, pos)
@@ -80,7 +79,7 @@ def readTerm(s: str, pos: list[int]) -> Term:
             args.append(readTerm(s, pos))
     else:
         pos[0] = posBefore
-        if Formulas.isVariable(predicate):
+        if Formula.isVariable(predicate):
             return Variable(predicate)
     return Term(predicate, *args)
 

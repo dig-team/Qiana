@@ -13,124 +13,6 @@ from typing import List, Dict, Iterable, Set
 ###########################################################################################
 
 # Logical operators for formulas
-IMPLIES = "=>"
-AND = "&"
-OR = "|"
-NOT = "~"
-EQV = "<=>"
-FORALL = "forall"
-OPERATORS = {
-    IMPLIES: "q_Implies",
-    AND: "q_And",
-    OR: "q_Or",
-    NOT: "q_Not",
-    FORALL: "q_Forall",
-}
-
-
-def isQuoted(s: str) -> bool:
-    """TRUE if the symbol is quoted"""
-    return s.startswith("q_")
-
-
-def isVariable(s: str) -> bool:
-    """Heuristically finds variables"""
-    return not isQuoted(s) and (len(s) < 3 or s.endswith("_AND") or s.endswith("_TERM"))
-
-
-def isIdentifier(c: str) -> bool:
-    """True if this character is a valid identifier character"""
-    return c == "_" or c.isalnum()
-
-
-def checkIdentifier(predicate: str):
-    """Passes if all characters are valid identifier characters"""
-    if not all(isIdentifier(p) for p in predicate):
-        raise Exception(f"Expected identifier, not {predicate}")
-
-
-def quote(s: str) -> str:
-    """Quotes a logical operator, predicate, or function, unless it is already quoted"""
-    if s.startswith("q_"):
-        return s
-    return OPERATORS.get(s, "q_" + s)
-
-
-def isQuotedVariable(s: str) -> str:
-    """TRUE for quoted variables"""
-    return s.startswith("q_") and isVariable(s[2:])
-
-
-###########################################################################################
-#                       Signatures                                                        #
-###########################################################################################
-
-
-class Signature:
-    """Contains predicates, functions, and quoted functions each with their arity, as well as variables, constants, and quoted constants"""
-
-    predicates : Dict[str, int]         # Dict matching predicates names to arities
-    functions : Dict[str, int]          # Dict matching functions names to arities; contains all functions found, including quotations of predicates
-    quotedFunctions : Dict[str, int]    # Dict matching quotation functions present in the input with their arities, including quotations of predicates
-    constants : Set[int]                # Set of the text of all constants from the input
-    quotedConstants : Set[str]          # Set of the text of all quotations of constants from the input
-    quotedVariables : Set[str]          # Set of the text of all quoted variables from the input + those we added
-
-    def __init__(self, formulas: Iterable[Formula], numberVariables: int = 3, verbose = False) -> None:
-        """Creates a signature matching a list of formulas
-        @param formulas: List of formulas
-        @param numberVariables: Number of quoted variables to add on top of the ones already present in the formulas
-        """
-        if verbose:
-            # Print formulas for user
-            print(f"  Creating signature for {len(formulas)} formulas...")
-
-        # Gather the components of the formulas
-        self.predicates : Dict[str, int] = {} 
-        self.quotedVariables : Set[str]= set() 
-        self.functions : Dict[str, int] = {} 
-        self.constants : Set[int] = set() 
-        self.quotedConstants : Set[str] = set() 
-        self.quotedFunctions : Dict[str, int] = {} 
-
-        for f in formulas:
-            f.getComponents(self.predicates, self.functions)
-
-        for f in set(self.functions):
-            if isQuoted(f):
-                if self.functions[f] == 0: # If the function is a constant
-                    if isQuotedVariable(f):
-                        self.quotedVariables.add(f)
-                    else:
-                        self.quotedConstants.add(f)
-                else:
-                    self.quotedFunctions[f] = self.functions[f]
-                self.functions.pop(f, None)
-            elif self.functions[f] == 0:
-                self.constants.add(f)
-                self.functions.pop(f, None)
-
-
-        # Create variable quotations, make sure we have 3 more than the total number of vars from the initial set of formulas
-        #
-        self.quotedVariables.update(["q_VAR_" + str(i) for i in range(numberVariables)])
-
-        # Remove special elements
-        self.predicates.pop("ist", None)
-        self.functions.pop("quote", None)
-        self.quotedFunctions.pop("q_Quote", None)
-        self.predicates.pop("truthPredicate", None)
-        for q in OPERATORS.values():
-            self.quotedFunctions.pop(q, None)
-
-        if verbose:
-            print("    Quoted variables: " + str([a for a in self.quotedVariables]))
-            print("    Constants: " + str([a for a in self.constants]))
-            print("    Quoted constants: " + str([a for a in self.quotedConstants]))
-            print("    Predicates: " + str(self.predicates))
-            print("    Functions: " + str(self.functions))
-            print("    Quoted functions: " + str(self.quotedFunctions))
-            print("  done")
 
 
 ###########################################################################################
@@ -140,6 +22,64 @@ class Signature:
 
 class Formula:
     """Represents a formula of an operator and constituent formulas"""
+
+    ###########################################################################
+    #   Convenience functions and objects
+    ###########################################################################
+
+    IMPLIES = "=>"
+    AND = "&"
+    OR = "|"
+    NOT = "~"
+    EQV = "<=>"
+    FORALL = "forall"
+    OPERATORS = {
+        IMPLIES: "q_Implies",
+        AND: "q_And",
+        OR: "q_Or",
+        NOT: "q_Not",
+        FORALL: "q_Forall",
+    }
+
+
+    @staticmethod
+    def isQuoted(s: str) -> bool:
+        """TRUE if the symbol is quoted"""
+        return s.startswith("q_")
+
+
+    @staticmethod
+    def isVariable(s: str) -> bool:
+        """Heuristically finds variables"""
+        return not Formula.isQuoted(s) and (len(s) < 3 or s.endswith("_AND") or s.endswith("_TERM"))
+
+
+    @staticmethod
+    def isIdentifier(c: str) -> bool:
+        """True if this character is a valid identifier character"""
+        return c == "_" or c.isalnum()
+
+    @staticmethod
+    def checkIdentifier(predicate: str):
+        """Passes if all characters are valid identifier characters"""
+        if not all(Formula.isIdentifier(p) for p in predicate):
+            raise Exception(f"Expected identifier, not {predicate}")
+
+    @staticmethod
+    def quoteStr(s: str) -> str:
+        """Quotes a logical operator, predicate, or function, unless it is already quoted"""
+        if s.startswith("q_"):
+            return s
+        return Formula.OPERATORS.get(s, "q_" + s)
+
+    @staticmethod
+    def isQuotedVariable(s: str) -> str:
+        """TRUE for quoted variables"""
+        return s.startswith("q_") and Formula.isVariable(s[2:])
+
+    ###########################################################################
+    #   Formula objects
+    ###########################################################################
 
     def __init__(self, operator: str, *args: Formula) -> None:
         self.operator = operator
@@ -152,7 +92,7 @@ class Formula:
 
     def quote(self) -> Term:
         """Quotes the formula except variables"""
-        return Term(quote(self.operator), *[a.quote() for a in self.args])
+        return Term(Formula.quoteStr(self.operator), *[a.quote() for a in self.args])
 
     def instantiate(self, instantiation: Mapping[Variable, Term]) -> Formula:
         """Instantiates the formula with variables. Not needed, just for future use."""
@@ -186,7 +126,7 @@ class Forall(Formula):
 
     def __init__(self, variables: List[str], formula: Formula) -> None:
         self.variables = [Variable(v) for v in variables]
-        self.operator = FORALL
+        self.operator = Formula.FORALL
         self.args = [formula]
 
     def instantiate(self, instantiation: Mapping[Variable, Term]) -> Formula:
@@ -214,7 +154,7 @@ class Forall(Formula):
         if len(self.variables) == 0:
             return self.args[0].quote()
         return Term(
-            quote(self.operator),
+            Formula.quoteStr(self.operator),
             self.variables[0].quote(),
             Forall(self.variables[1:], self.args[0]).quote(),
         )
@@ -238,7 +178,7 @@ class Atom(Formula):
     """Represents an atom of a predicate and arguments"""
 
     def __init__(self, predicate: str, *args: Term) -> None:
-        checkIdentifier(predicate)
+        Formula.checkIdentifier(predicate)
         self.operator = predicate
         for a in args:
             if not isinstance(a, Term):
@@ -249,9 +189,9 @@ class Atom(Formula):
 
     def quote(self) -> Term:
         """Quotes the formula except variables"""
-        if len(self.args) == 0 and isVariable(self.operator):
+        if len(self.args) == 0 and Formula.isVariable(self.operator):
             return Variable(self.operator)
-        return Term(quote(self.operator), *[a.quote() for a in self.args])
+        return Term(Formula.quoteStr(self.operator), *[a.quote() for a in self.args])
 
     def instantiate(self, instantiation: Mapping[Variable, Term]) -> Formula:
         """Instantiates the atom with variables. Not needed, just for future use."""
@@ -307,7 +247,7 @@ class Term:
     """Represents a term of a function symbol and arguments"""
 
     def __init__(self, function: str, *args: Term) -> None:
-        checkIdentifier(function)
+        Formula.checkIdentifier(function)
         self.function = function
         for a in args:
             if not isinstance(a, Term):
@@ -352,7 +292,7 @@ class Term:
 
     def quote(self) -> Term:
         """Quotes the formula except variables"""
-        return Term(quote(self.function), *[a.quote() for a in self.args])
+        return Term(Formula.quoteStr(self.function), *[a.quote() for a in self.args])
 
     def __str__(self) -> str:
         if len(self.args) == 0:
@@ -404,32 +344,32 @@ class Variable(Term):
 
 def Implies(arg1: Formula, arg2: Formula) -> Formula:
     """Convenience function to create the formula "arg1 => arg2" """
-    return Formula(IMPLIES, arg1, arg2)
+    return Formula(Formula.IMPLIES, arg1, arg2)
 
 
 def And(*args: Formula) -> Formula:
     """Convenience function to create the formula "arg1 & arg2" """
-    return Formula(AND, *args)
+    return Formula(Formula.AND, *args)
 
 
 def Not(arg: Formula) -> Formula:
     """Convenience function to create the formula "~arg1" """
-    return Formula(NOT, arg)
+    return Formula(Formula.NOT, arg)
 
 
 def Eqv(form1: Formula, form2: Formula) -> Formula:
     """Convenience function to create the formula "form1 <-> form2" """
-    return Formula(EQV, form1, form2)
+    return Formula(Formula.EQV, form1, form2)
 
 
 def qAnd(*args: Term) -> Term:
     """Convenience function to create the term qAnd(arg1, arg2)"""
-    return Term(quote(AND), *args)
+    return Term(Formula.quoteStr(Formula.AND), *args)
 
 
 def qNot(arg: Term) -> Term:
     """Convenience function to create the term qNot(arg)"""
-    return Term(quote(NOT), arg)
+    return Term(Formula.quoteStr(Formula.NOT), arg)
 
 
 def V(name: str) -> Variable:
