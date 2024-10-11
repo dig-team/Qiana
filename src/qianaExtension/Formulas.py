@@ -6,7 +6,7 @@ Internal representation of formulas
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import List, Dict
+from typing import List, Dict, Iterable, Set
 
 ###########################################################################################
 #                       Identifiers                                                       #
@@ -69,28 +69,36 @@ def isQuotedVariable(s: str) -> str:
 class Signature:
     """Contains predicates, functions, and quoted functions each with their arity, as well as variables, constants, and quoted constants"""
 
-    def __init__(self, formulas: Formula, numberVariables: int = 3) -> None:
+    predicates : Dict[str, int]         # Dict matching predicates names to arities
+    functions : Dict[str, int]          # Dict matching functions names to arities; contains all functions found, including quotations of predicates
+    quotedFunctions : Dict[str, int]    # Dict matching quotation functions present in the input with their arities, including quotations of predicates
+    constants : Set[int]                # Set of the text of all constants from the input
+    quotedConstants : Set[str]          # Set of the text of all quotations of constants from the input
+    quotedVariables : Set[str]          # Set of the text of all quoted variables from the input + those we added
+
+    def __init__(self, formulas: Iterable[Formula], numberVariables: int = 3, verbose = False) -> None:
         """Creates a signature matching a list of formulas
         @param formulas: List of formulas
         @param numberVariables: Number of quoted variables to add on top of the ones already present in the formulas
         """
-        # Print formulas for user
-        print(f"  Creating signature for {len(formulas)} formulas...")
+        if verbose:
+            # Print formulas for user
+            print(f"  Creating signature for {len(formulas)} formulas...")
 
         # Gather the components of the formulas
-        self.predicates = {}
-        self.quotedVariables = set()
-        self.functions : Dict[str, int] = {} #Dict matching functions names to arities
-        self.constants = set()
-        self.quotedConstants = set()
-        self.quotedFunctions = {}
+        self.predicates : Dict[str, int] = {} 
+        self.quotedVariables : Set[str]= set() 
+        self.functions : Dict[str, int] = {} 
+        self.constants : Set[int] = set() 
+        self.quotedConstants : Set[str] = set() 
+        self.quotedFunctions : Dict[str, int] = {} 
 
         for f in formulas:
             f.getComponents(self.predicates, self.functions)
 
         for f in set(self.functions):
             if isQuoted(f):
-                if self.functions[f] == 0:
+                if self.functions[f] == 0: # If the function is a constant
                     if isQuotedVariable(f):
                         self.quotedVariables.add(f)
                     else:
@@ -98,11 +106,10 @@ class Signature:
                 else:
                     self.quotedFunctions[f] = self.functions[f]
                 self.functions.pop(f, None)
-                continue
-            if self.functions[f] == 0:
+            elif self.functions[f] == 0:
                 self.constants.add(f)
                 self.functions.pop(f, None)
-                continue
+
 
         # Create variable quotations, make sure we have 3 more than the total number of vars from the initial set of formulas
         #
@@ -116,13 +123,14 @@ class Signature:
         for q in OPERATORS.values():
             self.quotedFunctions.pop(q, None)
 
-        print("    Quoted variables: " + str([a for a in self.quotedVariables]))
-        print("    Constants: " + str([a for a in self.constants]))
-        print("    Quoted constants: " + str([a for a in self.quotedConstants]))
-        print("    Predicates: " + str(self.predicates))
-        print("    Functions: " + str(self.functions))
-        print("    Quoted functions: " + str(self.quotedFunctions))
-        print("  done")
+        if verbose:
+            print("    Quoted variables: " + str([a for a in self.quotedVariables]))
+            print("    Constants: " + str([a for a in self.constants]))
+            print("    Quoted constants: " + str([a for a in self.quotedConstants]))
+            print("    Predicates: " + str(self.predicates))
+            print("    Functions: " + str(self.functions))
+            print("    Quoted functions: " + str(self.quotedFunctions))
+            print("  done")
 
 
 ###########################################################################################

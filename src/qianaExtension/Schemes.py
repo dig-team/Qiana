@@ -145,7 +145,7 @@ def outputSchemes(output: Callable[[str, Formulas.Formula], typing.Any], signatu
                 parse(f"∀t. reach(t) → equals(sub({cx}, t, {Formulas.quote(c)}), {Formulas.quote(c)})"),
             )
 
-    # Schema 45 TODO: check paper for 45 and 46
+    # Schema 45 
     # Handles both quoted functions and quoted predicates
     for cx in signature.quotedVariables:
         for f in signature.quotedFunctions:
