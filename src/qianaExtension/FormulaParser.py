@@ -57,13 +57,13 @@ def readTerm(s: str, pos: list[int]) -> Term:
     """Parses the next term out of the string, updates the position"""
     predicate = readItem(s, pos)
     Formula.checkIdentifier(predicate)
-    if predicate == "ist":
-        readGivenItem(s, pos, "(")
-        context = readTerm(s, pos)
-        readGivenItem(s, pos, ",")
-        formula = readFormula(s, pos)
-        readGivenItem(s, pos, ")")
-        return Term("ist", context, formula.quote())
+    # if predicate == "ist":
+    #     readGivenItem(s, pos, "(")
+    #     context = readTerm(s, pos)
+    #     readGivenItem(s, pos, ",")
+    #     formula = readFormula(s, pos)
+    #     readGivenItem(s, pos, ")")
+    #     return Term("ist", context, formula.quote())
     posBefore = pos[0]
     nextItem = readItem(s, pos)
     args = []

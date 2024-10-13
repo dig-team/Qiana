@@ -42,6 +42,7 @@ class Signature:
 
         # Remove special symbols from the signature
         self.functions.pop("quote",None) 
+        self.quotedFunctions.pop("quote",None) 
         self.predicates.pop("truthPredicate",None) 
 
         # Quote and unquote what was found so all quoted / unquoted counterparts exist as needed

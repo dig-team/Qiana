@@ -5,6 +5,9 @@ class Settings:
     Static class that saves the settings globally and provides a method to open the settings window.
     """
 
+    # TODO : timeout setting
+    # TODO : write list of special restricted symbols
+
     _settingsWindow : '_SettingsWindow' = None
     quotedVarsNumber : int | None = None
 
