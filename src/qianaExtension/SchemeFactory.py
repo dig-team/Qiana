@@ -1,5 +1,6 @@
 from typing import List, Callable, Tuple
 from enum import Enum, auto
+import re
 
 class SchemeFactory():
     """
@@ -7,6 +8,27 @@ class SchemeFactory():
     For use in schemes generation, this serves the same function as the "extand" method of the Formula type but is more general.
     However the schemes it creates are more complex and less readable than those created by the "extand" method, so it is not recommended to use this class for schemes that can be created with "extand".
     """
+
+    @staticmethod
+    def generateInstance(schemeText : str, maxIndices : List[int]):
+        """
+        @param schemeText: the text of the scheme. This is a formula using macros following the "\!" escape character. 
+        a \!^ b is a macro for qAnd(a,b) and \![f(t_$);,] stands for f(t_1), ..., f(t_n); where n is given by the second argument of this function.
+        @param maxIndices: a list of integers, the i-th integer is the maximum value of indices for the i-th use of the \![prefix;sep] macro
+        """
+        pass
+
+    @staticmethod
+    def _expandSimpleMacros(schemeText : str) -> str:
+        """
+        A simple utility function to expand macros of the form a \!^ b 
+        """
+        patternqAnd = re.compile(r"([[^(), ]+|\(.*\)]) *\\!\^ *([[^(), ]+|\(.*\)])")
+        m = patternqAnd.search(schemeText)
+        while m:
+            schemeText = patternqAnd.sub(r"qAnd(\1,\2)", schemeText)
+            m = patternqAnd.search(schemeText)
+        return schemeText
 
     class ExtensionModes(Enum):
         predicateAND = auto()
