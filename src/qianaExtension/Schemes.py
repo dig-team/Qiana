@@ -7,12 +7,13 @@ from typing import Callable, List
 import typing
 
 import qianaExtension.Formulas as Formulas
+from qianaExtension.Formulas import Formula
 from qianaExtension.SchemeFactory import SchemeFactory
 from qianaExtension.FormulaParser import parse
+from qianaExtension.Signatures import Signature
 
 
-
-def outputSchemes(output: Callable[[str, Formulas.Formula], typing.Any], signature : Formulas.Signature):
+def outputSchemes(output: Callable[[str, Formulas.Formula], typing.Any], signature : Signature):
     """Calls the output function for all schemes generated from the signature"""
     
     # ===============================================
@@ -71,13 +72,13 @@ def outputSchemes(output: Callable[[str, Formulas.Formula], typing.Any], signatu
             )
     # Schema (34):
     for c in signature.constants:
-        output("schema_34_" + c, parse(f"equals(eval({Formulas.quote(c)}), {c})"))
+        output("schema_34_" + c, parse(f"equals(eval({Formula.quoteStr(c)}), {c})"))
 
     output("schema_35", parse(f"∀t. reach(t) → equals(eval(quote(t)), t)"))
 
     # Schema (36):
     for f in signature.functions:
-        quoted_f : str = Formulas.quote(f)
+        quoted_f : str = Formula.quoteStr(f)
         def schema_36_instance(quotedFunArgsReach : str, quotedFunArgs : str, evalFunArgs : str) -> str:
             return f"∀{quotedFunArgs}.({quotedFunArgsReach}) → equals(eval({quoted_f}({quotedFunArgs})), {f}({evalFunArgs}))"
         indicesToStrings = [reachFromIndice, quotedFunArg, evalFunArg]
@@ -96,7 +97,7 @@ def outputSchemes(output: Callable[[str, Formulas.Formula], typing.Any], signatu
 
     # Schema (37):
     for p in signature.predicates:
-        quoted_p : str = Formulas.quote(p)
+        quoted_p : str = Formula.quoteStr(p)
         def schema_37_instance(quotedFunArgs, quotedFunArgsReach) -> str:
             return f"∀{quotedFunArgs}.({quotedFunArgsReach}) → equals(eval({quoted_p}({quotedFunArgs})), {quoted_p}({quotedFunArgs}))"
         indicesToStrings = [quotedFunArg, reachFromIndice]
@@ -121,7 +122,7 @@ def outputSchemes(output: Callable[[str, Formulas.Formula], typing.Any], signatu
 
     # Schema (41):
     for c in signature.constants:
-        output("schema_41_" + c, parse(f"equals(eval({Formulas.quote(c)}), {c})"))
+        output("schema_41_" + c, parse(f"equals(eval({Formula.quoteStr(c)}), {c})"))
 
     # Schema (42):
     for c in signature.quotedVariables:
@@ -142,7 +143,7 @@ def outputSchemes(output: Callable[[str, Formulas.Formula], typing.Any], signatu
         for c in signature.constants:
             output(
                 "schema_43_" + cx + "_" + c,
-                parse(f"∀t. reach(t) → equals(sub({cx}, t, {Formulas.quote(c)}), {Formulas.quote(c)})"),
+                parse(f"∀t. reach(t) → equals(sub({cx}, t, {Formula.quoteStr(c)}), {Formula.quoteStr(c)})"),
             )
 
     # Schema 45 
@@ -227,7 +228,7 @@ def outputSchemes(output: Callable[[str, Formulas.Formula], typing.Any], signatu
         output(
             "schema_59_" + p,
             parse(
-                f"∀tn. (wft(t_AND)) → truthPredicate({Formulas.quote(p)}(tn)) ↔ {p}(eval(t_TERM))"
+                f"∀tn. (wft(t_AND)) → truthPredicate({Formula.quoteStr(p)}(tn)) ↔ {p}(eval(t_TERM))"
             ).expand(signature.predicates[p]),
         )
 

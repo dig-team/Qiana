@@ -9,6 +9,7 @@ from typing import List
 
 import qianaExtension.FormulaParser as FormulaParser
 import qianaExtension.Formulas as Formulas
+from qianaExtension.Signatures import Signature
 import qianaExtension.Schemes as Schemes
 
 def getOutput(inputTPTPT : str, numberVariables : int = 3) -> List[str]:
@@ -18,7 +19,7 @@ def getOutput(inputTPTPT : str, numberVariables : int = 3) -> List[str]:
     @return: List[str] - the tptp representation of the qiana closure of the input
     """
     inputFormulas : List[Formulas.Formula] = FormulaParser.readFormulasFromData(inputTPTPT)
-    signature = Formulas.Signature(inputFormulas, numberVariables)
+    signature = Signature(inputFormulas, numberVariables)
     output = []
     counter = 0
     for formula in inputFormulas:
@@ -27,6 +28,7 @@ def getOutput(inputTPTPT : str, numberVariables : int = 3) -> List[str]:
     def writeOutput(identifier, formula):
         output.append(f"fof({identifier},axiom,{formula}).")
     Schemes.outputSchemes(writeOutput, signature)
+    print(output)
     return output
 
 if __name__ == "__main__":
