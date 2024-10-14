@@ -21,18 +21,47 @@ class SchemeFactory():
     @staticmethod
     def _expandSimpleMacros(schemeText : str) -> str:
         """
-        A simple utility function to expand macros of the form a \!^ b 
+        Utility function to expand macros of the form a \!^ b 
         """
-        patternqAnd = re.compile(r"([[^(), ]+|\(.*\)]) *\\!\^ *([[^(), ]+|\(.*\)])")
-        m = patternqAnd.search(schemeText)
-        while m:
-            schemeText = patternqAnd.sub(r"qAnd(\1,\2)", schemeText)
-            m = patternqAnd.search(schemeText)
+        macroIndex = schemeText.find("\\!^")
+        while macroIndex != -1:
+            leftOperandBegin = SchemeFactory._expandOperand(schemeText, macroIndex-1, leftOperand=True)
+            rightOperandEnd = SchemeFactory._expandOperand(schemeText, macroIndex+3, leftOperand=False)
+            leftOperand = schemeText[leftOperandBegin:macroIndex]
+            rightOperand = schemeText[macroIndex+3:rightOperandEnd]
+            schemeText = schemeText[:leftOperandBegin] + f"qAnd({leftOperand}, {rightOperand})"+ schemeText[rightOperandEnd:]
+            macroIndex = schemeText.find("\\!^")
         return schemeText
 
     class ExtensionModes(Enum):
         predicateAND = auto()
         argumentList = auto()
+
+    @staticmethod
+    def _expandOperand(txt : str, extremPosition : int, leftOperand : bool) -> str:
+        """
+        Simple utility function to find the other end of an operand in a scheme text. This is mostly about counting parenthesis and stopping on the right characters.
+        
+        @param txt: 
+        @param extremPosition: first operand char index
+        @param leftOperand: true if we are moving left and looking for the end of the left operand
+        @return: the index of the other end of the operand
+        """
+        if leftOperand:
+            startingRangeLimit, endSearch, step, stopChars = extremPosition, -1 , -1, "(,"
+        else:
+            startingRangeLimit, endSearch, step, stopChars = extremPosition+1, len(txt), 1, "),"
+        parenthesisCount = 0
+
+        for i in range(startingRangeLimit, endSearch, step):
+            if txt[i] in stopChars and parenthesisCount == 0:
+                return i + 1 if leftOperand else i
+            if txt[i] == ")":
+                parenthesisCount += 1
+            if txt[i] == "(":
+                parenthesisCount -= 1
+        raise Exception(f"Badly formatted scheme : {txt}")
+
 
     @staticmethod
     def generateSchemeInstance(schemeInstanceFromTexts : Callable[[Tuple[str, ...]],str], indicesToStrings : List[Callable[[int],str]], maxIndices : List[int], modes : List[ExtensionModes]) -> str:
