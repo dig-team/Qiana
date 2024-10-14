@@ -31,6 +31,14 @@ class SchemeFactory():
             rightOperand = schemeText[macroIndex+3:rightOperandEnd]
             schemeText = schemeText[:leftOperandBegin] + f"qAnd({leftOperand}, {rightOperand})"+ schemeText[rightOperandEnd:]
             macroIndex = schemeText.find("\\!^")
+
+        macroIndex = schemeText.find("\\!¬")
+
+        while macroIndex != -1:
+            operandEnd = SchemeFactory._expandOperand(schemeText, macroIndex+3, leftOperand=False)
+            operand = schemeText[macroIndex+3:operandEnd]
+            schemeText = schemeText[:macroIndex] + f"qNot({operand})"+ schemeText[operandEnd:]
+            macroIndex = schemeText.find("\\!¬")
         return schemeText
 
     class ExtensionModes(Enum):
