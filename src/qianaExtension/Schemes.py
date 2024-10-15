@@ -80,8 +80,7 @@ def outputSchemes(output: Callable[[str, Formulas.Formula], typing.Any], signatu
     # Schema (36):
     for f, arity in signature.functions.items():
         qf = Formula.quoteStr(f)
-        schemeInst = SF.genScheme(f"∀\![T_$;,].(\![reach(T_$);∧]) → equals(eval({qf}(\![T_$;,])), {f}(\![eval(T_$);,])))", 4*[arity])
-        output(f"schema_36_{f}", parse(schemeInst))
+        output(f"schema_36_{f}",SF.genParsedScheme(f"∀\![T_$;,].(\![reach(T_$);∧]) → equals(eval({qf}(\![T_$;,])), {f}(\![eval(T_$);,])))", 4*[arity]))
 
     # # OLD Schema (36):
     # for f in signature.functions:
@@ -105,8 +104,7 @@ def outputSchemes(output: Callable[[str, Formulas.Formula], typing.Any], signatu
     # Schema 37
     for p, arity in signature.predicates.items():
         qp = Formula.quoteStr(p)
-        schemeInst = SF.genScheme(f"∀\![T_$;,].(\![reach(T_$);∧]) → equals(eval({qp}(\![T_$;,])), {qp}(\![T_$;,]))", 4*[arity])
-        output(f"schema_37_{p}", parse(schemeInst))
+        output(f"schema_37_{p}",SF.genParsedScheme(f"∀\![T_$;,].(\![reach(T_$);∧]) → equals(eval({qp}(\![T_$;,])), {qp}(\![T_$;,]))", 4*[arity]))
 
     # # OLD Schema (37):
     # for p in signature.predicates:

@@ -2,12 +2,26 @@ from typing import List, Callable, Tuple
 from enum import Enum, auto
 import re
 
+from qianaExtension.FormulaParser import parse
+
 class SchemeFactory():
     """
     A purely static utility class providing utility functions to generate schemes.
     For use in schemes generation, this serves the same function as the "extand" method of the Formula type but is more general.
     However the schemes it creates are more complex and less readable than those created by the "extand" method, so it is not recommended to use this class for schemes that can be created with "extand".
     """
+
+    @staticmethod
+    def genParsedScheme(schemeText : str, maxIndices : List[int] = []) -> str:
+        """
+        Convenience function to generate a scheme and parse it in one call.
+
+        @param schemeText: the text of the scheme. This is a formula using macros following the "\!" escape character. 
+        x \!^ y is a macro for qAnd(x,y) and \![f(t_$);,] stands for f(t_1), ..., f(t_n); where n is given by the second argument of this function.
+        @param maxIndices: a list of integers, the i-th integer is the maximum value of indices for the i-th use of the \![prefix;sep] macro
+ 
+        """
+        return parse(SchemeFactory.genScheme(schemeText, maxIndices))
 
     @staticmethod
     def genScheme(schemeText : str, maxIndices : List[int]) -> str:
