@@ -16,7 +16,10 @@ class SchemeFactory():
         a \!^ b is a macro for qAnd(a,b) and \![f(t_$);,] stands for f(t_1), ..., f(t_n); where n is given by the second argument of this function.
         @param maxIndices: a list of integers, the i-th integer is the maximum value of indices for the i-th use of the \![prefix;sep] macro
         """
-        pass
+        schemeText = SchemeFactory._expandSimpleMacros(schemeText)
+        for i in maxIndices:
+            schemeText = SchemeFactory._expandOneRepetitionMacro(schemeText, i)
+        return schemeText
 
     @staticmethod
     def _expandSimpleMacros(schemeText : str) -> str:
@@ -40,6 +43,15 @@ class SchemeFactory():
             schemeText = schemeText[:macroIndex] + f"qNot({operand})"+ schemeText[operandEnd:]
             macroIndex = schemeText.find("\\!¬")
         return schemeText
+
+    @staticmethod
+    def _expandOneRepetitionMacro(schemeText : str, maxIndice : int) -> str:
+        pattern = re.compile(r"\\!\[(?P<repeat>[^;]+);(?P<sep>[^;]+)\]")
+        match = pattern.search(schemeText)
+        repeat = match.group("repeat")
+        sep = match.group("sep")
+        newText = sep.join([repeat.replace("$", str(i)) for i in range(1,maxIndice+1)])
+        return schemeText[:match.start()] + newText + schemeText[match.end():]
 
     class ExtensionModes(Enum):
         predicateAND = auto()
