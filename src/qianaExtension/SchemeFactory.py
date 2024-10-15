@@ -10,10 +10,12 @@ class SchemeFactory():
     """
 
     @staticmethod
-    def generateInstance(schemeText : str, maxIndices : List[int]) -> str:
+    def genScheme(schemeText : str, maxIndices : List[int]) -> str:
         """
+        Generate one instance of a scheme.
+
         @param schemeText: the text of the scheme. This is a formula using macros following the "\!" escape character. 
-        a \!^ b is a macro for qAnd(a,b) and \![f(t_$);,] stands for f(t_1), ..., f(t_n); where n is given by the second argument of this function.
+        x \!^ y is a macro for qAnd(x,y) and \![f(t_$);,] stands for f(t_1), ..., f(t_n); where n is given by the second argument of this function.
         @param maxIndices: a list of integers, the i-th integer is the maximum value of indices for the i-th use of the \![prefix;sep] macro
         """
         for i in maxIndices:

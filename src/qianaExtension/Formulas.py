@@ -58,6 +58,7 @@ class Formula:
             return s
         return Formula.OPERATORS.get(s, "q_" + s)
     
+    @staticmethod
     def unquoteStr(s : str) -> str:
         """Unquotes a logical symbol, predicate, or function, if the symbol is not quoted, raise an error"""
         if s.startswith("q_"):
@@ -99,7 +100,7 @@ class Formula:
     def __str__(self) -> str:
         return "(" + (" " + self.operator + " ").join([str(a) for a in self.args]) + ")"
 
-    def expand(self, n: int):
+    def expand(self, n: int) -> Formula:
         """Expands any meta-variables from x_1...x_n"""
         return Formula(self.operator, *[a.expand(n) for a in self.args])
 

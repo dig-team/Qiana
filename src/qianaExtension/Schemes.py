@@ -9,6 +9,7 @@ import typing
 import qianaExtension.Formulas as Formulas
 from qianaExtension.Formulas import Formula
 from qianaExtension.SchemeFactory import SchemeFactory
+from qianaExtension.SchemeFactory import SchemeFactory as SF
 from qianaExtension.FormulaParser import parse
 from qianaExtension.Signatures import Signature
 
@@ -30,17 +31,17 @@ def outputSchemes(output: Callable[[str, Formulas.Formula], typing.Any], signatu
     # ===============================================
     # Schemes
 
-    output("schema_6", parse("∀tc, t1, t2. ist(tc, t1∧t2) → ist(tc, t1)"))
-    output("schema_7", parse("∀tc, t1, t2. ist(tc, t1∧t2) ↔ ist(tc, t2∧t1)"))
-    output("schema_8", parse("∀tc, t1. ist(tc, ¬¬t1) ↔ ist(tc, t1)"))
-    output(
-        "schema_9", parse("∀tc, t1, t2, t3. ist(tc, (t1∧t2)∧t3) ↔ ist(tc, t1∧(t2∧t3))")
-    )
-    output(
-        "schema_10",
-        parse("∀tc, t1, t2, t3. ist(tc, (t1∧t2)∨t3) ↔ ist(tc, (t1∨t3)∧(t2∨t3))"),
-    )
-    output("schema_11", parse("∀tc, t1, t2. (ist(tc, t1∨t2) ∧ ist(c, ¬t1)) → ist(c, t2)"))
+    # output("schema_6", parse("∀tc, t1, t2. ist(tc, t1∧t2) → ist(tc, t1)"))
+    # output("schema_7", parse("∀tc, t1, t2. ist(tc, t1∧t2) ↔ ist(tc, t2∧t1)"))
+    # output("schema_8", parse("∀tc, t1. ist(tc, ¬¬t1) ↔ ist(tc, t1)"))
+    # output(
+    #     "schema_9", parse("∀tc, t1, t2, t3. ist(tc, (t1∧t2)∧t3) ↔ ist(tc, t1∧(t2∧t3))")
+    # )
+    # output(
+    #     "schema_10",
+    #     parse("∀tc, t1, t2, t3. ist(tc, (t1∧t2)∨t3) ↔ ist(tc, (t1∨t3)∧(t2∨t3))"),
+    # )
+    # output("schema_11", parse("∀tc, t1, t2. (ist(tc, t1∨t2) ∧ ist(c, ¬t1)) → ist(c, t2)"))
 
     output("schema_29", parse("∀x. equals(x, x)"))
     output("schema_30", parse("∀x, y, z. ((equals(x, y) ∧ equals(y, z)) → equals(x, z))"))
@@ -77,16 +78,22 @@ def outputSchemes(output: Callable[[str, Formulas.Formula], typing.Any], signatu
     output("schema_35", parse(f"∀t. reach(t) → equals(eval(quote(t)), t)"))
 
     # Schema (36):
-    for f in signature.functions:
-        quoted_f : str = Formula.quoteStr(f)
-        def schema_36_instance(quotedFunArgsReach : str, quotedFunArgs : str, evalFunArgs : str) -> str:
-            return f"∀{quotedFunArgs}.({quotedFunArgsReach}) → equals(eval({quoted_f}({quotedFunArgs})), {f}({evalFunArgs}))"
-        indicesToStrings = [reachFromIndice, quotedFunArg, evalFunArg]
-        maxIndices : List[int] = [signature.functions[f] for _ in range(3)]
-        modes = [predicateAND, argumentList, argumentList]
-        output(f"schema_36_{f}",parse(SchemeFactory.generateSchemeInstance(schema_36_instance, indicesToStrings, maxIndices, modes)))
+    for f, arity in signature.functions.items():
+        qf = Formula.quoteStr(f)
+        schemeInst = SF.genScheme(f"∀\![T_$;,].(\![reach(T_$);∧]) → equals(eval({qf}(\![T_$;,])), {f}(\![eval(T_$);,])))", 4*[arity])
+        output(f"schema_36_{f}", parse(schemeInst))
 
-    # # OLD SCHEMA 36
+    # # OLD Schema (36):
+    # for f in signature.functions:
+    #     quoted_f : str = Formula.quoteStr(f)
+    #     def schema_36_instance(quotedFunArgsReach : str, quotedFunArgs : str, evalFunArgs : str) -> str:
+    #         return f"∀{quotedFunArgs}.({quotedFunArgsReach}) → equals(eval({quoted_f}({quotedFunArgs})), {f}({evalFunArgs}))"
+    #     indicesToStrings = [reachFromIndice, quotedFunArg, evalFunArg]
+    #     maxIndices : List[int] = [signature.functions[f] for _ in range(3)]
+    #     modes = [predicateAND, argumentList, argumentList]
+    #     output(f"schema_36_old_{f}",parse(SchemeFactory.generateSchemeInstance(schema_36_instance, indicesToStrings, maxIndices, modes)))
+
+    # # OLDER SCHEMA 36
     # for f in signature.functions:
     #     output(
     #         "schema_36_" + f,
@@ -95,17 +102,23 @@ def outputSchemes(output: Callable[[str, Formulas.Formula], typing.Any], signatu
     #         ).expand(signature.functions[f]),
     #     )
 
-    # Schema (37):
-    for p in signature.predicates:
-        quoted_p : str = Formula.quoteStr(p)
-        def schema_37_instance(quotedFunArgs, quotedFunArgsReach) -> str:
-            return f"∀{quotedFunArgs}.({quotedFunArgsReach}) → equals(eval({quoted_p}({quotedFunArgs})), {quoted_p}({quotedFunArgs}))"
-        indicesToStrings = [quotedFunArg, reachFromIndice]
-        maxIndices : List[int] = [signature.predicates[p] for _ in range(2)]
-        modes = [argumentList, predicateAND]
-        output(f"schema_37_{p}",parse(SchemeFactory.generateSchemeInstance(schema_37_instance, indicesToStrings, maxIndices, modes)))
+    # Schema 37
+    for p, arity in signature.predicates.items():
+        qp = Formula.quoteStr(p)
+        schemeInst = SF.genScheme(f"∀\![T_$;,].(\![reach(T_$);∧]) → equals(eval({qp}(\![T_$;,])), {qp}(\![T_$;,]))", 4*[arity])
+        output(f"schema_37_{p}", parse(schemeInst))
+
+    # # OLD Schema (37):
+    # for p in signature.predicates:
+    #     quoted_p : str = Formula.quoteStr(p)
+    #     def schema_37_instance(quotedFunArgs, quotedFunArgsReach) -> str:
+    #         return f"∀{quotedFunArgs}.({quotedFunArgsReach}) → equals(eval({quoted_p}({quotedFunArgs})), {quoted_p}({quotedFunArgs}))"
+    #     indicesToStrings = [quotedFunArg, reachFromIndice]
+    #     maxIndices : List[int] = [signature.predicates[p] for _ in range(2)]
+    #     modes = [argumentList, predicateAND]
+    #     output(f"schema_37_OLD_{p}",parse(SchemeFactory.generateSchemeInstance(schema_37_instance, indicesToStrings, maxIndices, modes)))
     
-    # # OLD SCHEMA 37
+    # # OLDER SCHEMA 37
     # for p in signature.predicates:
     #     output(
     #         "schema_37_" + p,
