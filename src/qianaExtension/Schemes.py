@@ -78,12 +78,12 @@ def outputSchemes(output: Callable[[str, Formulas.Formula], typing.Any], signatu
     
     # Schema A9 
     output(
-        "schema_10",
+        "schema_A9",
         parse("∀tc, t1, t2, t3. ist(tc, qOr(qAnd(t1,t2),t3)) ↔ ist(tc, qAnd(qOr(t1,t3),qOr(t2,t3)))"),
     )
     
-    # Schema A10 TODO + Bad
-    # output("schema_11", parse("∀tc, t1, t2. (ist(tc, t1∨t2) ∧ ist(c, ¬t1)) → ist(c, t2)"))
+    # Schema A10
+    output("schema_A10", parse("∀tc, t1, t2. (ist(tc, qOr(t1,t2)) ∧ ist(tc, qNot(t1))) → ist(tc, t2)"))
 
     # Schema A11fin TODO
 
@@ -127,11 +127,13 @@ def outputSchemes(output: Callable[[str, Formulas.Formula], typing.Any], signatu
     # Schema A18
     for f in signature.functions:
         output(
-            "schema_A18",
+            "schema_A18_"+f,
             parse(f"∀ tn. (reach(t_AND)) → reach({f}(tn))").expand(
                 signature.functions[f]
             ),
         )
+    for c in signature.constants:
+        output("schema_A18_" + c, parse(f"reach({c})"))
 
     # Schema A19
     output("schema_A19", parse(f"∀x. wft(quote(x))"))
@@ -140,14 +142,15 @@ def outputSchemes(output: Callable[[str, Formulas.Formula], typing.Any], signatu
     for cx in signature.quotedVariables:
         output("schema_A20_" + cx, parse(f"wft({cx})"))
 
-    # Schema A21 TODO
+    # Schema A21 
     for c in signature.quotedConstants:
-        output("schema_56", parse(f"wft({c})"))
+        output("schema_A21_" + c, parse(f"wft({c})"))
 
-    for f in signature.functions:
+    for f, arity in signature.functions.items():
+        fq = Formula.quoteStr(f)
         output(
-            "schema_58",
-            parse(f"∀ tn. (wft(t_AND)) → wft({f}(tn))").expand(signature.functions[f]),
+            "schema_A21_" + fq,
+            parse(f"∀ tn. (wft(t_AND)) → wft({fq}(tn))").expand(arity),
         )
 
     # Schema A22
@@ -248,8 +251,6 @@ def outputSchemes(output: Callable[[str, Formulas.Formula], typing.Any], signatu
     # Schema 50 is a typo and does not exist. I will remove it at the last possible time to avoid confusing the naming scheme
 
     # Schema (53): # TODO where should this go?
-    for c in signature.constants:
-        output("schema_53_" + c, parse(f"reach({c})"))
 
 
 
