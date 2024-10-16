@@ -19,7 +19,7 @@ fof(h4,axiom,
 ).
 
 fof(h5,axiom,
-    ist(say(friar), q_Forall(q_X0, q_Not(q_And(q_drinkPotion(q_x0),q_Not(q_appearDead(q_x0))))))
+    ist(say(friar), q_Forall(q_x0, q_Not(q_And(q_drinkPotion(q_x0),q_Not(q_appearDead(q_x0))))))
 ).
 
 fof(h6,axiom,

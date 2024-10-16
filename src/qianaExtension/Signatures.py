@@ -40,7 +40,9 @@ class Signature:
         self.predicates["ist"] = 2
         self.quotedVariables.update(["q_VAR_" + str(i) for i in range(numberVariables)])
 
+
         # Remove special symbols from the signature
+        self.quotedConstants = self.quotedConstants - self.quotedVariables 
         self.functions.pop("quote",None) 
         self.quotedFunctions.pop("quote",None) 
         self.predicates.pop("truthPredicate",None) 
