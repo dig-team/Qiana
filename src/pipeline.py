@@ -14,14 +14,17 @@ class Pipeline:
         self.qianaClosure = None
         self.htmlTree = None
 
+    def computeQianaClosure(self, input: str) -> None:
+        variableNumber = Settings.getQuotedVarsNumber()
+        self.qianaClosure : str = os.linesep.join(qianaClosure(input, variableNumber))
+
     def runCompute(self, input: str) -> None:
         """
         Takes as input the tptpt representation of a set of formulas and returns the html representation of the reasoning steps performed to find a contradiction on the qiana closure of input.
         @param input: str - the tptp representation of a set of formulas (not necessarily closed under qiana)
         @return: str - the html representation of the reasoning steps performed to find a contradiction on the qiana closure of input
         """
-        variableNumber = Settings.getQuotedVarsNumber()
-        self.qianaClosure : str = os.linesep.join(qianaClosure(input, variableNumber))
+        self.computeQianaClosure(input)
         foundContradiction, reasoningSteps, vampireOutput = callSolver(self.qianaClosure)
         if foundContradiction:
             self.htmlTree = getHtmlFromSteps(reasoningSteps)

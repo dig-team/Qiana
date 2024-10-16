@@ -48,10 +48,10 @@ def outputSchemes(output: Callable[[str, Formulas.Formula], typing.Any], signatu
         ),
     )
 
-    # Schema A3fin TODO + Bad
+    # Schema A3fin
     output(
         "schema_A3fin",
-        parse("∀ t1. reach(t1) → (truthPredicate(q_Not(t1)) ↔ (¬truthPredicate(t1)))"),
+        parse("∀ t1. reach(t1) → (truthPredicate(q_Not(t1)) ↔ (~truthPredicate(t1)))"),
     )
 
     # Schema A4fin
@@ -63,25 +63,24 @@ def outputSchemes(output: Callable[[str, Formulas.Formula], typing.Any], signatu
             ),
         )
 
-    # Schema A5 TODO
-    # output("schema_A5", parse("∀tc, t1, t2. ist(tc, t1∧t2) → ist(tc, t1)"))
+    # Schema A5 
+    output("schema_A5", SF.genParsedScheme("∀tc, t1, t2. ist(tc, t1\!∧t2) → ist(tc, t1)"))
 
-    # Schema A6 TODO
-    # output("schema_A6", parse("∀tc, t1, t2. ist(tc, t1∧t2) ↔ ist(tc, t2∧t1)"))
+    # Schema A6 
+    output("schema_A6", SF.genParsedScheme("∀tc, t1, t2. ist(tc, t1\!∧t2) ↔ ist(tc, t2\!∧t1)"))
     
-    # Schema A7 TODO
-    # output("schema_A7", parse("∀tc, t1. ist(tc, ¬¬t1) ↔ ist(tc, t1)"))
+    # Schema A7 
+    output("schema_A7", SF.genParsedScheme("∀tc, t1. ist(tc, qNot(qNot(t1))) ↔ ist(tc, t1)"))
 
-    # Schema A8 TODO
-    # output(
-    #     "schema_A8", parse("∀tc, t1, t2, t3. ist(tc, (t1∧t2)∧t3) ↔ ist(tc, t1∧(t2∧t3))")
-    # )
+    # Schema A8 
+    output(
+        "schema_A8", parse("∀tc, t1, t2, t3. ist(tc,qAnd(qAnd(t1, t2), t3)) ↔ ist(tc,qAnd(t1,qAnd(t2, t3)))"))
     
-    # Schema A9 TODO
-    # output(
-    #     "schema_10",
-    #     parse("∀tc, t1, t2, t3. ist(tc, (t1∧t2)∨t3) ↔ ist(tc, (t1∨t3)∧(t2∨t3))"),
-    # )
+    # Schema A9 
+    output(
+        "schema_10",
+        parse("∀tc, t1, t2, t3. ist(tc, qOr(qAnd(t1,t2),t3)) ↔ ist(tc, qAnd(qOr(t1,t3),qOr(t2,t3)))"),
+    )
     
     # Schema A10 TODO + Bad
     # output("schema_11", parse("∀tc, t1, t2. (ist(tc, t1∨t2) ∧ ist(c, ¬t1)) → ist(c, t2)"))
@@ -154,13 +153,13 @@ def outputSchemes(output: Callable[[str, Formulas.Formula], typing.Any], signatu
     # Schema A22
     output("schema_A22", parse(f"∀t. reach(t) → equals(eval(quote(t)), t)"))
 
-    # Schema A23 TODO
+    # Schema A23 
     for f, arity in signature.functions.items():
         qf = Formula.quoteStr(f)
         output(f"schema_A23_{f}",SF.genParsedScheme(f"∀\![T_$;,].(\![reach(T_$);∧]) → equals(eval({qf}(\![T_$;,])), {f}(\![eval(T_$);,])))", 4*[arity]))
 
     for c in signature.constants:
-        output("schema_34_" + c, parse(f"equals(eval({Formula.quoteStr(c)}), {c})"))
+        output("schema_A23_" + c, parse(f"equals(eval({Formula.quoteStr(c)}), {c})"))
 
     # Schema A24
     for p, arity in signature.predicates.items():

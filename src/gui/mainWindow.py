@@ -36,6 +36,12 @@ class MainWindow(QMainWindow):
     def setTPTP(self, tptp : str):
         self.editor.setPlainText(tptp)
 
+    def getClosure(self):
+        tptp = self.editor.toPlainText()
+        pipeline = Pipeline()
+        pipeline.computeQianaClosure(tptp)
+        self.display.setClosure(pipeline.getQianaClosure())
+
     def run(self):
         tptp = self.editor.toPlainText()
         pipeline = Pipeline()
@@ -58,15 +64,19 @@ class _MenuBar(QWidget):
         self.menus = QMenuBar()
         self.exampleMenu = self.menus.addMenu("Examples")
         self.toolsMenu = self.menus.addMenu("Tools")
+        self.closureButton = QPushButton("Get Closure")
         self.runButton = QPushButton("Run")
 
         self.layout1 = QHBoxLayout()
         self.layout1.addWidget(self.menus)
+        self.layout1.addWidget(self.closureButton)
         self.layout1.addWidget(self.runButton)
+        self.closureButton.setFixedSize(120, 40)
         self.runButton.setFixedSize(120, 40)
         self.setLayout(self.layout1)
 
     def connectToWindow(self, window : MainWindow):
+        self.closureButton.clicked.connect(window.getClosure)
         self.runButton.clicked.connect(window.run)
         self._fillEXamples(window)
         self._fillTools(window)
@@ -74,6 +84,8 @@ class _MenuBar(QWidget):
     def _fillEXamples(self, window : MainWindow):
         example1Action = self.exampleMenu.addAction("Romeo and Juliet")
         example1Action.triggered.connect(lambda : window.setTPTP(examples.Example_RJbasic))
+        example1Action = self.exampleMenu.addAction("Signature Test")
+        example1Action.triggered.connect(lambda : window.setTPTP(examples.Example_SingatureTest))
 
     def _fillTools(self, window : MainWindow):
         expandAction = self.toolsMenu.addAction("Expand formula tree")

@@ -1,4 +1,3 @@
-Example_RJbasic = """
 %----Hypothesis
 fof(h1,axiom,
     ! [X] : 
@@ -47,4 +46,3 @@ fof(h10,axiom,
 fof(true_goal,conjecture,
     dead(juliet)
 ).
-"""

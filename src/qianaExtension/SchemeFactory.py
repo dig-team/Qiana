@@ -21,7 +21,9 @@ class SchemeFactory():
         @param maxIndices: a list of integers, the i-th integer is the maximum value of indices for the i-th use of the \![prefix;sep] macro
  
         """
-        return parse(SchemeFactory.genScheme(schemeText, maxIndices))
+        schemeText = schemeText.replace("\\!∧", "\\!^")
+        schemeInst = SchemeFactory.genScheme(schemeText, maxIndices)
+        return parse(schemeInst)
 
     @staticmethod
     def genScheme(schemeText : str, maxIndices : List[int]) -> str:
@@ -52,7 +54,6 @@ class SchemeFactory():
             macroIndex = schemeText.find("\\!^")
 
         macroIndex = schemeText.find("\\!¬")
-
         while macroIndex != -1:
             operandEnd = SchemeFactory._expandOperand(schemeText, macroIndex+3, leftOperand=False)
             operand = schemeText[macroIndex+3:operandEnd]

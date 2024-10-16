@@ -18,7 +18,7 @@ def getThree(formulas : str) -> Tuple[bool, List[ReasoningStep], str]:
     result = subprocess.run(args, input=formulas, text=True, capture_output=True)
     if result.stdout == "sat\n":
         return(False, [], result.stdout)
-    elif result.stdout == "unknown\n":
+    elif result.stdout == "unknown\n" or result.stdout == "\n":
         return(False, [], result.stdout)
     elif result.stdout == "unsat\n":
         args = ["./reasoner/vampire"]
@@ -26,7 +26,6 @@ def getThree(formulas : str) -> Tuple[bool, List[ReasoningStep], str]:
         return(True, TPTPOutputParser(result.stdout), result.stdout)
     else:
         raise Exception("Vampire returned an unexpected result: " + result.stdout)
-
 
 if __name__ == "__main__":
     # path = sys.argv[1]

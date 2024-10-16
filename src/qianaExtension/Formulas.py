@@ -98,6 +98,8 @@ class Formula:
         self.type = type
 
     def __str__(self) -> str:
+        if self.operator == Formula.NOT:
+            return "~" + str(self.args[0])
         return "(" + (" " + self.operator + " ").join([str(a) for a in self.args]) + ")"
 
     def expand(self, n: int) -> Formula:
