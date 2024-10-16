@@ -31,21 +31,71 @@ def outputSchemes(output: Callable[[str, Formulas.Formula], typing.Any], signatu
     # ===============================================
     # Schemes
 
-    # output("schema_6", parse("∀tc, t1, t2. ist(tc, t1∧t2) → ist(tc, t1)"))
-    # output("schema_7", parse("∀tc, t1, t2. ist(tc, t1∧t2) ↔ ist(tc, t2∧t1)"))
-    # output("schema_8", parse("∀tc, t1. ist(tc, ¬¬t1) ↔ ist(tc, t1)"))
+    # Schema A1fin
+    for p in signature.predicates:
+        output(
+            "schema_A1fin_" + p,
+            parse(
+                f"∀tn. (wft(t_AND)) → truthPredicate({Formula.quoteStr(p)}(tn)) ↔ {p}(eval(t_TERM))"
+            ).expand(signature.predicates[p]),
+        )
+    
+    # Schema A2fin
+    output(
+        "schema_A2fin",
+        parse(
+            "∀ t1, t2. (reach(t1) ∧ reach(t2)) → truthPredicate(q_And(t1, t2)) ↔ (truthPredicate(t1) ∧ truthPredicate(t2))"
+        ),
+    )
+
+    # Schema A3fin TODO + Bad
+    output(
+        "schema_A3fin",
+        parse("∀ t1. reach(t1) → (truthPredicate(q_Not(t1)) ↔ (¬truthPredicate(t1)))"),
+    )
+
+    # Schema A4fin
+    for cx in signature.quotedVariables:
+        output(
+            "schema_A4fin_" + cx,
+            parse(
+                f"∀ t1. reach(t1) → (truthPredicate(q_Forall({cx}, t1)) ↔ (∀x. truthPredicate(sub({cx}, quote(x), t1))))"
+            ),
+        )
+
+    # Schema A5 TODO
+    # output("schema_A5", parse("∀tc, t1, t2. ist(tc, t1∧t2) → ist(tc, t1)"))
+
+    # Schema A6 TODO
+    # output("schema_A6", parse("∀tc, t1, t2. ist(tc, t1∧t2) ↔ ist(tc, t2∧t1)"))
+    
+    # Schema A7 TODO
+    # output("schema_A7", parse("∀tc, t1. ist(tc, ¬¬t1) ↔ ist(tc, t1)"))
+
+    # Schema A8 TODO
     # output(
-    #     "schema_9", parse("∀tc, t1, t2, t3. ist(tc, (t1∧t2)∧t3) ↔ ist(tc, t1∧(t2∧t3))")
+    #     "schema_A8", parse("∀tc, t1, t2, t3. ist(tc, (t1∧t2)∧t3) ↔ ist(tc, t1∧(t2∧t3))")
     # )
+    
+    # Schema A9 TODO
     # output(
     #     "schema_10",
     #     parse("∀tc, t1, t2, t3. ist(tc, (t1∧t2)∨t3) ↔ ist(tc, (t1∨t3)∧(t2∨t3))"),
     # )
+    
+    # Schema A10 TODO + Bad
     # output("schema_11", parse("∀tc, t1, t2. (ist(tc, t1∨t2) ∧ ist(c, ¬t1)) → ist(c, t2)"))
 
-    output("schema_29", parse("∀x. equals(x, x)"))
-    output("schema_30", parse("∀x, y, z. ((equals(x, y) ∧ equals(y, z)) → equals(x, z))"))
-    output("schema_31", parse("∀x, y. equals(x, y) → equals(y, x)"))
+    # Schema A11fin TODO
+
+    # Schema A12
+    output("schema_A12", parse("∀x. equals(x, x)"))
+
+    # Schema A13
+    output("schema_A13", parse("∀x, y. equals(x, y) → equals(y, x)"))
+    
+    # Schema A14
+    output("schema_A14", parse("∀x, y, z. ((equals(x, y) ∧ equals(y, z)) → equals(x, z))"))
 
     # Syntax:
     #    p(xn)        ~~~~>   p(x1, ..., xn)
@@ -53,34 +103,165 @@ def outputSchemes(output: Callable[[str, Formulas.Formula], typing.Any], signatu
     #    p(x_AND)     ~~~~>   p(x1) & ... & p(xn)
     #    f(p(x_TERM)) ~~~~>   f(p(x1), p(x2),...,p(xn))
 
-    # Schema 32
+    # Schema A15
     for f in signature.functions:
         output(
-            "schema_32_" + f,
+            "schema_A15_" + f,
             parse(f"∀ xn, yn. equals(x_AND, y_AND) → equals({f}(xn), {f}(yn))").expand(
                 signature.functions[f]
             ),
         )
 
-    # Schema (33):
+    # Schema A16
     for p in signature.predicates:
         if signature.predicates[p] > 0:
             output(
-                "schema_33_" + p,
+                "schema_A16_" + p,
                 parse(f"∀ xn, yn. equals(x_AND, y_AND) → ({p}(xn) ↔ {p}(yn))").expand(
                     signature.predicates[p]
                 ),
             )
-    # Schema (34):
+
+    # Schema A17:
+    output("schema_A17", parse("∀x. reach(quote(x))"))
+
+    # Schema A18
+    for f in signature.functions:
+        output(
+            "schema_A18",
+            parse(f"∀ tn. (reach(t_AND)) → reach({f}(tn))").expand(
+                signature.functions[f]
+            ),
+        )
+
+    # Schema A19
+    output("schema_A19", parse(f"∀x. wft(quote(x))"))
+
+    # Schema A20
+    for cx in signature.quotedVariables:
+        output("schema_A20_" + cx, parse(f"wft({cx})"))
+
+    # Schema A21 TODO
+    for c in signature.quotedConstants:
+        output("schema_56", parse(f"wft({c})"))
+
+    for f in signature.functions:
+        output(
+            "schema_58",
+            parse(f"∀ tn. (wft(t_AND)) → wft({f}(tn))").expand(signature.functions[f]),
+        )
+
+    # Schema A22
+    output("schema_A22", parse(f"∀t. reach(t) → equals(eval(quote(t)), t)"))
+
+    # Schema A23 TODO
+    for f, arity in signature.functions.items():
+        qf = Formula.quoteStr(f)
+        output(f"schema_A23_{f}",SF.genParsedScheme(f"∀\![T_$;,].(\![reach(T_$);∧]) → equals(eval({qf}(\![T_$;,])), {f}(\![eval(T_$);,])))", 4*[arity]))
+
     for c in signature.constants:
         output("schema_34_" + c, parse(f"equals(eval({Formula.quoteStr(c)}), {c})"))
 
-    output("schema_35", parse(f"∀t. reach(t) → equals(eval(quote(t)), t)"))
+    # Schema A24
+    for p, arity in signature.predicates.items():
+        qp = Formula.quoteStr(p)
+        output(f"schema_A24_{p}",SF.genParsedScheme(f"∀\![T_$;,].(\![reach(T_$);∧]) → equals(eval({qp}(\![T_$;,])), {qp}(\![T_$;,]))", 4*[arity]))
 
-    # Schema (36):
-    for f, arity in signature.functions.items():
-        qf = Formula.quoteStr(f)
-        output(f"schema_36_{f}",SF.genParsedScheme(f"∀\![T_$;,].(\![reach(T_$);∧]) → equals(eval({qf}(\![T_$;,])), {f}(\![eval(T_$);,])))", 4*[arity]))
+    # Schema A25
+    output("schema_A25", parse(f"∀t1, t2. equals(eval(q_And(t1, t2)), q_And(t1, t2))"))
+
+    # Schema A26
+    output(
+        "schema_A26", parse(f"∀t1, t2. equals(eval(q_Forall(t1, t2)), q_Forall(t1, t2))")
+    )
+    
+    # Schema A27
+    output("schema_A27", parse(f"∀t. equals(eval(q_Not(t)), q_Not(t))"))
+
+    # Schema A28 TODO + Bad
+    for c in signature.constants:
+        output("schema_A28_" + c, parse(f"equals(eval({Formula.quoteStr(c)}), {c})"))
+
+    # Schema A29
+    for c in signature.quotedVariables:
+        output("schema_A29_" + c, parse(f"∀t. reach(t) → equals(sub({c}, t, {c}), t)"))
+
+    # Schema A30: ∀t. reach(t) → sub(cx, t, cy ) = cy
+    for cx in signature.quotedVariables:
+        for cy in signature.quotedVariables:
+            if cx == cy:
+                continue
+            output(
+                "schema_A30_" + cx + "_" + cy,
+                parse(f"∀t. reach(t) → equals(sub({cx}, t, {cy} ), {cy})"),
+            )
+
+    # Schema A31 TODO + Bad 
+    # Handles both quoted functions and quoted predicates
+    for cx in signature.quotedVariables:
+        for f in signature.quotedFunctions:
+            output(
+                "schema_A31_" + cx + "_" + f,
+                parse(
+                    f"∀ tn. reach(t_AND) → equals(sub({cx}, t, {f}(tn)), {f}(sub({cx}, t, t_TERM)))"
+                ).expand(signature.quotedFunctions[f]),
+            )
+    # Schema (44): ∀t. reach(t) → sub(cx, t, qc) = c
+    for cx in signature.quotedVariables:
+        for c in signature.constants:
+            output(
+                "schema_43_" + cx + "_" + c,
+                parse(f"∀t. reach(t) → equals(sub({cx}, t, {Formula.quoteStr(c)}), {Formula.quoteStr(c)})"),
+            )
+
+    # Schema A32
+    for c in signature.quotedVariables:
+        output(
+            "schema_A32_" + c,
+            parse(
+                f"∀t1, t2. (reach(t1) ∧ reach(t2)) → equals(sub({cx}, t1, q_Forall({cx}, t2)), q_Forall({cx}, t2)))"
+            ),
+        )
+
+    # Schema A33
+    for cx in signature.quotedVariables:
+        for cy in signature.quotedVariables:
+            if cx == cy:
+                continue
+            output(
+                "schema_A33_" + cx + "_" + cy,
+                parse(
+                    f"∀t1, t2. (reach(t1) ∧ reach(t2)) → equals(sub({cx}, t1, q_Forall({cy}, t2)), q_Forall({cy}, sub({cx}, t1, t2)))"
+                ),
+            )
+
+    # Schema A34
+    for cx in signature.quotedVariables:
+        output(
+            "schema_A34_" + cx,
+            parse(
+                f"∀t1, t2. (reach(t1) ∧ reach(t2)) → equals(sub({cx}, t1, quote(t2)), quote(t2))"
+            ),
+        )
+
+
+
+    # Schema 50 is a typo and does not exist. I will remove it at the last possible time to avoid confusing the naming scheme
+
+    # Schema (53): # TODO where should this go?
+    for c in signature.constants:
+        output("schema_53_" + c, parse(f"reach({c})"))
+
+
+
+    # Schema (60):
+    
+
+    # Schema (61):
+    
+
+
+
 
     # # OLD Schema (36):
     # for f in signature.functions:
@@ -101,11 +282,6 @@ def outputSchemes(output: Callable[[str, Formulas.Formula], typing.Any], signatu
     #         ).expand(signature.functions[f]),
     #     )
 
-    # Schema 37
-    for p, arity in signature.predicates.items():
-        qp = Formula.quoteStr(p)
-        output(f"schema_37_{p}",SF.genParsedScheme(f"∀\![T_$;,].(\![reach(T_$);∧]) → equals(eval({qp}(\![T_$;,])), {qp}(\![T_$;,]))", 4*[arity]))
-
     # # OLD Schema (37):
     # for p in signature.predicates:
     #     quoted_p : str = Formula.quoteStr(p)
@@ -125,143 +301,3 @@ def outputSchemes(output: Callable[[str, Formulas.Formula], typing.Any], signatu
     #         ).expand(signature.predicates[p]),
     #     )
 
-    output("schema_38", parse(f"∀t1, t2. equals(eval(q_And(t1, t2)), q_And(t1, t2))"))
-    output(
-        "schema_39", parse(f"∀t1, t2. equals(eval(q_Forall(t1, t2)), q_Forall(t1, t2))")
-    )
-    output("schema_40", parse(f"∀t. equals(eval(q_Not(t)), q_Not(t))"))
-
-    # Schema (41):
-    for c in signature.constants:
-        output("schema_41_" + c, parse(f"equals(eval({Formula.quoteStr(c)}), {c})"))
-
-    # Schema (42):
-    for c in signature.quotedVariables:
-        output("schema_42_" + c, parse(f"∀t. reach(t) → equals(sub({c}, t, {c}), t)"))
-
-    # Schema (43): ∀t. reach(t) → sub(cx, t, cy ) = cy
-    for cx in signature.quotedVariables:
-        for cy in signature.quotedVariables:
-            if cx == cy:
-                continue
-            output(
-                "schema_43_" + cx + "_" + cy,
-                parse(f"∀t. reach(t) → equals(sub({cx}, t, {cy} ), {cy})"),
-            )
-
-    # Schema (44): ∀t. reach(t) → sub(cx, t, qc) = c
-    for cx in signature.quotedVariables:
-        for c in signature.constants:
-            output(
-                "schema_43_" + cx + "_" + c,
-                parse(f"∀t. reach(t) → equals(sub({cx}, t, {Formula.quoteStr(c)}), {Formula.quoteStr(c)})"),
-            )
-
-    # Schema 45 
-    # Handles both quoted functions and quoted predicates
-    for cx in signature.quotedVariables:
-        for f in signature.quotedFunctions:
-            output(
-                "schema_45_" + cx + "_" + f,
-                parse(
-                    f"∀ tn. reach(t_AND) → equals(sub({cx}, t, {f}(tn)), {f}(sub({cx}, t, t_TERM)))"
-                ).expand(signature.quotedFunctions[f]),
-            )
-
-    # Schema (47):
-    for c in signature.quotedVariables:
-        output(
-            "schema_47_" + c,
-            parse(
-                f"∀t1, t2. (reach(t1) ∧ reach(t2)) → equals(sub({cx}, t1, q_Forall({cx}, t2)), q_Forall({cx}, t2)))"
-            ),
-        )
-
-    # Schema 48:
-    for cx in signature.quotedVariables:
-        for cy in signature.quotedVariables:
-            if cx == cy:
-                continue
-            output(
-                "schema_48_" + cx + "_" + cy,
-                parse(
-                    f"∀t1, t2. (reach(t1) ∧ reach(t2)) → equals(sub({cx}, t1, q_Forall({cy}, t2)), q_Forall({cy}, sub({cx}, t1, t2)))"
-                ),
-            )
-
-    # Schema 49:
-    for cx in signature.quotedVariables:
-        output(
-            "schema_49_" + cx,
-            parse(
-                f"∀t1, t2. (reach(t1) ∧ reach(t2)) → equals(sub({cx}, t1, quote(t2)), quote(t2))"
-            ),
-        )
-
-    # Schema 50 is a typo and does not exist. I will remove it at the last possible time to avoid confusing the naming scheme
-
-    # Schema (52):
-    output("schema_52", parse("∀x. reach(quote(x))"))
-
-    # Schema (53):
-    for c in signature.constants:
-        output("schema_53_" + c, parse(f"reach({c})"))
-
-    # Schema (54):
-    for f in signature.functions:
-        output(
-            "schema_54",
-            parse(f"∀ tn. (reach(t_AND)) → reach({f}(tn))").expand(
-                signature.functions[f]
-            ),
-        )
-
-    # Schema (55):
-    output("schema_55", parse(f"∀x. wft(quote(x))"))
-
-    # Schema (56):
-    for c in signature.quotedConstants:
-        output("schema_56", parse(f"wft({c})"))
-
-    # Schema (57):
-    for cx in signature.quotedVariables:
-        output("schema_57_" + cx, parse(f"wft({cx})"))
-
-    # Schema (58):
-    for f in signature.functions:
-        output(
-            "schema_58",
-            parse(f"∀ tn. (wft(t_AND)) → wft({f}(tn))").expand(signature.functions[f]),
-        )
-
-    # Schema (59):
-    for p in signature.predicates:
-        output(
-            "schema_59_" + p,
-            parse(
-                f"∀tn. (wft(t_AND)) → truthPredicate({Formula.quoteStr(p)}(tn)) ↔ {p}(eval(t_TERM))"
-            ).expand(signature.predicates[p]),
-        )
-
-    # Schema (60):
-    output(
-        "schema_60",
-        parse(
-            "∀ t1, t2. (reach(t1) ∧ reach(t2)) → truthPredicate(q_And(t1, t2)) ↔ (truthPredicate(t1) ∧ truthPredicate(t2))"
-        ),
-    )
-
-    # Schema (61):
-    output(
-        "schema_61",
-        parse("∀ t1. reach(t1) → (truthPredicate(q_Not(t1)) ↔ (¬truthPredicate(t1)))"),
-    )
-
-    # Schema (62):
-    for cx in signature.quotedVariables:
-        output(
-            "schema_62_" + cx,
-            parse(
-                f"∀ t1. reach(t1) → (truthPredicate(q_Forall({cx}, t1)) ↔ (∀x. truthPredicate(sub({cx}, quote(x), t1))))"
-            ),
-        )
