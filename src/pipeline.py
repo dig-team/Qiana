@@ -5,6 +5,7 @@ from qianaExtension import qianaClosure
 from htmlGeneration import getHtmlFromSteps, getHtmlNoContradiction
 from gui import Settings
 
+
 class Pipeline:
     qianaClosure : str | None
     htmlTree : str | None
