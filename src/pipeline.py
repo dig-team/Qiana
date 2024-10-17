@@ -25,7 +25,8 @@ class Pipeline:
         @return: str - the html representation of the reasoning steps performed to find a contradiction on the qiana closure of input
         """
         self.computeQianaClosure(input)
-        foundContradiction, reasoningSteps, vampireOutput = callSolver(self.qianaClosure)
+        timeout = Settings.getTimeOutValue()
+        foundContradiction, reasoningSteps, vampireOutput = callSolver(self.qianaClosure, timeout)
         if foundContradiction:
             self.htmlTree = getHtmlFromSteps(reasoningSteps)
         else:

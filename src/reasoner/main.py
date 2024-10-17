@@ -8,13 +8,13 @@ import json
 from reasoner.vampireParser import TPTPOutputParser
 from interfaceTypes import ReasoningStep
 
-def getThree(formulas : str) -> Tuple[bool, List[ReasoningStep], str]:
+def getThree(formulas : str, timeout : int) -> Tuple[bool, List[ReasoningStep], str]:
     """
     Call solver and parse its output
     @param formulas: str - the tptp representation of a set of formulas
     @return: Tuple[bool, List[ReasoningStep], str] - a tuple containing a boolean indicating if a contradiction was found, the reasoning steps performed to find the contradiction, and the raw TPTP output of the reasoning
     """
-    args = ["./reasoner/vampire", "--output_mode", "smtcomp"]
+    args = ["./reasoner/vampire", "--output_mode", "smtcomp", "--time_limit", str(timeout)+"s"]
     result = subprocess.run(args, input=formulas, text=True, capture_output=True)
     if result.stdout == "sat\n":
         return(False, [], result.stdout)
