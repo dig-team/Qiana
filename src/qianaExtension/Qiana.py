@@ -28,7 +28,6 @@ def getOutput(inputTPTPT : str, numberVariables : int = 3) -> List[str]:
     def writeOutput(identifier, formula):
         output.append(f"fof({identifier},axiom,{formula}).")
     Schemes.outputSchemes(writeOutput, signature)
-    print(output)
     return output
 
 if __name__ == "__main__":
