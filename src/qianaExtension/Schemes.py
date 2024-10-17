@@ -64,10 +64,10 @@ def outputSchemes(output: Callable[[str, Formulas.Formula], typing.Any], signatu
         )
 
     # Schema A5 
-    output("schema_A5", SF.genParsedScheme("∀tc, t1, t2. ist(tc, t1\!∧t2) → ist(tc, t1)"))
+    output("schema_A5", SF.genParsedScheme("∀tc, t1, t2. ist(tc, t1\\!∧t2) → ist(tc, t1)"))
 
     # Schema A6 
-    output("schema_A6", SF.genParsedScheme("∀tc, t1, t2. ist(tc, t1\!∧t2) ↔ ist(tc, t2\!∧t1)"))
+    output("schema_A6", SF.genParsedScheme("∀tc, t1, t2. ist(tc, t1\\!∧t2) ↔ ist(tc, t2\\!∧t1)"))
     
     # Schema A7 
     output("schema_A7", SF.genParsedScheme("∀tc, t1. ist(tc, qNot(qNot(t1))) ↔ ist(tc, t1)"))
@@ -159,7 +159,7 @@ def outputSchemes(output: Callable[[str, Formulas.Formula], typing.Any], signatu
     # Schema A23 
     for f, arity in signature.functions.items():
         qf = Formula.quoteStr(f)
-        output(f"schema_A23_{f}",SF.genParsedScheme(f"∀\![T_$;,].(\![reach(T_$);∧]) → equals(eval({qf}(\![T_$;,])), {f}(\![eval(T_$);,])))", 4*[arity]))
+        output(f"schema_A23_{f}",SF.genParsedScheme(f"∀\\![T_$;,].(\\![reach(T_$);∧]) → equals(eval({qf}(\\![T_$;,])), {f}(\\![eval(T_$);,])))", 4*[arity]))
 
     for c in signature.constants:
         output("schema_A23_" + c, parse(f"equals(eval({Formula.quoteStr(c)}), {c})"))
@@ -167,7 +167,7 @@ def outputSchemes(output: Callable[[str, Formulas.Formula], typing.Any], signatu
     # Schema A24
     for p, arity in signature.predicates.items():
         qp = Formula.quoteStr(p)
-        output(f"schema_A24_{p}",SF.genParsedScheme(f"∀\![T_$;,].(\![reach(T_$);∧]) → equals(eval({qp}(\![T_$;,])), {qp}(\![T_$;,]))", 4*[arity]))
+        output(f"schema_A24_{p}",SF.genParsedScheme(f"∀\\![T_$;,].(\\![reach(T_$);∧]) → equals(eval({qp}(\\![T_$;,])), {qp}(\\![T_$;,]))", 4*[arity]))
 
     # Schema A25
     output("schema_A25", parse(f"∀t1, t2. equals(eval(q_And(t1, t2)), q_And(t1, t2))"))
@@ -180,9 +180,9 @@ def outputSchemes(output: Callable[[str, Formulas.Formula], typing.Any], signatu
     # Schema A27
     output("schema_A27", parse(f"∀t. equals(eval(q_Not(t)), q_Not(t))"))
 
-    # Schema A28 TODO + Bad
-    for c in signature.constants:
-        output("schema_A28_" + c, parse(f"equals(eval({Formula.quoteStr(c)}), {c})"))
+    # Schema A28
+    for qv in signature.quotedVariables:
+        output("schema_A28"+qv, parse(f"equals(eval({qv}), {qv})"))
 
     # Schema A29
     for c in signature.quotedVariables:
