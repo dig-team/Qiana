@@ -85,7 +85,9 @@ def outputSchemes(output: Callable[[str, Formulas.Formula], typing.Any], signatu
     # Schema A10
     output("schema_A10", parse("∀tc, t1, t2. (ist(tc, qOr(t1,t2)) ∧ ist(tc, qNot(t1))) → ist(tc, t2)"))
 
-    # Schema A11fin TODO
+    # Schema A11fin 
+    for qv in signature.quotedVariables:
+        output("schema_A11fin", parse(f"∀t1, t2. (reach(t1) ∧ reach(t2)) → (ist(t2, q_Forall({qv},t1)) → (∀x. ist(t2, sub(t1, {qv}, quote(x)))))"))
 
     # Schema A12
     output("schema_A12", parse("∀x. equals(x, x)"))
@@ -186,7 +188,7 @@ def outputSchemes(output: Callable[[str, Formulas.Formula], typing.Any], signatu
 
     # Schema A29
     for c in signature.quotedVariables:
-        output("schema_A29_" + c, parse(f"∀t. reach(t) → equals(sub({c}, t, {c}), t)"))
+        output("schema_A29_" + c, parse(f"∀t. reach(t) → equals(sub({c}, {c}, t), t)"))
 
     # Schema A30: ∀t. reach(t) → sub(cx, t, cy ) = cy
     for cx in signature.quotedVariables:
@@ -195,19 +197,20 @@ def outputSchemes(output: Callable[[str, Formulas.Formula], typing.Any], signatu
                 continue
             output(
                 "schema_A30_" + cx + "_" + cy,
-                parse(f"∀t. reach(t) → equals(sub({cx}, t, {cy} ), {cy})"),
+                parse(f"∀t. reach(t) → equals(sub({cy}, {cx}, t), {cy})"),
             )
 
-    # Schema A31 TODO + Bad 
+    # Schema A31
     # Handles both quoted functions and quoted predicates
     for cx in signature.quotedVariables:
         for f in signature.quotedFunctions:
             output(
                 "schema_A31_" + cx + "_" + f,
                 parse(
-                    f"∀ tn. reach(t_AND) → equals(sub({cx}, t, {f}(tn)), {f}(sub({cx}, t, t_TERM)))"
+                    f"∀ t, tn. reach(t_AND) → equals(sub({f}(tn), {cx}, t), {f}(sub(t_TERM, {cx}, t)))"
                 ).expand(signature.quotedFunctions[f]),
             )
+
     # Schema (44): ∀t. reach(t) → sub(cx, t, qc) = c
     for cx in signature.quotedVariables:
         for c in signature.constants:
@@ -250,7 +253,6 @@ def outputSchemes(output: Callable[[str, Formulas.Formula], typing.Any], signatu
 
     # Schema 50 is a typo and does not exist. I will remove it at the last possible time to avoid confusing the naming scheme
 
-    # Schema (53): # TODO where should this go?
 
 
 
