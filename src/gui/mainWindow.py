@@ -25,7 +25,7 @@ class MainWindow(QMainWindow):
         self.layout2.addWidget(self.editor)
         self.layout2.addWidget(self.display)
         self.layout2.setStretch(0, 1)
-        self.layout2.setStretch(1, 1)
+        self.layout2.setStretch(1, 2)
         centralWidget = QWidget()
         self.setCentralWidget(centralWidget)
         centralWidget.setLayout(self.layout2)
@@ -85,8 +85,10 @@ class _MenuBar(QWidget):
     def _fillEXamples(self, window : MainWindow):
         example1Action = self.exampleMenu.addAction("Romeo and Juliet")
         example1Action.triggered.connect(lambda : window.setTPTP(examples.Example_RJbasic))
-        example1Action = self.exampleMenu.addAction("Signature Test")
-        example1Action.triggered.connect(lambda : window.setTPTP(examples.Example_SingatureTest))
+        example2Action = self.exampleMenu.addAction("Signature Test")
+        example2Action.triggered.connect(lambda : window.setTPTP(examples.Example_SingatureTest))
+        example3Action = self.exampleMenu.addAction("Simple Romeo and Juliet")
+        example3Action.triggered.connect(lambda : window.setTPTP(examples.Example_RJsimple))
 
     def _fillTools(self, window : MainWindow):
         expandAction = self.toolsMenu.addAction("Expand formula tree")

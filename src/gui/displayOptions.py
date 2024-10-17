@@ -2,8 +2,8 @@ from typing import Any
 
 import os
 import pydotplus
-from PySide6.QtGui import QImage, QPixmap
-from PySide6.QtWidgets import QTabWidget, QTextEdit, QWidget, QHBoxLayout, QLabel
+from PySide6.QtGui import QImage, QPixmap, QPalette
+from PySide6.QtWidgets import QTabWidget, QTextEdit, QWidget, QHBoxLayout, QLabel, QScrollArea
 from PySide6.QtWebEngineWidgets import QWebEngineView
 
 class DisplayOptions(QTabWidget):
@@ -16,14 +16,17 @@ class DisplayOptions(QTabWidget):
         self.closure = QTextEdit()
         self.closure.setReadOnly(True)
         self.html = QWebEngineView()
-        self.graphImage = QWidget()
-        self.graphLayout = QHBoxLayout(self.graphImage)
+
         self.imageLabel = QLabel()
-        self.graphLayout.addWidget(self.imageLabel)
+        self.imageLabel.setScaledContents(True)
+        self.scrollAreaGraph = QScrollArea()
+        self.scrollAreaGraph.setBackgroundRole(QPalette.Dark)
+        self.scrollAreaGraph.setWidgetResizable(True)
+        self.scrollAreaGraph.setWidget(self.imageLabel)
 
         self.addTab(self.html, "ProofTree")
         self.addTab(self.closure, "Closure")
-        self.addTab(self.graphImage, "Graph")
+        self.addTab(self.scrollAreaGraph, "Graph")
 
     def setClosure(self, closure : str):
         self.closure.setPlainText(closure)
@@ -38,7 +41,8 @@ class DisplayOptions(QTabWidget):
         graph = pydotplus.graph_from_dot_data(dotTxt)
         image = graph.write_png("deleteme.png")
         pixmap = QPixmap("deleteme.png")
-        self.imageLabel.setPixmap(QPixmap(pixmap))
+        width, height = pixmap.width(), pixmap.height()
+        self.imageLabel.setPixmap(QPixmap(pixmap).scaled(width//2, height))
         os.remove("deleteme.png")
 
     def expandHtml(self):

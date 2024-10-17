@@ -13,4 +13,4 @@ def _stepToNode(step : ReasoningStep) -> str:
     return f'{step.id} [label="{step.toLightText()}"];'
 
 def _stepToEdges(step : ReasoningStep) -> str:
-    return "\n".join([f'{step.id} -> {parentId};' for parentId in step.Parents])
+    return "\n".join([f'{parentId} -> {step.id};' for parentId in step.Parents])
