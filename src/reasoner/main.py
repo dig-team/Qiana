@@ -18,7 +18,7 @@ def getThree(formulas : str, timeout : int) -> Tuple[bool, List[ReasoningStep], 
     result = subprocess.run(args, input=formulas, text=True, capture_output=True)
     if result.stdout == "sat\n":
         return(False, [], result.stdout)
-    elif result.stdout == "unknown\n" or result.stdout == "\n":
+    elif result.stdout == "unknown\n" or result.stdout == "\n" or result.stdout == "":
         return(False, [], result.stdout)
     elif result.stdout == "unsat\n":
         args = ["./reasoner/vampire"]

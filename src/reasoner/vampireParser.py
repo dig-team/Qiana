@@ -50,6 +50,7 @@ def TPTPOutputParser(text : str) -> List[ReasoningStep]:
         goodLine, parsedLine = _lineTest(line)
         if goodLine: parsedLines.append(parsedLine)
     return parsedLines
+    
 def prettifyer(text, nameDict, inputNameDict):
     """replaces all instances of an interna alias in the output JSON with the stored corresponding full text."""
     text = text.replace("quote","")

@@ -48,6 +48,7 @@ class MainWindow(QMainWindow):
         pipeline.runCompute(tptp)
         self.display.setHtml(pipeline.getHtmlTree())
         self.display.setClosure(pipeline.getQianaClosure())
+        self.display.setGraph(pipeline.getGraphDot())
 
     def expandHtml(self):
         self.display.expandHtml()
