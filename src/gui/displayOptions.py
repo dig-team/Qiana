@@ -39,7 +39,7 @@ class DisplayOptions(QTabWidget):
         Set the graph image from the given image data. Meant to be used with a raw png imgage, though other formats are implicitly supported.
         """
         graph = pydotplus.graph_from_dot_data(dotTxt)
-        image = graph.write_png("deleteme.png")
+        graph.write_png("deleteme.png")
         pixmap = QPixmap("deleteme.png")
         width, height = pixmap.width(), pixmap.height()
         self.imageLabel.setPixmap(QPixmap(pixmap).scaled(width//2, height))
