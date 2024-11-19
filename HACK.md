@@ -8,5 +8,12 @@ In vscode add line "python.testing.cwd": "${workspaceFolder}/src" to the setting
 # Leads
 - https://github.com/sneeuwballen/zipperposition/blob/master/doc/dedukti_input_format.org
 
+# Install requs
+pydotplus
+pyside6
+sudo apt install graphviz
+sudo apt install libxcb-cursor-dev
+
+
 # Requirements
 - Install pydotplus and GraphViz
