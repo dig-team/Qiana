@@ -12,7 +12,7 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         
-        self.setWindowTitle("Simple PySide6 Window")
+        self.setWindowTitle("Qiana")
         self.setGeometry(100, 100, 800, 600)
 
         self.menubar = _MenuBar()

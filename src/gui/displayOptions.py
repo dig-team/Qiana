@@ -36,7 +36,7 @@ class DisplayOptions(QTabWidget):
 
     def setGraph(self, dotTxt : str):
         """
-        Set the graph image from the given image data. Meant to be used with a raw png imgage, though other formats are implicitly supported.
+        Set the graph image from the given dot file.
         """
         graph = pydotplus.graph_from_dot_data(dotTxt)
         image = graph.write_png("deleteme.png")
