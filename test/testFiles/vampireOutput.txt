@@ -1,0 +1,63 @@
+% Refutation found. Thanks to Tanya!
+% SZS status Theorem for 
+% SZS output start Proof for 
+1. ! [X0] : (ist(say(friar),X0) => truthPredicate(X0)) [input]
+10. dead(juliet) [input]
+11. ~dead(juliet) [negated conjecture 10]
+14. ! [X2,X3] : (ist(X2,q_Not(q_Not(X3))) <=> ist(X2,X3)) [input]
+17. ! [X2,X3,X4] : ((ist(X6,q_Not(X3)) => ist(X6,X4)) & ist(X2,q_Or(X3,X4))) [input]
+19. ! [X0,X1,X7] : ((equals(X1,X7) => equals(X0,X7)) & equals(X0,X1)) [input]
+24. ! [X8,X9] : (equals(X8,X9) => (dead(X8) <=> dead(X9))) [input]
+117. wft(q_x0) [input]
+122. ! [X13] : (wft(X13) => (truthPredicate(q_dead(X13)) <=> dead(eval(X13)))) [input]
+131. ~dead(juliet) [flattening 11]
+134. ! [X0,X1] : (ist(X0,q_Not(q_Not(X1))) <=> ist(X0,X1)) [rectify 14]
+137. ! [X0,X1,X2] : ((ist(X3,q_Not(X1)) => ist(X3,X2)) & ist(X0,q_Or(X1,X2))) [rectify 17]
+138. ! [X3] : ! [X0,X1,X2] : ((ist(X3,q_Not(X1)) => ist(X3,X2)) & ist(X0,q_Or(X1,X2))) [closure 137]
+139. ! [X3,X0,X1,X2] : ((ist(X3,q_Not(X1)) => ist(X3,X2)) & ist(X0,q_Or(X1,X2))) [flattening 138]
+140. ! [X0,X1,X2] : ((equals(X1,X2) => equals(X0,X2)) & equals(X0,X1)) [rectify 19]
+144. ! [X0,X1] : (equals(X0,X1) => (dead(X0) <=> dead(X1))) [rectify 24]
+258. ! [X0] : (wft(X0) => (truthPredicate(q_dead(X0)) <=> dead(eval(X0)))) [rectify 122]
+268. ! [X0] : (truthPredicate(X0) | ~ist(say(friar),X0)) [ennf transformation 1]
+274. ! [X3,X0,X1,X2] : ((ist(X3,X2) | ~ist(X3,q_Not(X1))) & ist(X0,q_Or(X1,X2))) [ennf transformation 139]
+275. ! [X0,X1,X2] : ((equals(X0,X2) | ~equals(X1,X2)) & equals(X0,X1)) [ennf transformation 140]
+281. ! [X0,X1] : ((dead(X0) <=> dead(X1)) | ~equals(X0,X1)) [ennf transformation 144]
+380. ! [X0] : ((truthPredicate(q_dead(X0)) <=> dead(eval(X0))) | ~wft(X0)) [ennf transformation 258]
+391. ! [X0,X1] : ((ist(X0,q_Not(q_Not(X1))) | ~ist(X0,X1)) & (ist(X0,X1) | ~ist(X0,q_Not(q_Not(X1))))) [nnf transformation 134]
+394. ! [X0,X1,X2,X3] : ((ist(X0,X3) | ~ist(X0,q_Not(X2))) & ist(X1,q_Or(X2,X3))) [rectify 274]
+396. ! [X0,X1] : (((dead(X0) | ~dead(X1)) & (dead(X1) | ~dead(X0))) | ~equals(X0,X1)) [nnf transformation 281]
+416. ! [X0] : (((truthPredicate(q_dead(X0)) | ~dead(eval(X0))) & (dead(eval(X0)) | ~truthPredicate(q_dead(X0)))) | ~wft(X0)) [nnf transformation 380]
+438. ~ist(say(friar),X0) | truthPredicate(X0) [cnf transformation 268]
+447. ~dead(juliet) [cnf transformation 131]
+452. ist(X0,q_Not(q_Not(X1))) | ~ist(X0,X1) [cnf transformation 391]
+457. ist(X1,q_Or(X2,X3)) [cnf transformation 394]
+458. ~ist(X0,q_Not(X2)) | ist(X0,X3) [cnf transformation 394]
+460. equals(X0,X1) [cnf transformation 275]
+467. dead(X1) | ~dead(X0) | ~equals(X0,X1) [cnf transformation 396]
+562. wft(q_x0) [cnf transformation 117]
+568. ~truthPredicate(q_dead(X0)) | dead(eval(X0)) | ~wft(X0) [cnf transformation 416]
+601. 3 <=> ! [X1] : ~dead(X1) [avatar definition]
+602. ~dead(X1) <- (3) [avatar component clause 601]
+604. 4 <=> ! [X0] : dead(X0) [avatar definition]
+605. dead(X0) <- (4) [avatar component clause 604]
+607. dead(X1) | ~dead(X0) [subsumption resolution 467,460]
+608. 3 | 4 [avatar split clause 607,604,601]
+640. ~ist(X3,X4) | ist(X3,X5) [resolution 452,458]
+644. ist(X9,X10) [resolution 640,457]
+645. truthPredicate(X0) [resolution 644,438]
+651. dead(eval(X1)) | ~wft(X1) [resolution 645,568]
+652. ~wft(X1) <- (3) [subsumption resolution 651,602]
+656. $false <- (3) [resolution 652,562]
+665. ~3 [avatar contradiction clause 656]
+666. $false <- (4) [resolution 605,447]
+668. ~4 [avatar contradiction clause 666]
+669. $false [avatar sat refutation 608,665,668]
+% SZS output end Proof for 
+% ------------------------------
+% Version: Vampire 4.5.1 (commit 57a6f78c on 2020-07-15 11:59:04 +0200)
+% Termination reason: Refutation
+
+% Memory used [KB]: 5117
+% Time elapsed: 0.014 s
+% ------------------------------
+% ------------------------------

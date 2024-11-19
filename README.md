@@ -36,10 +36,32 @@ The code computes the Qiana closure of a given input theory. Both the input and 
 
 By convention, symbols starting with the letter q are quotations of the symbols that share the same name without the q. This is equivalent to underlining logic symbols in the article. For example, ```q_Alice``` is the quotation of ```Alice```. No symbol that is not a quotation should start with "q\_". The quotation of the usual first-order operators are available as "q_And", "q_Not", "q_Implies", and "q_Forall". In our example code, the total number of quoted variables is set to 3+the number of variables used in the input. 
 
-To run the demo code on the provided example input, run
+To run the GUI for Qiana, run the following from the src directory.
 ```
-python3 Qiana.py ../example/input-example.p output.p
+python3 main.py
 ```
+
+There is currently no CLI for Qiana. Please feel free to contact us if you would like one.
+
+## Requirements
+
+The following python packages can be install with pip
+```
+pip install pydotplus
+pip install pyside6
+```
+
+In some system you might need to install libxcb-cursor-dev to run PySide6 graphical applications, which is useful for the GUI of Qiana.
+Installing with apt
+```
+sudo apt install libxcb-cursor-dev
+```
+
+You also need to install Graphviz
+```
+sudo apt install graphviz
+```
+
 
 # Citing Qiana
 If you use Qiana in scientific work, please cite our article

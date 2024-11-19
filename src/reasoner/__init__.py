@@ -1,0 +1,1 @@
+from reasoner.main import getThree as callSolver
