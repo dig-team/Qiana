@@ -1,0 +1,9 @@
+FORMULA schemaHello
+BODY (wff(t1)&...&wff(t_n) => p($f(t1,...,tn)))
+$f in FUNCTION
+ARITIES: $f, $f
+
+FORMULA schemaHello2
+BODY (wff(t1)&...&wff(t_n) => p($f(t1,...,tn)))
+$f in FUNCTION
+ARITIES: $f, $f

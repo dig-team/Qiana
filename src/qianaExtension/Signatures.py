@@ -64,6 +64,9 @@ class Signature:
             print("    Quoted functions: " + str(self.quotedFunctions))
             print("  done")
 
+    def getArity(self, symbol: str) -> int:
+        pass
+
     def _readFormula(self, formula: Formula) -> None:
         """Reads a formula and updates the signature."""
         if isinstance(formula, Formulas.Atom) and formula.operator == "ist":
