@@ -1,40 +1,17 @@
-from typing import List, Tuple, Dict
+from typing import List, Tuple, Dict, Set
 
 from itertools import product
 
-class Signature:
+from src.qianaExtension.signature import Signature
 
-    def extendFromTptp(self, tptpFormula: str) -> None:
-        pass
+def getAllSchemesInstances(lines : List[str], signature: Signature = Signature()) -> List[str]:
+    """
+    Returns all the instances of the formulas defined in the lines parameter, with the patterns defined in the lines parameter applied to them.
 
-    def getArity(self, symbol: str) -> int:
-        pass
-
-    def addFunction(self, symbolAndArity: Tuple[str, int]) -> None:
-        pass
-
-    def getFunctions(self) -> List[str]:
-        pass
-
-    def addPredicate(self, symbolAndArity: Tuple[str, int]) -> None:
-        pass
-
-    def getPredicates(self) -> List[str]:
-        pass
-
-    def addQuotableVar(self, symbol: str) -> None:
-        pass
-
-    def getQuotableVars(self) -> List[str]:
-        pass
-
-    def addConstant(self, symbol: str) -> None:
-        pass
-
-    def getConstants(self) -> List[str]:
-        pass
-
-def getAllSchemesInstances(lines : List[str], signature: Signature) -> List[str]:
+    @param lines: List[str] - a list of lines defining the formulas/schemes and the patterns to apply to them
+    @param signature: Signature - the signature used with the patterns to obtain the final list of formulas
+    @return: List[str] - a list of all the instances of the formulas obtained by applying the patterns in lines, these are complete and valid tptp formulas
+    """
     lines = [line.rstrip("\n\r") for line in lines]
     lines = [line for line in lines if line and line[0] != "#"] # We remove empty lines and comments
     
@@ -44,12 +21,12 @@ def getAllSchemesInstances(lines : List[str], signature: Signature) -> List[str]
         return symbol, int(arity)
     newLines = []
     for line in lines:
-        if line.startswith("FUNCTION:"):
+        if line.startswith("FUNCTION "):
             signature.addFunction(_getSymbolAndArity(line))
-        elif line.startswith("PREDICATE:"):
+        elif line.startswith("PREDICATE "):
             signature.addPredicate(_getSymbolAndArity(line))
-        elif line.startswith("CONSTANT:"):
-            signature.addConstant(line.removeprefix("CONSTANT:").strip())
+        elif line.startswith("CONSTANT "):
+            signature.addConstant(line.removeprefix("CONSTANT ").strip())
         else:
             newLines.append(line)
     lines = newLines
@@ -57,29 +34,29 @@ def getAllSchemesInstances(lines : List[str], signature: Signature) -> List[str]
     # We parse the lines that define formula schemes
     formulaNames = []
     formulas = []
-    patternInfos = []
-    patternInfo = []
+    patternInfos : List[List[str]] = []
+    index = -1
     for line in lines:
-        assert line.startswith("FORMULA:") \
-            or line.startswith("BODY") \
+        assert line.startswith("FORMULA ") \
+            or line.startswith("BODY ") \
             or line.endswith("FUNCTION") \
             or line.endswith("PREDICATE") \
-            or line.endswith("CONSTANT")
-        if line.startswith("FORMULA:"):
-            formulaNames.append(line.removeprefix("FORMULA:"))
-            patternInfos.append(patternInfo)
-            patternInfo = []
-        elif line.startswith("BODY"):
-            formulas.append(line.removeprefix("BODY"))
+            or line.endswith("CONSTANT") \
+            or line.startswith("ARITIES ")
+        if line.startswith("FORMULA "):
+            formulaNames.append(line.removeprefix("FORMULA "))
+            patternInfos.append([])
+            index += 1
+        elif line.startswith("BODY "):
+            formulas.append(line.removeprefix("BODY "))
         else:
-            patternInfo.append(line)
+            patternInfos[index].append(line)
+        
     assert len(formulas) == len(formulaNames) == len(patternInfos)
     instances = []
     for i, formula in enumerate(formulas):
         instances.extend(getAllInstancesOfFormula(formulaNames[i], formula, patternInfos[i], signature))
     return instances
-        
-    
 
 def getAllInstancesOfFormula(name: str, formula: str, patternInfo : List[str], signature : Signature) -> List[str]:
     """
@@ -90,7 +67,7 @@ def getAllInstancesOfFormula(name: str, formula: str, patternInfo : List[str], s
     @return: List[str] - a list of all the instances of the formula obtained by applying the patterns in patternInfo, these are complete and valid tptp formulas
     """
     aritySymbols = [] # Default case if the arities are not specified, in the abscence of dot patterns
-    swapValues : Dict[str, List[str]]  = dict() # For the swap pattern
+    swapValues : Dict[str, List[str]]  = dict() # Matches each swap pattern symbol (like "$f") to the list of concrete symbol that can be put in its place
     for line in patternInfo:
         line = line.strip()
         # If the line starts with a # it is a comment
@@ -108,8 +85,8 @@ def getAllInstancesOfFormula(name: str, formula: str, patternInfo : List[str], s
             else:
                 raise ValueError("Invalid pattern type in patternInfo")
         # If the line is of the form "ARITIES: $f, $g" it is the list of arities for the dot patterns
-        elif line.startswith("ARITIES:"):
-            line = line.removeprefix("ARITIES:")
+        elif line.startswith("ARITIES"):
+            line = line.removeprefix("ARITIES").strip().replace(" ", "")
             aritySymbols = line.split(",")
 
     formulas = []
@@ -219,10 +196,12 @@ def injectInDifference(firstOperand: str, secondOperand: str, symbolToInject: st
     for (i, k) in enumerate(firstOperand):
         if k != secondOperand[i]:
             indexLeft = i
-            for (i, k) in reversed(list(enumerate(firstOperand))):
-                if k != secondOperand[i]:
-                    indexRight = i
-                    break
+            break
+    reversedFirstOperad = firstOperand[::-1]
+    reversedSecondOperad = secondOperand[::-1]
+    for (i, k) in enumerate(reversedFirstOperad):
+        if k != reversedSecondOperad[i]:
+            indexRight = len(firstOperand) - i - 1
             break
     return firstOperand[:indexLeft] + symbolToInject + firstOperand[indexRight+1:]
 
@@ -264,3 +243,7 @@ if __name__ == "__main__":
     print(replaceAllDotPatterns(formula, [2, 2])) # "(wff(t1) & wff(t2) => wff(f(t1,t2))"
 
     print(injectInDifference("t1", "t2", "n")) # "tn"
+
+    with open("examples/exampleSchemes.schemes", "r") as f:
+        schemes = f.readlines()
+    print(getAllSchemesInstances(schemes, Signature(functions={"f": 2, "g": 1}, predicates={"wff": 1}, constants={"c"})))
