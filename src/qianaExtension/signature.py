@@ -2,60 +2,85 @@ from typing import Dict, List, Set, Tuple
 
 class Signature:
 
-    # TODO: this does not handle quotations well
+    baseFunctions : Dict[str,int] # Dict macthing function names to arity, corresponds to functions from F_b
+    basePredicates : Dict[str,int]
+    quotableVariables : Set[str]
 
-    predicates : Dict[str, int]         # Dict matching predicates names to arities
-    functions : Dict[str, int]          # Dict matching functions names to arities; contains all functions found, including quotations of predicates
-    quotedFunctions : Dict[str, int]    # Dict matching quotation functions present in the input with their arities, including quotations of predicates
-    quotedPredicates : Dict[str, int]   # Dict matching quoted predicates present in the input with their arities
-    constants : Set[int]                # Set of the text of all constants from the input. Constants are NOT functions of arity 0
-    quotedConstants : Set[str]          # Set of the text of all quotations of constants from the input. Constants are NOT functions of arity 0
-    quotableVariables: Set[str]          # Set of the text of all quotable variables
-    quotedVariables : Set[str]          # Set of the text of all quoted variables from the input + those we added
-
-    def __init__(self, predicates=None, functions=None, quotedFunctions=None, quotedPredicates=None, constants=None, quotedConstants=None, quotableVariables=None, quotedVariables=None):
-        self.predicates = predicates if predicates is not None else {}
-        self.functions = functions if functions is not None else {}
-        self.quotedFunctions = quotedFunctions if quotedFunctions is not None else {}
-        self.quotedPredicates = quotedPredicates if quotedPredicates is not None else {}
-        self.constants = constants if constants is not None else set()
-        self.quotedConstants = quotedConstants if quotedConstants is not None else set()
-        self.quotableVariables = quotableVariables if quotableVariables is not None else set()
-        self.quotedVariables = quotedVariables if quotedVariables is not None else set()
+    def __init__(self, functions: Dict[str,int] = {}, predicates: Dict[str,int] = {}, quotableVariables: Set[str] = set()):
+        self.baseFunctions = functions
+        self.basePredicates = predicates
+        self.quotableVariables = quotableVariables
+        
 
     def extendFromTptp(self, tptpFormula: str) -> None:
         pass
 
+    def extendFromSignature(self, signature: 'Signature') -> 'Signature':
+        """
+        Extend and return the signature this is applied, which becomes the union of itself and the signature passed as argument
+        """
+        self.baseFunctions.update(signature.baseFunctions)
+        self.basePredicates.update(signature.basePredicates)
+        self.quotableVariables.update(signature.quotableVariables)
+        return self
+    
+    def addFunction(self, symbol: str, arity: int) -> None:
+        self.baseFunctions[symbol] = arity
+
+    def addPredicate(self, symbol: str, arity: int) -> None:
+        self.basePredicates[symbol] = arity
+
     def getArity(self, symbol: str) -> int:
-        if symbol in self.predicates: return self.predicates[symbol]
-        if symbol in self.functions: return self.functions[symbol]
-        if symbol in self.quotedFunctions: return self.quotedFunctions[symbol]
-        if symbol in self.quotedPredicates: return self.quotedPredicates[symbol]
-        if symbol in self.constants or symbol in self.quotedConstants: return 0
-        raise ValueError("Symbol not found in signature or not of a type requiring an arity")
+        symbol = Signature.unquoteSymbol(symbol) or symbol
+        if symbol in self.baseFunctions: return self.baseFunctions[symbol]
+        if symbol in self.basePredicates: return self.basePredicates[symbol]
+        if symbol in self.quotableVariables: return 0
+        if symbol == self.getTruthPredicate(): return 1
+        if symbol in self._getSpecialFunctions(): return self._getSpecialFunctions()[symbol]
+        raise ValueError("Symbol not found in signature")
+    
+    @classmethod
+    def quoteSymbol(cls, symbol: str) -> str:
+        return f"q_{symbol}"
+    
+    @classmethod
+    def unquoteSymbol(cls, symbol: str) -> str | None:
+        """
+        Unquotes a symbol if it is quoted, otherwise returns None
+        """
+        if symbol.startswith("q_"): return symbol[2:]
+        return None
+    
+    def getBaseFunctions(self) -> List[str]:
+        return self.baseFunctions.keys()
+    
+    def getAllFunctions(self) -> List[str]:
+        """
+        Litteraly returns anything that is a function in the signature, no exceptions
 
-    def addFunction(self, symbolAndArity: Tuple[str, int]) -> None:
-        symbol, arity = symbolAndArity
-        self.functions[symbol] = arity
+        @return: List of all functions in the signature. Should be equal to all base functions + all quoted functions + all quoted predicates + special functions + quotedVariables
+        """
+        return list(self.baseFunctions.keys()) + \
+            [Signature.quoteSymbol(var) for var in self.baseFunctions] + \
+            [Signature.quoteSymbol(var) for var in self.basePredicates] +\
+            [Signature.quoteSymbol(var) for var in self._getSpecialFunctions()] +\
+            [Signature.quoteSymbol(var) for var in self.quotableVariables]
 
-    def getFunctions(self) -> List[str]:
-        return self.functions.keys()
-
-    def addPredicate(self, symbolAndArity: Tuple[str, int]) -> None:
-        symbol, arity = symbolAndArity
-        self.predicates[symbol] = arity
-
-    def getPredicates(self) -> List[str]:
-        return self.predicates.keys()
-
-    def addQuotableVar(self, symbol: str) -> None:
-        self.quotableVariables.add(symbol)
-
-    def getQuotableVars(self) -> List[str]:
-        return self.quotableVariables
-
-    def addConstant(self, symbol: str) -> None:
-        self.constants.add(symbol)
-
-    def getConstants(self) -> List[str]:
-        return self.constants
+    def _getSpecialFunctions(self) -> Dict[str,int]:
+        # TODO : what else
+        return {"qianaQuotingFunc" : 1}
+    
+    def getTruthPredicate(self) -> str:
+        """
+        Returns the name of the truth predicate in the signature
+        """
+        return "qianaTruth"
+    
+    def getBasePredicates(self) -> List[str]:
+        return self.basePredicates.keys()
+    
+    def getAllPredicates(self) -> List[str]:
+        return self.getBasePredicates() + [self.getTruthPredicate()]
+    
+    def getQuotedVars(self) -> List[str]:
+        return [Signature.quoteSymbol(var) for var in self.quotedVariables]
