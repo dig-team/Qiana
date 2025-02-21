@@ -17,6 +17,11 @@ def getAllSchemesInstances(lines : List[str], signature: Signature = Signature()
     
     # We parse the lines that define the signature and extend the signature we received
     def _getSymbolAndArity(line:str) -> Tuple[str, int]:
+        """
+        Parses a line indicating a symbol's arity.
+
+        @return: Tuple[str, int] - the symbol and its arity
+        """
         _, symbol, arity = line.strip().split(":")
         return symbol, int(arity)
     newLines = []
