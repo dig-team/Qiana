@@ -24,6 +24,9 @@ class SchemeInfo():
         return self.name
 
     def getAritySymbols(self) -> List[str]:
+        """
+        Returns the list of swap pattern symbols that are used to indicate the arities of the dot patterns in the body of the scheme
+        """
         return self.aritySymbols
 
     def getSymbolTargets(self) -> Dict[str,str]:
@@ -43,6 +46,9 @@ class SchemeInfo():
            # symbolDict matches a swap pattern symbol like $f to an actual function symbol like "multiply", symbolQuotationMatchings matches a swap pattern symbol that is a quotation to the swap pattern symbol it needs to be a quotation of (for example matching $qf to $f). So we need to find what the actual symbol associated to $f is, quote it, and then associate that quotation to $qf in symbolDict
 
 def getAllSchemeInfos(lines: list[str]) -> Tuple[List[SchemeInfo],Signature]:
+    """
+    Read all the scheme infos from a list of lines. This returns a list of SchemeInfo objects and a Signature object.
+    """
     lines = [line.strip().rstrip("\n\r") for line in lines]
     lines = [line for line in lines if line and line[0] != "#"] # We remove empty lines and comments
     

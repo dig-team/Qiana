@@ -83,4 +83,4 @@ class Signature:
         return self.getBasePredicates() + [self.getTruthPredicate()]
     
     def getQuotedVars(self) -> List[str]:
-        return [Signature.quoteSymbol(var) for var in self.quotedVariables]
+        return [Signature.quoteSymbol(var) for var in self.quotableVariables]

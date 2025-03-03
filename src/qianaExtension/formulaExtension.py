@@ -3,6 +3,7 @@ from typing import List, Tuple, Dict, Set
 from itertools import product
 
 from src.qianaExtension.signature import Signature
+from src.qianaExtension.patternParsing import SchemeInfo, getAllSchemeInfos
 
 def getAllSchemesInstances(lines : List[str], signature: Signature = Signature()) -> List[str]:
     """
@@ -12,55 +13,13 @@ def getAllSchemesInstances(lines : List[str], signature: Signature = Signature()
     @param signature: Signature - the signature used with the patterns to obtain the final list of formulas
     @return: List[str] - a list of all the instances of the formulas obtained by applying the patterns in lines, these are complete and valid tptp formulas
     """
-    lines = [line.rstrip("\n\r") for line in lines]
-    lines = [line for line in lines if line and line[0] != "#"] # We remove empty lines and comments
-    
-    # We parse the lines that define the signature and extend the signature we received
-    def _getSymbolAndArity(line:str) -> Tuple[str, int]:
-        """
-        Parses a line indicating a symbol's arity.
-
-        @return: Tuple[str, int] - the symbol and its arity
-        """
-        _, symbol, arity = line.strip().split(":")
-        return symbol, int(arity)
-    newLines = []
-    for line in lines:
-        if line.startswith("FUNCTION "):
-            signature.addFunction(_getSymbolAndArity(line))
-        elif line.startswith("PREDICATE "):
-            signature.addPredicate(_getSymbolAndArity(line))
-        else:
-            newLines.append(line)
-    lines = newLines
-    
-    # We parse the lines that define formula schemes
-    formulaNames = []
-    formulas = []
-    patternInfos : List[List[str]] = []
-    index = -1
-    for line in lines:
-        assert line.startswith("FORMULA ") \
-            or line.startswith("BODY ") \
-            or line.endswith("FUNCTION") \
-            or line.endswith("PREDICATE") \
-            or line.startswith("ARITIES ")
-        if line.startswith("FORMULA "):
-            formulaNames.append(line.removeprefix("FORMULA "))
-            patternInfos.append([])
-            index += 1
-        elif line.startswith("BODY "):
-            formulas.append(line.removeprefix("BODY "))
-        else:
-            patternInfos[index].append(line)
-        
-    assert len(formulas) == len(formulaNames) == len(patternInfos)
+    schemeInfos, signature = getAllSchemeInfos(lines)
     instances = []
-    for i, formula in enumerate(formulas):
-        instances.extend(getAllInstancesOfFormula(formulaNames[i], formula, patternInfos[i], signature))
+    for schemeInfo in schemeInfos:
+        instances.extend(getAllInstancesOfFormula(schemeInfo, signature))
     return instances
 
-def getAllInstancesOfFormula(name: str, formula: str, patternInfo : List[str], signature : Signature) -> List[str]:
+def getAllInstancesOfFormula(schemeInfo : SchemeInfo, signature : Signature) -> List[str]:
     """
     Parse the lines of pattern info to have the necessary information to apply the macro patterns and returns all formula instances this generates.
 
@@ -68,44 +27,36 @@ def getAllInstancesOfFormula(name: str, formula: str, patternInfo : List[str], s
     @param patternInfo: List[str] - a list of patterns to apply to the formula
     @return: List[str] - a list of all the instances of the formula obtained by applying the patterns in patternInfo, these are complete and valid tptp formulas
     """
-    aritySymbols = [] # Default case if the arities are not specified, in the abscence of dot patterns
-    swapValues : Dict[str, List[str]]  = dict() # Matches each swap pattern symbol (like "$f") to the list of concrete symbol that can be put in its place
-    for line in patternInfo:
-        line = line.strip()
-        # If the line starts with a # it is a comment
-        if line[0] == "#":
-            pass
-        # If the line is of the form "$f is FUNCTION", it is a swap pattern
-        elif line[0] == "$":
-            symbol = line.split(" ")[0]
-            if line.endswith("FUNCTION"):
-                swapValues[symbol] = signature.getAllFunctions()
-            elif line.endswith("PREDICATE"):
-                swapValues[symbol] = signature.getAllPredicates()
-            else:
-                raise ValueError("Invalid pattern type in patternInfo")
-        # If the line is of the form "ARITIES: $f, $g" it is the list of arities for the dot patterns
-        elif line.startswith("ARITIES"):
-            line = line.removeprefix("ARITIES").strip().replace(" ", "")
-            aritySymbols = line.split(",")
+
+    swapValues : Dict[str, List[str]] = dict()  # Matches each swap pattern symbol to the list of concrete symbols
+    
+    # Process symbol targets from SchemeInfo
+    for symbol, target in schemeInfo.getSymbolTargets().items():
+        if target == "BASE_PREDICATE":
+            swapValues[symbol] = signature.getBasePredicates()
+        elif target == "BASE_FUNCTION":
+            swapValues[symbol] = signature.getBaseFunctions()
+        elif target == "ANY_PREDICATE":
+            swapValues[symbol] = signature.getAllPredicates()
+        elif target == "ANY_FUNCTION":
+            swapValues[symbol] = signature.getAllFunctions()
+        elif target == "QUOTED_VARIABLE":
+            swapValues[symbol] = signature.getQuotedVars()
+        else:
+            raise ValueError(f"Unknown target type: {target}")
+        
+    # Obtain a list of dicts, each corresponding to one possible mapping of swap pattern symbols to the appropriate concrete symbols
+    allCombinations : List[Dict[str,str]] = [dict(zip(swapValues.keys(), combi)) for combi in product(*swapValues.values())]
+    allCombinations = [schemeInfo.enrichSymbolDict(case) for case in allCombinations]
 
     formulas = []
-    valueCombinations = product(*swapValues.values())
-    for combi in valueCombinations:
-        swapPatterns = dict(zip(swapValues.keys(), combi))
-        arities = [int(symbol) if symbol.isdigit() else signature.getArity(swapPatterns[symbol]) for symbol in aritySymbols]
-        newFormula = applyAllPatternsOneInstance(formula, arities, swapPatterns)
-        newFormula = "fof(" + name + "_".join(combi) + "," + newFormula + ")."
-        formulas.append(newFormula)
-    
-    # If valueCombinations is empty, we still need to apply the patterns with no swap values
-    if not valueCombinations:
-        for symbol in aritySymbols : assert symbol.isdigit()
-        arities = [int(symbol) for symbol in aritySymbols]
-        formula = applyAllPatternsOneInstance(formula, arities, dict())
-        formula = "fof(" + name + "," + formula + ")."
-        formulas = [formula]
-
+    if not allCombinations: allCombinations = [dict()] # If there is no swap pattern, we still need to generate a formula
+    for case in allCombinations:
+        arities = [signature.getArity(case[symbol]) for symbol in schemeInfo.getAritySymbols()]
+        schemeBody = schemeInfo.getBody()
+        schemeBody = applyAllPatternsOneInstance(schemeBody, arities, case)
+        schemeBody = "fof(" + schemeInfo.getName() + "_".join(case.values()) + "," + schemeBody + ")."
+        formulas.append(schemeBody)
     return formulas
 
 def applyAllPatternsOneInstance(formula: str, arities: List[int], swapPatterns: Dict[str, str]) -> str:
