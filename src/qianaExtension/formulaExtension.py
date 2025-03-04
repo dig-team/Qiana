@@ -81,15 +81,16 @@ def replaceAllSwapPatterns(formula: str, swapPatterns: Dict[str, str]) -> str:
 
 def findDots(formula: str) -> Tuple[int, str] | None:
     """
-    Returns the index of the first dots in formula paired with the separation symbol. Only works for 3 dots with the same separation symbol at each end, the symbol is one char.
+    Find the leftmost pattern of three dots surrounded by the same symbol on each side.
+    Returns the index of the symbol to the left of these dots paired with the separation symbol. Only works for 3 dots with the same separation symbol at each end, the symbol is one char.
     
     @param formula: str - a formula body in tptp format with macro patterns
-    @return: Tuple[int, str] | None - The index of the first dots in formula paired with the separation symbol they use or None if there is no dot pattern
+    @return: Tuple[int, str] | None - The index of the symbol to the left of the leftmost 3 dots in formula paired with the separation symbol they use or None if there is no dot pattern
     """
     for i in range(len(formula) - 2):
         if formula[i] == "." and formula[i + 1] == "." and formula[i + 2] == ".":
             assert formula[i - 1] == formula[i + 3] # check if both ends of the dots have matching separation symbol
-            assert formula[i - 1] in [",", "&", "|", "=>", "<=>"] # check if the separation symbol is valid
+            assert formula[i - 1] in [",", "&", "|"] # check if the separation symbol is valid
             return i-1, formula[i - 1]
     return None
 
@@ -98,7 +99,7 @@ def findOperands(formula: str, index: int) -> Tuple[str, str, int, int]:
     Returns the two operands of a series of dots in formula
 
     @param formula: str - a formula body in tptp format with macro patterns
-    @param index: int - the index of the first dot of the symbol to the left of the dots
+    @param index: int - the index of the symbol to the left of the dot pattern
     @return: Tuple[str, str, int, int] - the two operands of the dot in formula, and the indexes delimiting the range of the operand+3 dots pattern
     """
     

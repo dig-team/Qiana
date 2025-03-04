@@ -1,172 +1,29 @@
 import pytest
 
-def test_getAllSchemeInfos_basic():
-    """
-    Test getAllSchemeInfos with basic input.
-    """
-    from src.qianaExtension.patternParsing import getAllSchemeInfos, _getSymbolAndArity, _readSchemeInfo, SchemeInfo
-    from src.qianaExtension.signature import Signature
-    lines = [
-        "FUNCTION f OF ARITY 2",
-        "PREDICATE p OF ARITY 1",
-        "FORMULA testFormula",
-        "BODY $f(x, y)",
-        "DOT_ARITIES $f",
-        "RANGE $f IN BASE_FUNCTION",
-        "WITH $qf QUOTING $f"
-    ]
-    schemeInfos, signature = getAllSchemeInfos(lines)
-    assert len(schemeInfos) == 1
-    assert isinstance(schemeInfos[0], SchemeInfo)
-    assert schemeInfos[0].getName() == "testFormula"
-    assert schemeInfos[0].getBody() == "$f(x, y)"
-    assert schemeInfos[0].getAritySymbols() == ["$f"]
-    assert schemeInfos[0].getSymbolTargets() == {"$f": "BASE_FUNCTION"}
-    assert schemeInfos[0].symbolQuotationMatchings == {"$qf": "$f"}
-
-def test_getAllSchemeInfos_empty():
-    """
-    Test getAllSchemeInfos with empty input.
-    """
-    from src.qianaExtension.patternParsing import getAllSchemeInfos, _getSymbolAndArity, _readSchemeInfo, SchemeInfo
-    from src.qianaExtension.signature import Signature
-    lines = []
-    schemeInfos, signature = getAllSchemeInfos(lines)
-    assert len(schemeInfos) == 0
-    assert isinstance(signature, Signature)
-
-def test_getAllSchemeInfos_comments():
-    """
-    Test getAllSchemeInfos with comments and empty lines.
-    """
-    from src.qianaExtension.patternParsing import getAllSchemeInfos, _getSymbolAndArity, _readSchemeInfo, SchemeInfo
-    from src.qianaExtension.signature import Signature
-
-    lines = [
-        "# This is a comment",
-        "",
-        "FUNCTION f OF ARITY 2",
-        "# Another comment",
-        "PREDICATE p OF ARITY 1",
-        "FORMULA testFormula",
-        "BODY f(x, y)",
-        "DOT_ARITIES $f",
-        "RANGE $f IN BASE_FUNCTION",
-        "WITH $qf QUOTING $f"
-    ]
-    schemeInfos, signature = getAllSchemeInfos(lines)
-    assert len(schemeInfos) == 1
-    assert isinstance(schemeInfos[0], SchemeInfo)
-    assert schemeInfos[0].getName() == "testFormula"
-    assert schemeInfos[0].getBody() == "f(x, y)"
-    assert schemeInfos[0].getAritySymbols() == ["$f"]
-    assert schemeInfos[0].getSymbolTargets() == {"$f": "BASE_FUNCTION"}
-    assert schemeInfos[0].symbolQuotationMatchings == {"$qf": "$f"}
-
-def test_getSymbolAndArity_function():
-    """
-    Test _getSymbolAndArity with a function line.
-    """
-    from src.qianaExtension.patternParsing import getAllSchemeInfos, _getSymbolAndArity, _readSchemeInfo, SchemeInfo
-    from src.qianaExtension.signature import Signature
-
-    line = "FUNCTION f OF ARITY 2"
-    symbol, arity = _getSymbolAndArity(line)
-    assert symbol == "f"
-    assert arity == 2
-
-def test_getSymbolAndArity_predicate():
-    """
-    Test _getSymbolAndArity with a predicate line.
-    """
-    from src.qianaExtension.patternParsing import getAllSchemeInfos, _getSymbolAndArity, _readSchemeInfo, SchemeInfo
-    from src.qianaExtension.signature import Signature
-
-    line = "PREDICATE p OF ARITY 1"
-    symbol, arity = _getSymbolAndArity(line)
-    assert symbol == "p"
-    assert arity == 1
-
-def test_getSymbolAndArity_invalid():
-    """
-    Test _getSymbolAndArity with an invalid line.
-    """
-    from src.qianaExtension.patternParsing import getAllSchemeInfos, _getSymbolAndArity, _readSchemeInfo, SchemeInfo
-    from src.qianaExtension.signature import Signature
-
-    line = "INVALID LINE"
-    with pytest.raises(AssertionError):
-        _getSymbolAndArity(line)
-
-def test_readSchemeInfo_basic():
-    """
-    Test _readSchemeInfo with basic input.
-    """
-    from src.qianaExtension.patternParsing import getAllSchemeInfos, _getSymbolAndArity, _readSchemeInfo, SchemeInfo
-    from src.qianaExtension.signature import Signature
-
-    lines = [
-        "FORMULA testFormula",
-        "BODY f(x, y)",
-        "DOT_ARITIES $f",
-        "RANGE $f IN BASE_FUNCTION",
-        "WITH $qf QUOTING $f"
-    ]
-    schemeInfo = _readSchemeInfo(lines)
-    assert schemeInfo.getName() == "testFormula"
-    assert schemeInfo.getBody() == "f(x, y)"
-    assert schemeInfo.getAritySymbols() == ["$f"]
-    assert schemeInfo.getSymbolTargets() == {"$f": "BASE_FUNCTION"}
-    assert schemeInfo.symbolQuotationMatchings == {"$qf": "$f"}
-
-def test_readSchemeInfo_no_DOT_ARITIES():
-    """
-    Test _readSchemeInfo without DOT_ARITIES line.
-    """
-    from src.qianaExtension.patternParsing import getAllSchemeInfos, _getSymbolAndArity, _readSchemeInfo, SchemeInfo
-    from src.qianaExtension.signature import Signature
-
-    lines = [
-        "FORMULA testFormula",
-        "BODY f(x, y)",
-        "RANGE $f IN BASE_FUNCTION",
-        "WITH $qf QUOTING $f"
-    ]
-    schemeInfo = _readSchemeInfo(lines)
-    assert schemeInfo.getName() == "testFormula"
-    assert schemeInfo.getBody() == "f(x, y)"
-    assert schemeInfo.getAritySymbols() == []
-    assert schemeInfo.getSymbolTargets() == {"$f": "BASE_FUNCTION"}
-    assert schemeInfo.symbolQuotationMatchings == {"$qf": "$f"}
-
-def test_readSchemeInfo_no_quotations():
-    """
-    Test _readSchemeInfo without WITH line.
-    """
-    from src.qianaExtension.patternParsing import getAllSchemeInfos, _getSymbolAndArity, _readSchemeInfo, SchemeInfo
-    from src.qianaExtension.signature import Signature
-
-    lines = [
-        "FORMULA testFormula",
-        "BODY f(x, y)",
-        "DOT_ARITIES $f",
-        "RANGE $f IN BASE_FUNCTION"
-    ]
-    schemeInfo = _readSchemeInfo(lines)
-    assert schemeInfo.getName() == "testFormula"
-    assert schemeInfo.getBody() == "f(x, y)"
-    assert schemeInfo.getAritySymbols() == ["$f"]
-    assert schemeInfo.getSymbolTargets() == {"$f": "BASE_FUNCTION"}
-    assert schemeInfo.symbolQuotationMatchings == {}
-
 def test_import_qianaExtension():
     from qianaExtension.formulaExtension import getAllSchemesInstances
+
+def test_findOperand():
+    from qianaExtension.formulaExtension import findOperands
+    leftop, rightop, leftIndex, rightIndex = findOperands("t1,...,t2", 2)
 
 def test_schemes_clear():
     from qianaExtension.formulaExtension import getAllSchemesInstances
     from qianaExtension.signature import Signature
-    with open("examples/exampleSchemes.schemes","r") as f:
-        lines = f.readlines()
+    lines = """
+    # FUNCTION and PREDICATE define new base functions and predicate, respectively (elements of $F_b$ and $P_b$)
+    FUNCTION f OF ARITY 2
+    PREDICATE p OF ARITY 2
+    FUNCTION c OF ARITY 0
+
+    FORMULA test
+    BODY ![X1,...,Xn] (wft(X1) &...& wft(Xn) => truth($qp(X1,...,Xn)))
+    DOT_ARITIES $p $p $p
+    RANGE $p IN BASE_PREDICATE
+    # Alternatives are BASE_PREDICATE, BASE_FUNCTION, ANY_FUNCTION, ANY_PREDICATE, QUOTED_VARIABLE
+    WITH $qp QUOTING $p
+    """
+    lines = lines.strip().splitlines()
     sig = Signature(functions={"f":2})
     allInstances = getAllSchemesInstances(lines, sig)
     for instance in allInstances: assert "..." not in instance

@@ -17,6 +17,7 @@ class SchemeInfo():
         self.aritySymbols = aritySymbols
         self.symbolTargets = symbolTargets
         self.symbolQuotationMatchings = symbolQuotationMatchings
+
     def getBody(self) -> str:
         return self.body
 
@@ -35,15 +36,17 @@ class SchemeInfo():
         """
         return self.symbolTargets
 
-    def enrichSymbolDict(self, symbolDict: Dict[str,str]) -> None:
+    def enrichSymbolDict(self, symbolDict: Dict[str,str]) -> Dict[str,str]:
         """
         Enrich a dict matching pattern symbols (like $f) to their actual symbol (like "multiply") with more such matchings to account for symbols that represent the quotation of another symbol
 
         @param symbolDict: a dictionary matching symbols to their actual meaning
+        @return: The same dictionary, but (possibly) with more matchings
         """
         for quoting, quoted in self.symbolQuotationMatchings.items():
            symbolDict[quoting] = Signature.quoteSymbol(symbolDict[quoted]) 
            # symbolDict matches a swap pattern symbol like $f to an actual function symbol like "multiply", symbolQuotationMatchings matches a swap pattern symbol that is a quotation to the swap pattern symbol it needs to be a quotation of (for example matching $qf to $f). So we need to find what the actual symbol associated to $f is, quote it, and then associate that quotation to $qf in symbolDict
+        return symbolDict
 
 def getAllSchemeInfos(lines: list[str]) -> Tuple[List[SchemeInfo],Signature]:
     """
