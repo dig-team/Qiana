@@ -118,7 +118,9 @@ def findOperands(formula: str, index: int) -> Tuple[str, str, int, int]:
         elif formula[iterIndexLeft] == "(":
             parenthesisCount -= 1
         iterIndexLeft -= 1
-        assert iterIndexLeft >= 0
+        if iterIndexLeft < 0: 
+            assert(iterIndexLeft == -1)
+            break
     leftOperand = formula[iterIndexLeft+1:leftStartingIndex+1]
     
     iterIndexRight = rightStartingIndex
@@ -129,10 +131,12 @@ def findOperands(formula: str, index: int) -> Tuple[str, str, int, int]:
         elif formula[iterIndexRight] == "(":
             parenthesisCount -= 1
         iterIndexRight += 1
-        assert iterIndexRight < len(formula)
+        if iterIndexRight >= len(formula):
+            assert(iterIndexRight == len(formula))
+            break
     rightOperand = formula[rightStartingIndex:iterIndexRight]
 
-    return leftOperand, rightOperand, iterIndexLeft+1, iterIndexRight-1
+    return leftOperand.strip(), rightOperand.strip(), iterIndexLeft+1, iterIndexRight-1
 
 def injectInDifference(firstOperand: str, secondOperand: str, symbolToInject: str) -> str:
     """
