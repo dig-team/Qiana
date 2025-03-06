@@ -11,10 +11,6 @@ class Signature:
         self.basePredicates = predicates
         self.quotableVariables = quotableVariables
         
-
-    def extendFromTptp(self, tptpFormula: str) -> None:
-        pass
-
     def extendFromSignature(self, signature: 'Signature') -> 'Signature':
         """
         Extend and return the signature this is applied, which becomes the union of itself and the signature passed as argument
@@ -84,3 +80,69 @@ class Signature:
     
     def getQuotedVars(self) -> List[str]:
         return [Signature.quoteSymbol(var) for var in self.quotableVariables]
+
+    def extendFromTptp(self, tptpFormula: str) -> List:
+        """
+        Read the body of a TPTP formula and extend the signature with the functions and predicates found in the formula.
+        @param tptpFormula: The body of a TPTP formula, example : "![X1] p(f(X1),X1)"
+        """
+        import re
+        
+        # Track all symbols found
+        symbols = []
+        
+        # Process nested patterns properly by manually tracking parentheses
+        def extract_symbols(formula: str) -> None:
+            i = 0
+            while i < len(formula):
+                # Find next opening parenthesis
+                if formula[i].isalnum():
+                    start = i
+                    while i < len(formula) and formula[i].isalnum() or formula[i] == '_':
+                        i += 1
+                    
+                    if i < len(formula) and formula[i] == '(':
+                        symbol = formula[start:i]
+                        i += 1  # Skip the opening parenthesis
+                        
+                        # Find matching closing parenthesis to extract arguments
+                        args_start = i
+                        depth = 1
+                        while i < len(formula) and depth > 0:
+                            if formula[i] == '(':
+                                depth += 1
+                            elif formula[i] == ')':
+                                depth -= 1
+                            i += 1
+                        
+                        if depth == 0:
+                            args = formula[args_start:i-1]
+                            
+                            # Count arguments
+                            if not args.strip():
+                                arity = 0
+                            else:
+                                arity = 1
+                                depth = 0
+                                for c in args:
+                                    if c == '(':
+                                        depth += 1
+                                    elif c == ')':
+                                        depth -= 1
+                                    elif c == ',' and depth == 0:
+                                        arity += 1
+                            
+                            # Determine if predicate or function
+                            is_predicate = symbol[0].islower() and not symbol.startswith('q_')
+                            symbols.append((symbol, arity, is_predicate))
+                            
+                            # Recursively process arguments
+                            extract_symbols(args)
+                    else:
+                        i += 1
+                else:
+                    i += 1
+        
+        # Extract all symbols
+        extract_symbols(tptpFormula)
+        return symbols
