@@ -5,7 +5,7 @@ from itertools import product
 from src.qianaExtension.signature import Signature
 from src.qianaExtension.patternParsing import SchemeInfo, getAllSchemeInfos
 
-def getAllSchemesInstances(lines : List[str], signature: Signature = Signature()) -> List[str]:
+def getAllSchemesInstances(lines : List[str], signature: Signature = None) -> List[str]:
     """
     Returns all the instances of the formulas defined in the lines parameter, with the patterns defined in the lines parameter applied to them.
 
@@ -13,6 +13,7 @@ def getAllSchemesInstances(lines : List[str], signature: Signature = Signature()
     @param signature: Signature - the signature used with the patterns to obtain the final list of formulas
     @return: List[str] - a list of all the instances of the formulas obtained by applying the patterns in lines, these are complete and valid tptp formulas
     """
+    signature = signature if signature else Signature()
     schemeInfos, signature = getAllSchemeInfos(lines)
     instances = []
     for schemeInfo in schemeInfos:
