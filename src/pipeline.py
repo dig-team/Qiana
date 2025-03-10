@@ -8,11 +8,14 @@ from dotGeneration import getDotFromSteps
 
 
 class Pipeline:
+    variableNumber : int
+    timeout : int | None
     qianaClosure : str | None
     htmlTree : str | None
 
-    def __init__(self):
-        self.variableNumber = None
+    def __init__(self, variableNumber: int | None = None, timeout: int | None = None) -> None:
+        self.timeout = timeout
+        self.variableNumber = variableNumber if variableNumber else 5
         self.qianaClosure = None
         self.htmlTree = None
 
@@ -42,4 +45,5 @@ class Pipeline:
     
     def getGraphDot(self) -> str:
         return getDotFromSteps(self.reasoningSteps)
+    
 
