@@ -28,8 +28,8 @@ def test_getAllSchemeInfos_empty():
     """
     Test getAllSchemeInfos with empty input.
     """
-    from src.qianaExtension.patternParsing import getAllSchemeInfos, _getSymbolAndArity, _readSchemeInfo, SchemeInfo
-    from src.qianaExtension.signature import Signature
+    from qianaExtension.patternParsing import getAllSchemeInfos, _getSymbolAndArity, _readSchemeInfo, SchemeInfo
+    from qianaExtension.signature import Signature
     lines = []
     schemeInfos, signature = getAllSchemeInfos(lines)
     assert len(schemeInfos) == 0
