@@ -1,7 +1,7 @@
 import os
 
 from reasoner import callSolver
-from qianaExtension import qianaClosure
+from qianaExtension import Signature, getAllSchemesInstances
 from htmlGeneration import getHtmlFromSteps, getHtmlNoContradiction
 from gui import Settings
 from dotGeneration import getDotFromSteps
@@ -17,8 +17,13 @@ class Pipeline:
         self.htmlTree = None
 
     def computeQianaClosure(self, input: str) -> None:
-        variableNumber = Settings.getQuotedVarsNumber()
-        self.qianaClosure : str = os.linesep.join(qianaClosure(input, variableNumber))
+        with open("qianaExtension/qianaAxio.schemes", "r") as f:
+            schemeLines = f.readlines()
+        signature = Signature()
+        signature.extendFromTptpFormulas(input)
+        variableNumber = Settings.getQuotedVarsNumber() # TODO : include the number of quoted vars?
+        # self.qianaClosure : str = os.linesep.join(qianaClosure(input, variableNumber))
+        self.qianaClosure = getAllSchemesInstances(schemeLines, signature) + input
 
     def runCompute(self, input: str) -> None:
         """

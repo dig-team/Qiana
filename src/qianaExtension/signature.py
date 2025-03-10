@@ -85,6 +85,17 @@ class Signature:
     def getQuotedVars(self) -> List[str]:
         return [Signature.quoteSymbol(var) for var in self.quotableVariables]
 
+    def extendFromTptpFormulas(self, tptpFormulas: List[str]) -> None:
+        """
+        Read the bodies of a list of TPTP formulas and extend the signature with the functions and predicates found in the formulas.
+        @param tptpFormulas: A list of TPTP formulas, example : ["fof(name, ![X1] p(f(X1),X1)", "p(f(a),b))."]
+        """
+        for formula in tptpFormulas:
+            formula = formula.strip()
+            if not formula.startswith("fof"): continue
+            formula = formula.split(",", 1)[1][::-2]
+            self.extendFromTptp(formula)
+
     def extendFromTptp(self, tptpFormula: str) -> None:
         """
         Read the body of a TPTP formula and extend the signature with the functions and predicates found in the formula.
