@@ -4,12 +4,12 @@ class Signature:
 
     baseFunctions : Dict[str,int] # Dict macthing function names to arity, corresponds to functions from F_b
     basePredicates : Dict[str,int]
-    quotableVariables : Set[str]
+    nbrQuotedVars : int
 
-    def __init__(self, functions: Dict[str,int] = None, predicates: Dict[str,int] = None, quotableVariables: Set[str] = None):
+    def __init__(self, functions: Dict[str,int] = None, predicates: Dict[str,int] = None, nbrQuotedVars: int = 6):
         self.baseFunctions = functions if functions else {}
         self.basePredicates = predicates if predicates else {}
-        self.quotableVariables = quotableVariables if quotableVariables else set()
+        self.nbrQuotedVars = nbrQuotedVars 
         
     def extendFromSignature(self, signature: 'Signature') -> 'Signature':
         """
@@ -17,7 +17,7 @@ class Signature:
         """
         self.baseFunctions.update(signature.baseFunctions)
         self.basePredicates.update(signature.basePredicates)
-        self.quotableVariables.update(signature.quotableVariables)
+        self.nbrQuotedVars = max(self.nbrQuotedVars, signature.nbrQuotedVars)
         return self
     
     def addFunction(self, symbol: str, arity: int) -> None:
@@ -30,7 +30,7 @@ class Signature:
         symbol = Signature.unquoteSymbol(symbol) or symbol
         if symbol in self.baseFunctions: return self.baseFunctions[symbol]
         if symbol in self.basePredicates: return self.basePredicates[symbol]
-        if symbol in self.quotableVariables: return 0
+        if symbol in self.getQuotedVars(): return 0
         if symbol == self.getTruthPredicate(): return 1
         if symbol in self._getSpecialFunctions(): return self._getSpecialFunctions()[symbol]
         raise ValueError("Symbol not found in signature")
@@ -64,7 +64,7 @@ class Signature:
             [Signature.quoteSymbol(var) for var in self.baseFunctions] + \
             [Signature.quoteSymbol(var) for var in self.basePredicates] +\
             [Signature.quoteSymbol(var) for var in self._getSpecialFunctions()] +\
-            [Signature.quoteSymbol(var) for var in self.quotableVariables]
+            self.getQuotedVars()
 
     def _getSpecialFunctions(self) -> Dict[str,int]:
         # TODO : what else
@@ -83,7 +83,7 @@ class Signature:
         return self.getBasePredicates() + [self.getTruthPredicate()]
     
     def getQuotedVars(self) -> List[str]:
-        return [Signature.quoteSymbol(var) for var in self.quotableVariables]
+        return [f"qvar{n+1}" for n in range(self.nbrQuotedVars)]
 
     def extendFromTptpFormulas(self, tptpFormulas: List[str]) -> None:
         """
