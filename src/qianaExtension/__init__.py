@@ -1,2 +1,2 @@
-from src.qianaExtension.signature import Signature
-from src.qianaExtension.formulaExtension import getAllSchemesInstances
+from qianaExtension.signature import Signature
+from qianaExtension.formulaExtension import getAllSchemesInstances
