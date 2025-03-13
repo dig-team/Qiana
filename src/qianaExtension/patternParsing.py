@@ -10,19 +10,27 @@ class SchemeInfo():
     aritySymbols : List[str]
     symbolTargets : Dict[str,str]
     symbolQuotationMatchings : Dict[str,str]
+    _containsSwapPatterns : bool
 
-    def __init__(self, name: str, body: str, aritySymbols: List[str], symbolTargets: Dict[str, str], symbolQuotationMatchings: Dict[str, str]):
+    def __init__(self, name: str, body: str, aritySymbols: List[str], symbolTargets: Dict[str, str], symbolQuotationMatchings: Dict[str, str], containsSwapPatterns: bool):
         self.name = name
         self.body = body
         self.aritySymbols = aritySymbols
         self.symbolTargets = symbolTargets
         self.symbolQuotationMatchings = symbolQuotationMatchings
+        self._containsSwapPatterns = containsSwapPatterns
 
     def getBody(self) -> str:
         return self.body
 
     def getName(self) -> str:
         return self.name
+    
+    def containsSwapPatterns(self) -> bool:
+        """
+        True if there is at list a swap pattern in the scheme
+        """
+        return self._containsSwapPatterns
 
     def getAritySymbols(self) -> List[str]:
         """
@@ -118,16 +126,18 @@ def _readSchemeInfo(lines: list[str]) -> SchemeInfo:
     aritySymbols = [] # Default case if the arities are not specified, in the abscence of dot patterns
     swapValues : Dict[str, str]  = dict() # Matches each swap pattern symbol (like "$f") to the list of concrete symbol that can be put in its place
     swapQuotations : Dict[str, str] = dict() # Matches each swap pattern symbol that is a quotation to the swap pattern symbol it needs to be a quotation of
+    foundASwapPattern = False
     for line in patternInfoLines:
         # If the line is of the form "$f is FUNCTION", it is a swap pattern
         if bool(re.match(r"^DOT_ARITIES(?:\s\$\S+)+$", line)):
             aritySymbols = line.removeprefix("DOT_ARITIES").strip().split(" ")
         elif bool(re.match(r"^RANGE \S+ IN \S+$", line)):
             _, symbol, _, target = line.split(" ")
+            foundASwapPattern = True
             assert target in {"BASE_PREDICATE", "BASE_FUNCTION", "ANY_PREDICATE", "ANY_FUNCTION", "QUOTED_VARIABLE"}
             swapValues[symbol] = target
         elif bool(re.match(r"^WITH \S+ QUOTING \S+$", line)):
             _, symbol, _, quotedSymbol = line.split(" ")
             swapQuotations[symbol] = quotedSymbol
-    return SchemeInfo(name, body, aritySymbols, swapValues, swapQuotations)
+    return SchemeInfo(name, body, aritySymbols, swapValues, swapQuotations, foundASwapPattern)
     

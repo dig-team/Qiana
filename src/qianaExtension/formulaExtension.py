@@ -51,7 +51,7 @@ def getAllInstancesOfFormula(schemeInfo : SchemeInfo, signature : Signature) -> 
     allCombinations = [schemeInfo.enrichSymbolDict(case) for case in allCombinations]
 
     formulas = []
-    if not allCombinations: allCombinations = [dict()] # If there is no swap pattern, we still need to generate a formula
+    if not allCombinations and not schemeInfo.containsSwapPatterns(): allCombinations = [dict()] # If there is no swap pattern we still need to generate a formula. However if there is no valid combaination but there is a swap pattern, we generate nothing at all
     for case in allCombinations:
         arities = [signature.getArity(case[symbol]) for symbol in schemeInfo.getAritySymbols()]
         schemeBody = schemeInfo.getBody()
