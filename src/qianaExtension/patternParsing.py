@@ -61,7 +61,7 @@ def getAllSchemeInfos(lines: list[str]) -> Tuple[List[SchemeInfo],Signature]:
     Read all the scheme infos from a list of lines. This returns a list of SchemeInfo objects and a Signature object.
     """
     lines = [line.strip().rstrip("\n\r") for line in lines]
-    lines = [line for line in lines if line and line[0] != "#"] # We remove empty lines and comments
+    lines = [line for line in lines if line and line[0] != "%"] # We remove empty lines and comments
     
     signature = Signature()
 

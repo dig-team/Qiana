@@ -56,7 +56,7 @@ def getAllInstancesOfFormula(schemeInfo : SchemeInfo, signature : Signature) -> 
         arities = [signature.getArity(case[symbol]) for symbol in schemeInfo.getAritySymbols()]
         schemeBody = schemeInfo.getBody()
         schemeBody = applyAllPatternsOneInstance(schemeBody, arities, case)
-        schemeBody = "fof(" + schemeInfo.getName() + "_".join(case.values()) + "," + schemeBody + ")."
+        schemeBody = "fof(" + schemeInfo.getName() + "_".join(case.values()) + ",axiom," + schemeBody + ")."
         formulas.append(schemeBody)
     return formulas
 
@@ -103,7 +103,6 @@ def findOperands(formula: str, index: int) -> Tuple[str, str, int, int]:
     @param index: int - the index of the symbol to the left of the dot pattern
     @return: Tuple[str, str, int, int] - the two operands of the dot in formula, and the indexes delimiting the range of the operand+3 dots pattern
     """
-    
     leftStartingIndex = index-1
     while formula[leftStartingIndex] == " ": leftStartingIndex -= 1
     rightStartingIndex = index+5
@@ -113,7 +112,7 @@ def findOperands(formula: str, index: int) -> Tuple[str, str, int, int]:
 
     iterIndexLeft = leftStartingIndex
     parenthesisCount = 0
-    while formula[iterIndexLeft] not in ["(", "[", ",", " "] or parenthesisCount != 0:
+    while formula[iterIndexLeft] not in ["(", "[", ",",":"] or parenthesisCount != 0:
         if formula[iterIndexLeft] == ")":
             parenthesisCount += 1
         elif formula[iterIndexLeft] == "(":
@@ -126,7 +125,7 @@ def findOperands(formula: str, index: int) -> Tuple[str, str, int, int]:
     
     iterIndexRight = rightStartingIndex
     parenthesisCount = 0
-    while formula[iterIndexRight] not in [")", "]", ",", " "] or parenthesisCount != 0:
+    while formula[iterIndexRight] not in [")", "]", ",", ":"] or parenthesisCount != 0:
         if formula[iterIndexRight] == ")":
             parenthesisCount += 1
         elif formula[iterIndexRight] == "(":
@@ -141,26 +140,16 @@ def findOperands(formula: str, index: int) -> Tuple[str, str, int, int]:
 
 def injectInDifference(firstOperand: str, secondOperand: str, symbolToInject: str) -> str:
     """
-    Finds the difference between two operands (strings that are almost identical except for a counting symbol, such as "t1" and "tn") and injects a symbol in the difference. For example returning "t2".
+    Receive two operands that are almost identical except for a counting symbol that is "1" in the first operand and "#" in the second operand.
+    Injects a sumbol in the difference between the two operands.
 
     @param firstOperand: str - the first operand
     @param secondOperand: str - the second operand
     @param symbolToInject: str - the symbol to inject in the difference of the operands
     @return: str - the difference between the two operands with the symbol put in the place of the difference
     """
-    assert firstOperand != secondOperand
-    if len(firstOperand) < len(secondOperand): firstOperand, secondOperand = secondOperand, firstOperand
-    for (i, k) in enumerate(firstOperand):
-        if k != secondOperand[i]:
-            indexLeft = i
-            break
-    reversedFirstOperad = firstOperand[::-1]
-    reversedSecondOperad = secondOperand[::-1]
-    for (i, k) in enumerate(reversedFirstOperad):
-        if k != reversedSecondOperad[i]:
-            indexRight = len(firstOperand) - i - 1
-            break
-    return firstOperand[:indexLeft] + symbolToInject + firstOperand[indexRight+1:]
+    assert secondOperand.replace("#","1") == firstOperand
+    return secondOperand.replace("#", symbolToInject)
 
 def replaceDotPattern(formula: str, leftOfPattern: int, rightOfPattern: int, separationSymbol: str, leftOperand:str, rightOperand: str, arity: int):
     """
