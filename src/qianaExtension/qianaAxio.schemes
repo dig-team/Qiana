@@ -97,7 +97,7 @@ FORMULA A30
 BODY ![X1, X2, X3] (term(X1) => sub(X1, X2, X3) = X1)
 
 FORMULA A31
-BODY ![X1,...,Xn, X2, X3] ((term(X1)&...&term(Xn)) => sub($f(X1,...,Xn), X2, X3) = $f(sub(X1, X2, X3),...,sub(Xn, X2, X3)))
+BODY ![X1,...,Xn, Y1, Y2] ((term(X1)&...&term(Xn)) => sub($f(X1,...,Xn), Y1, Y2) = $f(sub(X1, Y1, Y2),...,sub(Xn, Y1, Y2)))
 RANGE $f IN BASE_FUNCTION
 DOT_ARITIES $f $f $f $f
 

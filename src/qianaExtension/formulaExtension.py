@@ -113,7 +113,7 @@ def findOperands(formula: str, index: int) -> Tuple[str, str, int, int]:
 
     iterIndexLeft = leftStartingIndex
     parenthesisCount = 0
-    while formula[iterIndexLeft] not in ["(", ",", " "] or parenthesisCount != 0:
+    while formula[iterIndexLeft] not in ["(", "[", ",", " "] or parenthesisCount != 0:
         if formula[iterIndexLeft] == ")":
             parenthesisCount += 1
         elif formula[iterIndexLeft] == "(":
@@ -126,7 +126,7 @@ def findOperands(formula: str, index: int) -> Tuple[str, str, int, int]:
     
     iterIndexRight = rightStartingIndex
     parenthesisCount = 0
-    while formula[iterIndexRight] not in [")", ",", " "] or parenthesisCount != 0:
+    while formula[iterIndexRight] not in [")", "]", ",", " "] or parenthesisCount != 0:
         if formula[iterIndexRight] == ")":
             parenthesisCount += 1
         elif formula[iterIndexRight] == "(":

@@ -50,6 +50,40 @@ def test_schemes_harder():
     allInstances = getAllSchemesInstances(lines, sig)
     for instance in allInstances: assert "..." not in instance
 
+def test_noFunctions():
+    """
+    By not adding any base function we create a scheme that ranges over 0 functions
+    """
+    from qianaExtension.formulaExtension import getAllSchemesInstances
+    from qianaExtension.signature import Signature
+    lines = """
+    FORMULA A31
+    BODY ![X1,...,Xn, Y1, Y2] ((term(X1)&...&term(Xn)) => sub($f(X1,...,Xn), Y1, Y2) = $f(sub(X1, Y1, Y2),...,sub(Xn, Y1, Y2)))
+    RANGE $f IN BASE_FUNCTION
+    DOT_ARITIES $f $f $f $f
+    """.splitlines()
+    sig = Signature()
+    allInstances = getAllSchemesInstances(lines, sig)
+    for instance in allInstances: assert "..." not in instance
+
+def test_A31():
+    """
+    Specifically test scheme A31
+    """
+    from qianaExtension.formulaExtension import getAllSchemesInstances
+    from qianaExtension.signature import Signature
+    lines = """
+    FUNCTION f OF ARITY 2
+    FORMULA A31
+    BODY ![X1,...,Xn, Y1, Y2] ((term(X1)&...&term(Xn)) => sub($f(X1,...,Xn), Y1, Y2) = $f(sub(X1, Y1, Y2),...,sub(Xn, Y1, Y2)))
+    RANGE $f IN BASE_FUNCTION
+    DOT_ARITIES $f $f $f $f
+    """.splitlines()
+    sig = Signature()
+    allInstances = getAllSchemesInstances(lines, sig)
+    for instance in allInstances: assert "..." not in instance
+
+
 def test_include_schemes():
     """
     Test the schemes included in the qianaExtension/qianaAxio.schemes file
