@@ -1,0 +1,131 @@
+# The special symbols of the logic are qNot, qAnd, qTruth, and qQuote. These are not defined in the schemes but already exist implicitly
+# In addition, we always include the following
+PREDICATE ist OF ARITY 2
+FUNCTION sub OF ARITY 3
+FUNCTION eval OF ARITY 1
+# Eval is simply called "E" in the article
+PREDICATE wft OF ARITY 1
+PREDICATE term OF ARITY 1
+
+# Default QIANA axioms
+FORMULA A5
+BODY ![XC, X1, X2] (ist(XC, qAnd(X1, X2)) => (ist(XC, X1) & ist(XC, X2)))
+
+FORMULA A6
+BODY ![XC, X1, X2] (ist(XC, qAnd(X1, X2)) <=> ist(XC, qAnd(X2, X1)))
+
+FORMULA A7
+BODY ![XC, X1] (ist(XC, qNot(qNot(X1))) <=> ist(XC, X1))
+
+FORMULA A8
+BODY ![XC, X1, X2, X3] (ist(XC, qAnd(qAnd(X1, X2), X3)) <=> ist(XC, qAnd(X1, qAnd(X2, X3))))
+
+FORMULA A9
+BODY ![XC, X1, X2, X3] (ist(XC, qOr(qAnd(X1, X2), X3)) <=> ist(XC, qAnd(qOr(X1, X3), qOr(X2, X3))))
+
+FORMULA A10
+BODY ![XC, X1, X2] ((ist(XC, qOr(X1, X2)) & ist(XC, qNot(X1))) => ist(XC, X2))
+
+# Axioms specific to the finite axiomatization process
+FORMULA A12
+BODY ![X1] (X1 = X1)
+
+FORMULA A13
+BODY ![X1, X2] (X1 = X2 => X2 = X1)
+
+FORMULA A14
+BODY ![X1, X2, X3] ((X1 = X2 & X2 = X3) => X1 = X3)
+
+FORMULA A15
+BODY ![X1,...,Xn, Y1,...,Yn] ((X1 = Y1&...&Xn = Yn) => $f(X1,...,Xn) = $f(Y1,...,Yn))
+RANGE $f IN BASE_FUNCTION
+DOT_ARITIES $f $f $f $f $f
+
+FORMULA A16
+BODY ![X1,...,Xn, Y1,...,Yn] ((X1 = Y1&...&Xn = Yn) => $p(X1,...,Xn) <=> $p(Y1,...,Yn))
+RANGE $p IN BASE_PREDICATE
+DOT_ARITIES $p $p $p $p $p
+
+FORMULA A17
+BODY ![X1] (term(qQuote(X1)))
+
+FORMULA A18
+BODY ![X1,...,Xn] ((term(X1)&...&term(Xn)) => term($f(X1,...,Xn)))
+RANGE $f IN BASE_FUNCTION
+DOT_ARITIES $f $f $f
+
+FORMULA A19
+BODY ![X1] (wft(qQuote(X1)))
+
+FORMULA A20
+BODY ![X1] (wft(X1))
+
+FORMULA A21
+BODY ![X1,...,Xn] ((wft(X1)&...&wft(Xn)) => wft($f(X1,...,Xn)))
+RANGE $f IN BASE_FUNCTION
+DOT_ARITIES $f $f $f
+
+FORMULA A22
+BODY ![X1] (term(X1) => eval(qQuote(X1)) = X1)
+
+FORMULA A23
+BODY ![X1,...,Xn] ((term(X1)&...&term(Xn)) => eval($f(X1,...,Xn)) = $f(eval(X1),...,eval(Xn)))
+RANGE $f IN BASE_FUNCTION
+DOT_ARITIES $f $f $f $f
+
+FORMULA A24
+BODY ![X1,...,Xn] ((term(X1)&...&term(Xn)) => eval($p(X1,...,Xn)) = $p(X1,...,Xn))
+RANGE $p IN BASE_PREDICATE
+DOT_ARITIES $p $p $p $p
+
+FORMULA A25
+BODY ![X1, X2] (eval(qAnd(X1, X2)) = qAnd(X1, X2))
+
+FORMULA A26
+BODY ![X1, X2] (eval(qForall(X1, X2)) = qForall(X1, X2))
+
+FORMULA A27
+BODY ![X1] (eval(qNot(X1)) = qNot(X1))
+
+FORMULA A28
+BODY ![X1] (eval(X1) = X1)
+
+FORMULA A29
+BODY ![X1, X2, X3] (term(X1) => sub(X1, X1, X3) = X3)
+
+FORMULA A30
+BODY ![X1, X2, X3] (term(X1) => sub(X1, X2, X3) = X1)
+
+FORMULA A31
+BODY ![X1,...,Xn, X2, X3] ((term(X1)&...&term(Xn)) => sub($f(X1,...,Xn), X2, X3) = $f(sub(X1, X2, X3),...,sub(Xn, X2, X3)))
+RANGE $f IN BASE_FUNCTION
+DOT_ARITIES $f $f $f $f
+
+FORMULA A32
+BODY ![X1, X2, X3] ((term(X1) & term(X2)) => sub(qForall(X1, X2), X1, X3) = qForall(X1, X2))
+
+FORMULA A33
+BODY ![X1, X2, X3, X4] ((term(X1) & term(X2)) => sub(qForall(X3, X1), X2, X4) = qForall(X3, sub(X1, X2, X4)))
+
+FORMULA A34
+BODY ![X1, X2, X3] ((term(X1) & term(X2)) => sub(qQuote(X1), X2, X3) = qQuote(X1))
+
+# Finite versions of infinite axioms
+FORMULA A1fin
+BODY ![X1,...,Xn] (wft(X1)&...&wft(Xn) => qTruth($qp(X1,...,Xn)) <=> $p(eval(X1),...,eval(Xn)))
+DOT_ARITIES $p $p $p $p
+RANGE $p IN BASE_PREDICATE
+WITH $qp QUOTING $p
+
+FORMULA A2fin
+BODY ![X1, X2] ((term(X1) & term(X2)) => qTruth(qAnd(X1, X2)) <=> (qTruth(X1) & qTruth(X2)))
+
+FORMULA A3fin
+BODY ![X1] (term(X1) => qTruth(qNot(X1)) <=> qNot(qTruth(X1)))
+
+FORMULA A4fin
+BODY ![X1] (term(X1) => qTruth(qForall(X1)) <=> (![X2] qTruth(sub(X1, X2, qQuote(X2)))))
+
+FORMULA A11fin
+BODY ![XC, X1] ((term(X1) => (ist(XC, qForall(X1)) => ![X2] ist(XC, sub(X1, X2, qQuote(X2))))))
+

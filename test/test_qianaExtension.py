@@ -49,3 +49,15 @@ def test_schemes_harder():
     sig = Signature()
     allInstances = getAllSchemesInstances(lines, sig)
     for instance in allInstances: assert "..." not in instance
+
+def test_include_schemes():
+    """
+    Test the schemes included in the qianaExtension/qianaAxio.schemes file
+    """
+    from qianaExtension.formulaExtension import getAllSchemesInstances
+    from qianaExtension.signature import Signature
+    with open("qianaExtension/qianaAxio.schemes") as f:
+        lines = f.readlines()
+    sig = Signature()
+    allInstances = getAllSchemesInstances(lines, sig)
+    for instance in allInstances: assert "..." not in instance
