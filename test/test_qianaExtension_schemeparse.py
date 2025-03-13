@@ -43,10 +43,10 @@ def test_getAllSchemeInfos_comments():
     from src.qianaExtension.signature import Signature
 
     lines = [
-        "# This is a comment",
+        "% This is a comment",
         "",
         "FUNCTION f OF ARITY 2",
-        "# Another comment",
+        "% Another comment",
         "PREDICATE p OF ARITY 1",
         "FORMULA testFormula",
         "BODY f(x, y)",
