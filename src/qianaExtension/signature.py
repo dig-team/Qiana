@@ -1,15 +1,17 @@
 from typing import Dict, List, Set, Tuple
 
+import os
+
 class Signature:
 
     baseFunctions : Dict[str,int] # Dict macthing function names to arity, corresponds to functions from F_b
     basePredicates : Dict[str,int]
     nbrQuotedVars : int
 
-    def __init__(self, functions: Dict[str,int] = None, predicates: Dict[str,int] = None, nbrQuotedVars: int = 6):
+    def __init__(self, functions: Dict[str,int] = None, predicates: Dict[str,int] = None, nbrQuotedVars: int = 5):
         self.baseFunctions = functions if functions else {}
         self.basePredicates = predicates if predicates else {}
-        self.nbrQuotedVars = nbrQuotedVars 
+        self.nbrQuotedVars = nbrQuotedVars
         
     def extendFromSignature(self, signature: 'Signature') -> 'Signature':
         """
@@ -64,7 +66,7 @@ class Signature:
             [Signature.quoteSymbol(var) for var in self.baseFunctions] + \
             [Signature.quoteSymbol(var) for var in self.basePredicates] +\
             [Signature.quoteSymbol(var) for var in self._getSpecialFunctions()] +\
-            self.getQuotedVars()
+            [Signature.quoteSymbol(var) for var in self.getQuotedVars()]
 
     def _getSpecialFunctions(self) -> Dict[str,int]:
         # TODO : what else
@@ -83,18 +85,22 @@ class Signature:
         return self.getBasePredicates() + [self.getTruthPredicate()]
     
     def getQuotedVars(self) -> List[str]:
-        return [f"qvar{n+1}" for n in range(self.nbrQuotedVars)]
-
-    def extendFromTptpFormulas(self, tptpFormulas: List[str]) -> None:
+        return [f"qX{i}" for i in range(1, self.nbrQuotedVars + 1)]
+    
+    def extendFromTptps(self, tptpFormulas: str) -> None:
         """
-        Read the bodies of a list of TPTP formulas and extend the signature with the functions and predicates found in the formulas.
-        @param tptpFormulas: A list of TPTP formulas, example : ["fof(name, ![X1] p(f(X1),X1)", "p(f(a),b))."]
+        Read text matching a list of TPTP formulas (possibly with linebreaks and formulas split over multiple lines) and extend the signature with the functions and predicates found in the formulas.
         """
-        for formula in tptpFormulas:
-            formula = formula.strip()
-            if not formula.startswith("fof"): continue
-            formula = formula.split(",", 1)[1][::-2]
-            self.extendFromTptp(formula)
+        lines = [line for line  in tptpFormulas.splitlines() if not line.startswith("%") and line.strip()]
+        formula = ""
+        for line in lines:
+            if line.strip().endswith(")."):
+                formula += line
+                body = formula.split(",", 2)[2].strip().removesuffix(").") # go from fof(name, role, body). to body
+                self.extendFromTptp(body)
+                formula = ""
+            else:
+                formula += line
 
     def extendFromTptp(self, tptpFormula: str) -> None:
         """

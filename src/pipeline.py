@@ -27,7 +27,7 @@ class Pipeline:
             from gui import Settings
             quotedVariableNumber = Settings.getQuotedVarsNumber()
         signature = Signature(nbrQuotedVars=quotedVariableNumber)
-        signature.extendFromTptpFormulas(input)
+        signature.extendFromTptps(input)
         # self.qianaClosure : str = os.linesep.join(qianaClosure(input, variableNumber))
         self.qianaClosure = input + os.linesep + os.linesep.join(getAllSchemesInstances(schemeLines, signature))
 
