@@ -2,6 +2,8 @@ from typing import Dict, List, Set, Tuple
 
 import os
 
+from qianaExtension.tptpParsing import parseSymbols
+
 class Signature:
 
     baseFunctions : Dict[str,int] # Dict macthing function names to arity, corresponds to functions from F_b
@@ -79,7 +81,7 @@ class Signature:
         return "qianaTruth"
     
     def getBasePredicates(self) -> List[str]:
-        return self.basePredicates.keys()
+        return list(self.basePredicates.keys())
     
     def getAllPredicates(self) -> List[str]:
         return self.getBasePredicates() + [self.getTruthPredicate()]
@@ -107,16 +109,12 @@ class Signature:
         Read the body of a TPTP formula and extend the signature with the functions and predicates found in the formula.
         @param tptpFormula: The body of a TPTP formula, example : "![X1] p(f(X1),X1)"
         """
-        for symbol, arity, isFunction in Signature._parseFormula(tptpFormula):
-            if symbol in self._getSpecialFunctions() or symbol == self.getTruthPredicate():
-                continue
-            if Signature.isQuoted(symbol):
-                # We can't know if it's a quoted function or predicate, so we skip the case. # TODO : add to both instead? It would create additional schemes but maybe that would be fine?
-                continue
-            if isFunction:
-                self.addFunction(symbol, arity)
-            else:
-                self.addPredicate(symbol, arity)
+        for symbol, (arity, isFunction) in parseSymbols(tptpFormula).items():
+            if symbol[0].isupper(): continue # We don't want to add variables
+            if symbol in self._getSpecialFunctions() or symbol == self.getTruthPredicate(): continue
+            if Signature.isQuoted(symbol): continue # We can't know if it's a quoted function or predicate, so we skip the case. # TODO : add to both instead? It would create additional schemes but maybe that would be fine?
+            if isFunction: self.addFunction(symbol, arity)
+            else: self.addPredicate(symbol, arity)
 
     def _parseFormula(formula : str, formulasNext : bool = False) -> List[Tuple[str, int, bool]]:
         """

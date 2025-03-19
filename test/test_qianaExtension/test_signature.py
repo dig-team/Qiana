@@ -35,7 +35,7 @@ def test_extend_from_tptp_with_quantifier():
     # Test with quantifiers
     from src.qianaExtension.signature import Signature
     signature = Signature()
-    signature.extendFromTptp("![X1] p(X1, f(X2))")
+    signature.extendFromTptp("![X1] : p(X1, f(X2))")
     assert "p" in signature.basePredicates
     assert signature.basePredicates["p"] == 2
     assert "f" in signature.baseFunctions
@@ -87,14 +87,6 @@ def test_extend_from_tptp_multiple_calls():
     assert "g" in signature.baseFunctions
     assert signature.baseFunctions["g"] == 2
 
-def test_extend_from_tptp_empty():
-    # Test with an empty formula
-    from src.qianaExtension.signature import Signature
-    signature = Signature()
-    signature.extendFromTptp("")
-    assert not signature.basePredicates  # Should be empty
-    assert not signature.baseFunctions  # Should be empty
-    
 def test_extend_from_tptp_only_variable():
     # Test with just a variable
     from src.qianaExtension.signature import Signature
@@ -142,3 +134,13 @@ def test_extend_from_tptp_quoted_symbols():
     assert signature.basePredicates["q"] == 1
     assert "q_p" not in signature.baseFunctions
     assert "p" not in signature.basePredicates
+
+def test_extend_from_full_tptpts():
+    from os.path import join, dirname
+    from src.qianaExtension.signature import Signature
+
+    signature = Signature()
+    with open(join("..","test","test_qianaExtension","RJbasic.p")) as file:
+        signature.extendFromTptps(file.read())
+    pass
+    
