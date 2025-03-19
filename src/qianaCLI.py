@@ -44,9 +44,7 @@ if __name__ == "__main__":
     if args.verbose:
         print("Input preview:", input_content[:100] + ("..." if len(input_content) > 100 else ""))
 
-    pipeline = Pipeline()
-    variableNumber = args.numberVars if args.numberVars else 5
-    timeout = args.timeout if args.timeout else 5
+    pipeline = Pipeline(args.variableNumber, args.timeout)
     pipeline.computeQianaClosure(input_content)
     if args.closure:
         output = pipeline.getQianaClosure()

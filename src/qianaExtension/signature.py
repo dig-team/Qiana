@@ -122,7 +122,68 @@ class Signature:
         """
         Take a formula (for example "![X1] p(f(X1))") and returns a list of tuple containing each symbol along with its arity and a isAFunction boolean
         """
-        def _parseTopLevel(formula : str) -> Tuple[str, List[str]]:
+      
+        binary_connectives = ["&", "=>", "<=>", "|"]
+        parenthesis_level = 0
+        for i, char in enumerate(formula):
+            if char == "(":
+                parenthesis_level += 1
+            elif char == ")":
+                parenthesis_level -= 1
+            elif parenthesis_level == 0 :
+                for connective in binary_connectives:
+                    if formula[i:].startswith(connective):
+                        assert not formulasNext 
+                        return Signature._parseFormula(formula[:i], formulasNext) + Signature._parseFormula(formula[i+len(connective):], formulasNext)
+        if "]" in formula: 
+            splitformula = formula.split("]", 1)[1].strip()
+            assert splitformula.startswith(":"), f"Expected ':' after ']' in {formula}"
+            formula = splitformula[1:].strip()
+        if not formula : return []
+        
+        # Remove outermost parenthesis
+        while formula[0] == "(":
+            parenthesis_level = 0
+            for i, char in enumerate(formula):
+                if char == "(":
+                    parenthesis_level += 1
+                elif char == ")":
+                    parenthesis_level -= 1
+                if parenthesis_level == 0:
+                    break
+            if i == len(formula) - 1:
+                formula = formula[1:-1].strip()
+            else:
+                break
+
+        # Handle the only unary logical connectives 
+        if formula.startswith("~"):
+            return Signature._parseFormula(formula[1:], True)
+
+        binary_connectives = ["&", "=>", "<=>", "|"]
+        parenthesis_level = 0
+        for i, char in enumerate(formula):
+            if char == "(":
+                parenthesis_level += 1
+            elif char == ")":
+                parenthesis_level -= 1
+            elif parenthesis_level == 0 :
+                for connective in binary_connectives:
+                    if formula[i:].startswith(connective):
+                        assert not formulasNext 
+                        return Signature._parseFormula(formula[:i], formulasNext) + Signature._parseFormula(formula[i+len(connective):], formulasNext)
+
+        # Reach this only if there were no toplevel connectives
+        symbol, arguments = Signature._parseTopLevel(formula)
+
+        # Only variables start with an uppercase char
+        if not symbol[0].islower():
+            assert not arguments
+            return []
+        
+        return [(symbol, len(arguments), formulasNext)] + [tuple for arg in arguments for tuple in Signature._parseFormula(arg, True)]
+
+    def _parseTopLevel(formula : str) -> Tuple[str, List[str]]:
             """
             Read a formula of the form $f(a1, a2, ..., an)$ and return the function name and the arguments
             """
@@ -165,34 +226,3 @@ class Signature:
                     args.append(current_arg.strip())
             
             return name, args
-
-        if "]" in formula: formula = formula.split("]", 1)[1] 
-        if not formula : return []
-        if formula[0] == "(" and formula[-1] == ")": formula = formula[1:-1].strip()
-
-        # Handle the only unary logical connectives 
-        if formula.startswith("~"):
-            return Signature._parseFormula(formula[1:], True)
-
-        binary_connectives = ["&", "=>", "<=>", "|"]
-        parenthesis_level = 0
-        for i, char in enumerate(formula):
-            if char == "(":
-                parenthesis_level += 1
-            elif char == ")":
-                parenthesis_level -= 1
-            elif parenthesis_level == 0 :
-                for connective in binary_connectives:
-                    if formula[i:].startswith(connective):
-                        assert not formulasNext 
-                        return Signature._parseFormula(formula[:i], formulasNext) + Signature._parseFormula(formula[i+len(connective):], formulasNext)
-
-        # Reach this only if there were no toplevel connectives
-        symbol, arguments = _parseTopLevel(formula)
-
-        # Only variables start with an uppercase char
-        if not symbol[0].islower():
-            assert not arguments
-            return []
-        
-        return [(symbol, len(arguments), formulasNext)] + [tuple for arg in arguments for tuple in Signature._parseFormula(arg, True)]
