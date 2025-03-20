@@ -71,14 +71,13 @@ class Signature:
             [Signature.quoteSymbol(var) for var in self.getQuotedVars()]
 
     def _getSpecialFunctions(self) -> Dict[str,int]:
-        # TODO : what else
-        return {"qianaQuotingFunc" : 1}
+        return {"q_Quote" : 1, "q_Neg" : 1, "q_And" : 2, "q_Or" : 2, "q_Forall" : 2}
     
     def getTruthPredicate(self) -> str:
         """
         Returns the name of the truth predicate in the signature
         """
-        return "qianaTruth"
+        return "q_Truth"
     
     def getBasePredicates(self) -> List[str]:
         return list(self.basePredicates.keys())
@@ -87,7 +86,7 @@ class Signature:
         return self.getBasePredicates() + [self.getTruthPredicate()]
     
     def getQuotedVars(self) -> List[str]:
-        return [f"qX{i}" for i in range(1, self.nbrQuotedVars + 1)]
+        return [f"q_X{i}" for i in range(1, self.nbrQuotedVars + 1)]
     
     def extendFromTptps(self, tptpFormulas: str) -> None:
         """

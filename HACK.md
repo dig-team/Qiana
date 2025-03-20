@@ -34,14 +34,6 @@ The formula expression is the body of a TPTP formula, except it can contain the 
 3. **Quoting Mechanism**:
    - `WITH $qp QUOTING $p` - Creates a quoted version of symbol `$p` named `$qp`, used in swap patterns.
 
-## Special Symbols
-
-- `qNot`, `qAnd`, `qTruth`, `qQuote`, `qForall`, `qOr` - Special logical operators
-- `ist` - Appears to represent a belief or context operator ("is true")
-- `eval` - Evaluation function
-- `sub` - Substitution function
-- `wft`, `term` - Predicates for well-formed terms
-
 ## Example
 ```
 FORMULA axiom24

@@ -1,30 +1,30 @@
-% The special symbols of the logic are qNot, qAnd, qTruth, and qQuote. These are not defined in the schemes but already exist implicitly
+% The special symbols of the logic are q_Neg, q_And, q_Or, q_Forall, q_Truth, and q_Quote. These are not defined in the schemes but already exist implicitly
 % In addition, we always include the following
 PREDICATE ist OF ARITY 2
 FUNCTION sub OF ARITY 3
 FUNCTION eval OF ARITY 1
-% Eval is simply called "E" in the article
+% eval is simply called "E" in the article
 PREDICATE wft OF ARITY 1
 PREDICATE term OF ARITY 1
 
 % Default QIANA axioms
 FORMULA axiom5
-BODY ![XC, X1, X2] :(ist(XC, qAnd(X1, X2)) => (ist(XC, X1) & ist(XC, X2)))
+BODY ![XC, X1, X2] :(ist(XC, q_And(X1, X2)) => (ist(XC, X1) & ist(XC, X2)))
 
 FORMULA axiom6
-BODY ![XC, X1, X2] :(ist(XC, qAnd(X1, X2)) <=> ist(XC, qAnd(X2, X1)))
+BODY ![XC, X1, X2] :(ist(XC, q_And(X1, X2)) <=> ist(XC, q_And(X2, X1)))
 
 FORMULA axiom7
-BODY ![XC, X1] :(ist(XC, qNot(qNot(X1))) <=> ist(XC, X1))
+BODY ![XC, X1] :(ist(XC, q_Neg(q_Neg(X1))) <=> ist(XC, X1))
 
 FORMULA axiom8
-BODY ![XC, X1, X2, X3] :(ist(XC, qAnd(qAnd(X1, X2), X3)) <=> ist(XC, qAnd(X1, qAnd(X2, X3))))
+BODY ![XC, X1, X2, X3] :(ist(XC, q_And(q_And(X1, X2), X3)) <=> ist(XC, q_And(X1, q_And(X2, X3))))
 
 FORMULA axiom9
-BODY ![XC, X1, X2, X3] :(ist(XC, qOr(qAnd(X1, X2), X3)) <=> ist(XC, qAnd(qOr(X1, X3), qOr(X2, X3))))
+BODY ![XC, X1, X2, X3] :(ist(XC, q_OR(q_And(X1, X2), X3)) <=> ist(XC, q_And(q_OR(X1, X3), q_OR(X2, X3))))
 
 FORMULA axiom10
-BODY ![XC, X1, X2] :((ist(XC, qOr(X1, X2)) & ist(XC, qNot(X1))) => ist(XC, X2))
+BODY ![XC, X1, X2] :((ist(XC, q_OR(X1, X2)) & ist(XC, q_Neg(X1))) => ist(XC, X2))
 
 % Axioms specific to the finite axiomatization process
 FORMULA axiom12
@@ -47,7 +47,7 @@ RANGE $p IN BASE_PREDICATE
 DOT_ARITIES $p $p $p $p $p
 
 FORMULA axiom17
-BODY ![X1] :(term(qQuote(X1)))
+BODY ![X1] :(term(q_Quote(X1)))
 
 FORMULA axiom18
 BODY ![X1,...,X#] :((term(X1)&...&term(X#)) => term($f(X1,...,X#)))
@@ -55,7 +55,7 @@ RANGE $f IN BASE_FUNCTION
 DOT_ARITIES $f $f $f
 
 FORMULA axiom19
-BODY ![X1] :(wft(qQuote(X1)))
+BODY ![X1] :(wft(q_Quote(X1)))
 
 FORMULA axiom20
 BODY ![X1] :(wft(X1))
@@ -66,7 +66,7 @@ RANGE $f IN BASE_FUNCTION
 DOT_ARITIES $f $f $f
 
 FORMULA axiom22
-BODY ![X1] :(term(X1) => eval(qQuote(X1)) = X1)
+BODY ![X1] :(term(X1) => eval(q_Quote(X1)) = X1)
 
 FORMULA axiom23
 BODY ![X1,...,X#] :((term(X1)&...&term(X#)) => eval($f(X1,...,X#)) = $f(eval(X1),...,eval(X#)))
@@ -80,13 +80,13 @@ WITH $qp QUOTING $p
 DOT_ARITIES $p $p $p $p
 
 FORMULA axiom25
-BODY ![X1, X2] :(eval(qAnd(X1, X2)) = qAnd(X1, X2))
+BODY ![X1, X2] :(eval(q_And(X1, X2)) = q_And(X1, X2))
 
 FORMULA axiom26
-BODY ![X1, X2] :(eval(qForall(X1, X2)) = qForall(X1, X2))
+BODY ![X1, X2] :(eval(q_Forall(X1, X2)) = q_Forall(X1, X2))
 
 FORMULA axiom27
-BODY ![X1] :(eval(qNot(X1)) = qNot(X1))
+BODY ![X1] :(eval(q_Neg(X1)) = q_Neg(X1))
 
 FORMULA axiom28
 BODY ![X1] :(eval(X1) = X1)
@@ -103,30 +103,30 @@ RANGE $f IN BASE_FUNCTION
 DOT_ARITIES $f $f $f $f
 
 FORMULA axiom32
-BODY ![X1, X2, X3] :((term(X1) & term(X2)) => sub(qForall(X1, X2), X1, X3) = qForall(X1, X2))
+BODY ![X1, X2, X3] :((term(X1) & term(X2)) => sub(q_Forall(X1, X2), X1, X3) = q_Forall(X1, X2))
 
 FORMULA axiom33
-BODY ![X1, X2, X3, X4] :((term(X1) & term(X2)) => sub(qForall(X3, X1), X2, X4) = qForall(X3, sub(X1, X2, X4)))
+BODY ![X1, X2, X3, X4] :((term(X1) & term(X2)) => sub(q_Forall(X3, X1), X2, X4) = q_Forall(X3, sub(X1, X2, X4)))
 
 FORMULA axiom34
-BODY ![X1, X2, X3] :((term(X1) & term(X2)) => sub(qQuote(X1), X2, X3) = qQuote(X1))
+BODY ![X1, X2, X3] :((term(X1) & term(X2)) => sub(q_Quote(X1), X2, X3) = q_Quote(X1))
 
 % Finite versions of infinite axioms
 FORMULA axiom1fin
-BODY ![X1,...,X#] :((wft(X1)&...&wft(X#)) => qTruth($qp(X1,...,X#)) <=> $p(eval(X1),...,eval(X#)))
+BODY ![X1,...,X#] :((wft(X1)&...&wft(X#)) => q_Truth($qp(X1,...,X#)) <=> $p(eval(X1),...,eval(X#)))
 DOT_ARITIES $p $p $p $p
 RANGE $p IN BASE_PREDICATE
 WITH $qp QUOTING $p
 
 FORMULA axiom2fin
-BODY ![X1, X2] :((term(X1) & term(X2)) => qTruth(qAnd(X1, X2)) <=> (qTruth(X1) & qTruth(X2)))
+BODY ![X1, X2] :((term(X1) & term(X2)) => q_Truth(q_And(X1, X2)) <=> (q_Truth(X1) & q_Truth(X2)))
 
 FORMULA axiom3fin
-BODY ![X1] :(term(X1) => (qTruth(qNot(X1)) <=> ~(qTruth(X1))))
+BODY ![X1] :(term(X1) => (q_Truth(q_Neg(X1)) <=> ~(q_Truth(X1))))
 
 FORMULA axiom4fin
-BODY ![X1] :(term(X1) => qTruth(qForall(X1)) <=> (![X2] :qTruth(sub(X1, X2, qQuote(X2)))))
+BODY ![X1] :(term(X1) => q_Truth(q_Forall(X1)) <=> (![X2] :q_Truth(sub(X1, X2, q_Quote(X2)))))
 
 FORMULA axiom11fin
-BODY ![XC, X1] :((term(X1) => (ist(XC, qForall(X1)) => ![X2] :ist(XC, sub(X1, X2, qQuote(X2))))))
+BODY ![XC, X1] :((term(X1) => (ist(XC, q_Forall(X1)) => ![X2] :ist(XC, sub(X1, X2, q_Quote(X2))))))
 

@@ -71,13 +71,14 @@ No other symbol may start with $q\_$ except the ones listed bellow. In particula
 | ------------- | ------------- |
 | $\mathbb{Q}$ | q_Quote |
 | $\textbf{T}$ | q_Truth |
-| E | eval |
-| isTerm | term |
-| Wft | wft |
 | $\underline{\neg}$ | q_Neg |
 | $\underline{\land}$ | q_And |
 | $\underline{\lor}$ | q_Or |
 | $\underline{\forall}$ | q_Forall |
+| E | eval |
+| isTerm | term |
+| Wft | wft |
+| sub | sub |
 
 The quoted variables are written q_X1, q_X2, and so forth. Note that by default 5 quoted variables are used, so the complete list of quoted variables is q_X1, q_X2, q_X3, q_X4, and q_X5.
 
