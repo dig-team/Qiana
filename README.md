@@ -62,6 +62,24 @@ You also need to install Graphviz
 sudo apt install graphviz
 ```
 
+# Writting Qiana formulas in TPTP
+The following conventions are used within this tool to translate formal mathematical notations to TPTP formulas.
+For any function or predicate $f$ or $p$, their quotation is written $q\_f$ (resp $q\_p$).
+No other symbol may start with $q\_$ except the ones listed bellow. In particular, because functions and predicates cannot start with an uppercase letter, we list bellow all the symbols starting with $q\_$ followed by an uppercase letter that are allowed.
+
+| Qiana      | TPTP translation      |
+| ------------- | ------------- |
+| $\mathbb{Q}$ | q_Quote |
+| $\textbf{T}$ | q_Truth |
+| E | eval |
+| isTerm | term |
+| Wft | wft |
+| $\underline{\neg}$ | q_Neg |
+| $\underline{\land}$ | q_And |
+| $\underline{\lor}$ | q_Or |
+| $\underline{\forall}$ | q_Forall |
+
+The quoted variables are written q_X1, q_X2, and so forth. Note that by default 5 quoted variables are used, so the complete list of quoted variables is q_X1, q_X2, q_X3, q_X4, and q_X5.
 
 # Citing Qiana
 If you use Qiana in scientific work, please cite our article
