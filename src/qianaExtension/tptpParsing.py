@@ -4,9 +4,8 @@ import re
 
 def parseSymbols(tptp : str) -> Dict[str,Tuple[int, bool]]:
     """
-    Parse a tptp formula into a dictionary of symbols to their arity and whether they are functions (if not, it means they are predicats).
+    Parse a tptp formula into a dictionary of symbols to their arity and whether they are functions (if not, it means they are predicats). Note that variables are included in the output as functions and need to be filtered out if necessary.
     @param tptp: The tptp formula to parse
-    #  TODO : exaplain about vars
     """
     return _goThroughStruct(_parseStruct(tptp), False)
 

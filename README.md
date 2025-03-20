@@ -82,6 +82,13 @@ No other symbol may start with $q\_$ except the ones listed bellow. In particula
 
 The quoted variables are written q_X1, q_X2, and so forth. Note that by default 5 quoted variables are used, so the complete list of quoted variables is q_X1, q_X2, q_X3, q_X4, and q_X5.
 
+# On logic signatures
+The signature at hand will automatically be deduced from the input TPTP formulas. However quoted symbols and predicates are not used for this (because it would be impossible to always know if they quote a function or a predicate). For this reason, each function or predicate that needs to be present in the signature of the logic should appear unquoted in the input formulas.
+This can always be done by adding a tautological formula with the symbol in question to the input. For exampla:
+```
+fof(trivial_arity_2, axiom, ![X1] : ((p(f(x1,X1),f(X1,X1))) => (p(f(x1,X1),f(X1,X1))))).
+```
+
 # Citing Qiana
 If you use Qiana in scientific work, please cite our article
 

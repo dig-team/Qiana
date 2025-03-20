@@ -111,7 +111,7 @@ class Signature:
         for symbol, (arity, isFunction) in parseSymbols(tptpFormula).items():
             if symbol[0].isupper(): continue # We don't want to add variables
             if symbol in self._getSpecialFunctions() or symbol == self.getTruthPredicate(): continue
-            if Signature.isQuoted(symbol): continue # We can't know if it's a quoted function or predicate, so we skip the case. # TODO : add to both instead? It would create additional schemes but maybe that would be fine?
+            if Signature.isQuoted(symbol): continue # We can't know if it's a quoted function or predicate, so we skip the case. 
             if isFunction: self.addFunction(symbol, arity)
             else: self.addPredicate(symbol, arity)
 
