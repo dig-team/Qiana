@@ -140,7 +140,7 @@ def test_extend_from_full_tptpts():
     from src.qianaExtension.signature import Signature
 
     signature = Signature()
-    with open(join("..","test","test_qianaExtension","RJbasic.p")) as file:
+    with open(join("..","test","testFiles","RJbasic.p")) as file:
         signature.extendFromTptps(file.read())
     pass
     

@@ -95,13 +95,11 @@ class Signature:
         lines = [line for line  in tptpFormulas.splitlines() if not line.startswith("%") and line.strip()]
         formula = ""
         for line in lines:
+            formula += " " + line.strip()
             if line.strip().endswith(")."):
-                formula += line
                 body = formula.split(",", 2)[2].strip().removesuffix(").") # go from fof(name, role, body). to body
                 self.extendFromTptp(body)
                 formula = ""
-            else:
-                formula += line
 
     def extendFromTptp(self, tptpFormula: str) -> None:
         """
