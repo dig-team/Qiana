@@ -59,6 +59,9 @@ class Pipeline:
         else:
             self.htmlTree = getHtmlNoContradiction(self.vampireOutput)
 
+    def contradiction(self) -> bool:
+        return self.foundContradiction
+
     def getHtmlTree(self) -> str:
         return self.htmlTree
     
