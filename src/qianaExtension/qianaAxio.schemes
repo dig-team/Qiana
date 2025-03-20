@@ -89,13 +89,18 @@ FORMULA axiom27
 BODY ![X1] :(eval(q_Neg(X1)) = q_Neg(X1))
 
 FORMULA axiom28
-BODY ![X1] :(eval(X1) = X1)
+BODY (eval($x) = $x)
+RANGE $x IN QUOTED_VARIABLE
 
 FORMULA axiom29
-BODY ![X1, X2, X3] :(term(X1) => sub(X1, X1, X3) = X3)
+BODY ![X3] :(term(X1) => sub($x, $x, X3) = X3)
+RANGE $x IN QUOTED_VARIABLE
 
 FORMULA axiom30
-BODY ![X1, X2, X3] :(term(X1) => sub(X1, X2, X3) = X1)
+% TODO need to update scheme system to have different quoted variables
+BODY ![X3] :(term(X1) => sub($x, $y, X3) = $x)
+RANGE $x IN QUOTED_VARIABLE
+RANGE $y IN QUOTED_VARIABLE
 
 FORMULA axiom31
 BODY ![X1,...,X#, Y1, Y2] :((term(X1)&...&term(X#)) => sub($f(X1,...,X#), Y1, Y2) = $f(sub(X1, Y1, Y2),...,sub(X#, Y1, Y2)))
