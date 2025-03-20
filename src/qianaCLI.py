@@ -12,6 +12,7 @@ if __name__ == "__main__":
     parser.add_argument('-o', '--outputFile', type=str, help='Target output file. If not set, output goes to stdout', required=False)
     parser.add_argument('-t', '--timeout', type=int, help='Maximum time before timeout when calling solver.', required=False)
     parser.add_argument('-c', '--closure', action='store_true', help='Only compute the qiana closure of the input. If false, contradictions will be sought and a solver called.', required=False)
+    parser.add_argument('-s', '--sat', action='store_true', help='Only return FOUND CONTRADICTION or FOUND NO CONTRADICTION, only used if the -c option is ommited.', required=False)
     parser.add_argument('-n', '--numberVars', type=int, help='Pick the number of quoted variables. Default value is 5.', required=False)
 
     
@@ -43,14 +44,18 @@ if __name__ == "__main__":
     # For demonstration purposes, just print the first 100 characters
     if args.verbose:
         print("Input preview:", input_content[:100] + ("..." if len(input_content) > 100 else ""))
+    
+    varNum = args.numberVars if args.numberVars else 5
+    timeout = args.timeout if args.timeout else 5
 
-    pipeline = Pipeline(args.variableNumber, args.timeout)
-    pipeline.computeQianaClosure(input_content)
+    pipeline = Pipeline()
+    pipeline.computeQianaClosure(input_content, varNum)
     if args.closure:
         output = pipeline.getQianaClosure()
     else:
-        pipeline.runCompute()
+        pipeline.computeProofTree(timeout)
         output = pipeline.getHtmlTree()
+        if args.sat: output = "FOUND CONTRADICTION" if pipeline.foundContradiction else "FOUND NO CONTRADICTION"
     if args.outputFile:
         try:
             with open(args.outputFile, 'w') as f:
