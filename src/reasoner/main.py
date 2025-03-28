@@ -26,10 +26,3 @@ def getThree(formulas : str, timeout : int) -> Tuple[bool, List[ReasoningStep], 
         return(True, TPTPOutputParser(result.stdout), result.stdout)
     else:
         raise Exception("Vampire returned an unexpected result: " + result.stdout)
-
-if __name__ == "__main__":
-    # path = sys.argv[1]
-    path = "/home/sipirate/Documents/Doc_Divers/NoRDF/Qiana/Qiana_dig-team/example/input-example-contradiction.p"
-    f = open(path,"r")
-    prompt = f.read()
-    print(getThree(prompt))

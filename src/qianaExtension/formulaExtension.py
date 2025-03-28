@@ -183,14 +183,3 @@ def replaceAllDotPatterns(formula: str, arities: List[int]) -> str:
         leftOperand, rightOperand, leftIndex, rightIndex = findOperands(formula, dotIndex)
         formula = replaceDotPattern(formula, leftIndex, rightIndex, seprationSymbol, leftOperand, rightOperand, arity)
     return formula
-
-if __name__ == "__main__":
-    formula = "(wff(t1) &...& wff(tn) => wff(f(t1,...,tn)))"
-    # n =arity of f
-    print(replaceAllDotPatterns(formula, [2, 2])) # "(wff(t1) & wff(t2) => wff(f(t1,t2))"
-
-    print(injectInDifference("t1", "t2", "n")) # "tn"
-
-    with open("examples/exampleSchemes.schemes", "r") as f:
-        schemes = f.readlines()
-    print(getAllSchemesInstances(schemes, Signature(functions={"f": 2, "g": 1}, predicates={"wff": 1}, constants={"c"})))

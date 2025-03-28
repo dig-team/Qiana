@@ -1,4 +1,5 @@
 import os
+from os.path import join, dirname
 
 from reasoner import callSolver
 from qianaExtension import Signature, getAllSchemesInstances
@@ -21,8 +22,8 @@ class Pipeline:
         @param input: str - the tptp representation of a set of formulas
         @param QuotedVariableNumber: int | None - the number of quoted variables to use in the qiana closure, default is 5. This argument should ideally always be specified when calling for the CLI as otherwise the value stored in Settings will be used.
         """
-        with open("qianaExtension/qianaAxio.schemes", "r") as f:
-            schemeLines = f.readlines()
+        path_to_schemes = join(dirname(__file__), "qianaExtension/qianaAxio.schemes")
+        with open(path_to_schemes, "r") as f: schemeLines = f.readlines()
         if not quotedVariableNumber:
             from gui import Settings
             quotedVariableNumber = Settings.getQuotedVarsNumber()
