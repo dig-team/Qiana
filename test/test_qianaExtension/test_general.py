@@ -49,6 +49,8 @@ def test_schemes_harder():
     sig = Signature()
     allInstances = getAllSchemesInstances(lines, sig)
     for instance in allInstances: assert "..." not in instance
+    names = [instance.split(",")[0] for instance in allInstances]
+    assert len(names) == len(set(names)), "All names should be different"
 
 def test_noFunctions():
     """
@@ -65,6 +67,59 @@ def test_noFunctions():
     sig = Signature()
     allInstances = getAllSchemesInstances(lines, sig)
     for instance in allInstances: assert "..." not in instance
+
+
+def test_distincPairs():
+    """
+    Test schemes containing the DISTINCT keyword.
+    """
+    from qianaExtension.formulaExtension import getAllSchemesInstances
+    from qianaExtension.signature import Signature
+    lines = """
+    FUNCTION f OF ARITY 2
+    FUNCTION ff OF ARITY 2
+    PREDICATE p OF ARITY 2
+    FUNCTION c OF ARITY 0
+
+    FORMULA test
+    BODY ![X1,...,X#, Y1, Y2] : ((term(X1)&...&term(X#)) => sub($f(X1,...,X#), Y1, Y2) = $g(sub(X1, Y1, Y2),...,sub(X#, Y1, Y2)))
+    RANGE $f IN BASE_FUNCTION
+    RANGE $g IN BASE_FUNCTION
+    DOT_ARITIES $f $f $f $f
+    DISTINCT $f $g
+    """.splitlines()
+    sig = Signature()
+    allInstances = getAllSchemesInstances(lines, sig)
+    for instance in allInstances: assert "..." not in instance
+    names = [instance.split(",")[0] for instance in allInstances]
+    assert len(names) == len(set(names)), "All names should be different"
+
+def test_distincPairs2():
+    """
+    Test schemes containing the DISTINCT keyword.
+    """
+    from qianaExtension.formulaExtension import getAllSchemesInstances
+    from qianaExtension.signature import Signature
+   
+    lines = """
+    FUNCTION f OF ARITY 2
+    FUNCTION g OF ARITY 2
+
+    FORMULA test
+    BODY $f(x1,...,x#) = $g(x1,...,x#)
+    RANGE $f IN BASE_FUNCTION
+    RANGE $g IN BASE_FUNCTION
+    DOT_ARITIES $f $g
+    DISTINCT $f $g
+    """.splitlines()
+    sig = Signature()
+    allInstances = getAllSchemesInstances(lines, sig)
+    for instance in allInstances: assert "..." not in instance
+    names = [instance.split(",")[0] for instance in allInstances]
+    assert len(names) == len(set(names)), "All names should be different"
+    for instance in allInstances: assert not "f(x1,x2) = f(x1,x2)" in instance
+    assert any("f(x1,x2) = g(x1,x2)" in instance for instance in allInstances)
+
 
 def test_A31():
     """

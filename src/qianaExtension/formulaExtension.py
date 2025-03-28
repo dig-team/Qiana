@@ -49,6 +49,7 @@ def getAllInstancesOfFormula(schemeInfo : SchemeInfo, signature : Signature) -> 
     # Obtain a list of dicts, each corresponding to one possible mapping of swap pattern symbols to the appropriate concrete symbols
     allCombinations : List[Dict[str,str]] = [dict(zip(swapValues.keys(), combi)) for combi in product(*swapValues.values())]
     allCombinations = [schemeInfo.enrichSymbolDict(case) for case in allCombinations]
+    allCombinations = [case for case in allCombinations if _respectDistinctPairs(case, schemeInfo.getDistinctPairs())] 
 
     formulas = []
     if not allCombinations and not schemeInfo.containsSwapPatterns(): allCombinations = [dict()] # If there is no swap pattern we still need to generate a formula. However if there is no valid combaination but there is a swap pattern, we generate nothing at all
@@ -56,9 +57,25 @@ def getAllInstancesOfFormula(schemeInfo : SchemeInfo, signature : Signature) -> 
         arities = [signature.getArity(case[symbol]) for symbol in schemeInfo.getAritySymbols()]
         schemeBody = schemeInfo.getBody()
         schemeBody = applyAllPatternsOneInstance(schemeBody, arities, case)
-        schemeBody = "fof(" + schemeInfo.getName() + "_".join(case.values()) + ",axiom," + schemeBody + ")."
+        schemeBody = "fof(" + schemeInfo.getName() + "_" + "_".join(case.values()) + "axiom,axiom," + schemeBody + ")."
         formulas.append(schemeBody)
     return formulas
+
+def _respectDistinctPairs(case: Dict[str, str], distinctPairs: List[Tuple[str, str]]) -> bool:
+    """
+    Returns True if the case respects all the distinct pairs, False otherwise
+
+    @param case: Dict[str, str] - a mapping of swap pattern symbols to the concrete symbols they are replaced by
+    @param distinctPairs: List[Tuple[str, str]] - a list of pairs of symbols that should be distinct in every instance of the scheme
+    @return: bool - True if the case respects all the distinct pairs, False otherwise
+    """
+    for (symbol1, symbol2) in distinctPairs:
+        assert symbol1.startswith("$")
+        if symbol2.startswith("$") : target = case[symbol2]
+        else: target = symbol2
+        if case[symbol1] == target:
+            return False
+    return True
 
 def applyAllPatternsOneInstance(formula: str, arities: List[int], swapPatterns: Dict[str, str]) -> str:
     """

@@ -11,14 +11,16 @@ class SchemeInfo():
     symbolTargets : Dict[str,str]
     symbolQuotationMatchings : Dict[str,str]
     _containsSwapPatterns : bool
+    distinctPairs : List[Tuple[str,str]]
 
-    def __init__(self, name: str, body: str, aritySymbols: List[str], symbolTargets: Dict[str, str], symbolQuotationMatchings: Dict[str, str], containsSwapPatterns: bool):
+    def __init__(self, name: str, body: str, aritySymbols: List[str], symbolTargets: Dict[str, str], symbolQuotationMatchings: Dict[str, str], containsSwapPatterns: bool, distinctPairs: List[Tuple[str,str]]):
         self.name = name
         self.body = body
         self.aritySymbols = aritySymbols
         self.symbolTargets = symbolTargets
         self.symbolQuotationMatchings = symbolQuotationMatchings
         self._containsSwapPatterns = containsSwapPatterns
+        self.distinctPairs = distinctPairs
 
     def getBody(self) -> str:
         return self.body
@@ -43,6 +45,12 @@ class SchemeInfo():
         @return a dictionary matching swap pattern symbols to a word indicating what to swap it with (for example "FUNCTION" or "PREDICATE")
         """
         return self.symbolTargets
+    
+    def getDistinctPairs(self) -> List[Tuple[str,str]]:
+        """
+        @return a list of pairs of symbols (possibly swap pattern symbols) that should be distinct in every instance of the scheme.
+        """
+        return self.distinctPairs
 
     def enrichSymbolDict(self, symbolDict: Dict[str,str]) -> Dict[str,str]:
         """
@@ -86,7 +94,8 @@ def getAllSchemeInfos(lines: list[str]) -> Tuple[List[SchemeInfo],Signature]:
             or line.startswith("BODY ") \
             or line.startswith("DOT_ARITIES ") \
             or line.startswith("RANGE ") \
-            or line.startswith("WITH ")
+            or line.startswith("WITH ") \
+            or line.startswith("DISTINCT ")
         if line.startswith("FORMULA "):
             formulaNames.append(line.removeprefix("FORMULA "))
             patternInfos.append([])
@@ -116,6 +125,9 @@ def _getSymbolAndArity(line:str) -> Tuple[str, int]:
     return (symbol, int(arity))
 
 def _readSchemeInfo(lines: list[str]) -> SchemeInfo:
+    """
+    Read the lines corresponding to a scheme and return the associated SchemeInfo object.
+    """
     nameLine = lines[0]
     bodyLine = lines[1]
     patternInfoLines = lines[2:]
@@ -126,8 +138,10 @@ def _readSchemeInfo(lines: list[str]) -> SchemeInfo:
     aritySymbols = [] # Default case if the arities are not specified, in the abscence of dot patterns
     swapValues : Dict[str, str]  = dict() # Matches each swap pattern symbol (like "$f") to the list of concrete symbol that can be put in its place
     swapQuotations : Dict[str, str] = dict() # Matches each swap pattern symbol that is a quotation to the swap pattern symbol it needs to be a quotation of
+    distinctPairs : List[Tuple[str,str]] = [] # List of pairs of symbols that should be distinct in every instance of the scheme
     foundASwapPattern = False
     for line in patternInfoLines:
+        line = line.strip()
         # If the line is of the form "$f is FUNCTION", it is a swap pattern
         if bool(re.match(r"^DOT_ARITIES(?:\s\$\S+)+$", line)):
             aritySymbols = line.removeprefix("DOT_ARITIES").strip().split(" ")
@@ -139,5 +153,10 @@ def _readSchemeInfo(lines: list[str]) -> SchemeInfo:
         elif bool(re.match(r"^WITH \S+ QUOTING \S+$", line)):
             _, symbol, _, quotedSymbol = line.split(" ")
             swapQuotations[symbol] = quotedSymbol
-    return SchemeInfo(name, body, aritySymbols, swapValues, swapQuotations, foundASwapPattern)
+        elif bool(re.match(r"^DISTINCT \S+ \S+$", line)):
+            _, symbol1, symbol2 = line.split(" ")
+            distinctPairs.append((symbol1, symbol2))
+        else:
+            raise ValueError(f"Invalid line in pattern info: {line}")
+    return SchemeInfo(name, body, aritySymbols, swapValues, swapQuotations, foundASwapPattern, distinctPairs)
     
