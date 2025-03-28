@@ -12,8 +12,12 @@ class SchemeInfo():
     symbolQuotationMatchings : Dict[str,str]
     _containsSwapPatterns : bool
     distinctPairs : List[Tuple[str,str]]
+    artityRanges : Dict[str, Tuple[float, float]]
 
     def __init__(self, name: str, body: str, aritySymbols: List[str], symbolTargets: Dict[str, str], symbolQuotationMatchings: Dict[str, str], containsSwapPatterns: bool, distinctPairs: List[Tuple[str,str]]):
+        """
+        Initialize a SchemeInfo object and stores the attributes. It should be noted the the symbolTargets attribute can contain matching of symbols of the form $f[x;y] where x and y give a limit to the range of the arity of $f. This information will be extracted during initialization and is not present in the symbols returned by getSymbolTargets
+        """
         self.name = name
         self.body = body
         self.aritySymbols = aritySymbols
@@ -21,6 +25,38 @@ class SchemeInfo():
         self.symbolQuotationMatchings = symbolQuotationMatchings
         self._containsSwapPatterns = containsSwapPatterns
         self.distinctPairs = distinctPairs
+        self._extractRangeInfo()
+
+    def testValidCase(self, case : Dict[str,str], sig : Signature) -> bool:
+        """
+        Test an association of values to symbol and check its validity according to the following constraints given by the scheme
+        1. No two symbols that are supposed to be distinct are equal
+        2. The arity of each dot pattern is in the range given by the scheme
+        3. The symbols used in the scheme are in the signature
+        """
+        # Check the symbols are in the signature
+        if not all([symbol in sig.getAllFunctions() or symbol in sig.getAllPredicates() for symbol in case.values()]): return False
+        if not self._respectDistinctPairs(case): return False
+        for symbol, target in case.items():
+            if symbol not in self.artityRanges: continue # Symbols that quote another symbols are not in the arity ranges
+            lower, upper = self.artityRanges[symbol]
+            if not (lower <= sig.getArity(target) <= upper): return False
+        return True
+
+    def _respectDistinctPairs(self, case: Dict[str, str]) -> bool:
+        """
+        Returns True if the case respects all the distinct pairs, False otherwise
+
+        @param case: Dict[str, str] - a mapping of swap pattern symbols to the concrete symbols they are replaced by
+        @return: bool - True if the case respects all the distinct pairs, False otherwise
+        """
+        for (symbol1, symbol2) in self.distinctPairs:
+            assert symbol1.startswith("$")
+            if symbol2.startswith("$") : target = case[symbol2]
+            else: target = symbol2
+            if case[symbol1] == target:
+                return False
+        return True
 
     def getBody(self) -> str:
         return self.body
@@ -33,6 +69,34 @@ class SchemeInfo():
         True if there is at list a swap pattern in the scheme
         """
         return self._containsSwapPatterns
+    
+    def _extractRangeInfo(self) -> None:
+        """
+        Called at the end of the initialization to extract the range information from the symbolTargets attribute. Reads all symbol used in the symbolTargets dict and extracts the range information from them, which is stored in the SchemeInfo object. 
+        For example if {"$f[1;3]": "BASE_FUNCTION"} is in symbolTargets, this will extract the information that $f has arity between 1 and 3 and update symbolTargets to contain {"$f" : "BASE_FUNCTION"} instead. Remark that a value of -1 is considered as infinity for the upper bound.
+        """
+        newSymbolTargets = dict()
+        arityRanges : Dict[str, Tuple[float, float]] = dict()
+        
+        for symbol, target in self.symbolTargets.items():
+            range_pattern = re.compile(r'^(.*?)\[(\d+);(-?\d+)\]$')
+            match = range_pattern.match(symbol)
+            if match:
+                base_symbol = match.group(1)
+                lower = float(match.group(2))
+                upper = float(match.group(3))
+                if upper == -1: 
+                    upper = float("inf")
+                newSymbolTargets[base_symbol] = target
+                arityRanges[base_symbol] = (lower, upper)
+            else:
+                range_pattern = re.compile(r'^\$[a-zA-Z0-9_]+')
+                assert range_pattern.match(symbol)
+                newSymbolTargets[symbol] = target
+                arityRanges[symbol] = (0, float("inf"))
+        self.symbolTargets = newSymbolTargets
+        self.artityRanges = arityRanges
+
 
     def getAritySymbols(self) -> List[str]:
         """
@@ -46,12 +110,6 @@ class SchemeInfo():
         """
         return self.symbolTargets
     
-    def getDistinctPairs(self) -> List[Tuple[str,str]]:
-        """
-        @return a list of pairs of symbols (possibly swap pattern symbols) that should be distinct in every instance of the scheme.
-        """
-        return self.distinctPairs
-
     def enrichSymbolDict(self, symbolDict: Dict[str,str]) -> Dict[str,str]:
         """
         Enrich a dict matching pattern symbols (like $f) to their actual symbol (like "multiply") with more such matchings to account for symbols that represent the quotation of another symbol
@@ -159,4 +217,4 @@ def _readSchemeInfo(lines: list[str]) -> SchemeInfo:
         else:
             raise ValueError(f"Invalid line in pattern info: {line}")
     return SchemeInfo(name, body, aritySymbols, swapValues, swapQuotations, foundASwapPattern, distinctPairs)
-    
+

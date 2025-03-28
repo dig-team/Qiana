@@ -120,6 +120,88 @@ def test_distincPairs2():
     for instance in allInstances: assert not "f(x1,x2) = f(x1,x2)" in instance
     assert any("f(x1,x2) = g(x1,x2)" in instance for instance in allInstances)
 
+def test_arityRanges():
+    """
+    Test schemes containing the ARITY keyword.
+    """
+    from qianaExtension.formulaExtension import getAllSchemesInstances
+    from qianaExtension.signature import Signature
+    lines = """
+    FUNCTION f OF ARITY 2
+    FUNCTION ff OF ARITY 3
+
+    FORMULA test
+    BODY ![X1,...,X#] : ((wft(X1) &...& wft(X#)) => truth($f(X1,...,X#)))
+    DOT_ARITIES $f $f $f
+    RANGE $f[0;2] IN BASE_FUNCTION
+    """.splitlines()
+    sig = Signature()
+    allInstances = getAllSchemesInstances(lines, sig)
+    for instance in allInstances: assert "..." not in instance
+
+def test_arityRanges2():
+    """
+    Test schemes containing complex ARITY range specifications with multiple functions,
+    different arity ranges, and combined patterns.
+    """
+    from qianaExtension.formulaExtension import getAllSchemesInstances
+    from qianaExtension.signature import Signature
+    lines = """
+    FUNCTION f OF ARITY 2
+    FUNCTION g OF ARITY 1
+    FUNCTION h OF ARITY 3
+    FUNCTION i OF ARITY 0
+    PREDICATE p OF ARITY 2
+    PREDICATE q OF ARITY 1
+    
+    FORMULA complex_test
+    BODY ![X1,...,X#, Y1,...,Y#] : (((wft(X1) &...& wft(X#)) & (term(Y1) &...& term(Y#))) => $f(X1,...,X#) = $g(Y1,...,Y#) & $p(X1,Y1))
+    DOT_ARITIES $f $g $f $g $f $g
+    RANGE $f[1;3] IN BASE_FUNCTION
+    RANGE $g[0;2] IN BASE_FUNCTION
+    RANGE $p IN BASE_PREDICATE
+    DISTINCT $f $g
+    
+    FORMULA additional_test
+    BODY ![Z] : ($h(Z) = Z => $p(Z, $g(Z)))
+    RANGE $h[1;1] IN BASE_FUNCTION
+    RANGE $g[0;1] IN BASE_FUNCTION
+    RANGE $p IN BASE_PREDICATE
+    """.splitlines()
+    
+    sig = Signature()
+    allInstances = getAllSchemesInstances(lines, sig)
+    
+    # General validation
+    for instance in allInstances: 
+        assert "..." not in instance
+    
+    # Validate formula generation
+    names = [instance.split(",")[0] for instance in allInstances]
+    assert len(names) == len(set(names)), "All names should be different"
+    
+    # Validate specific arity constraint cases
+    f2_instances = [inst for inst in allInstances if "f(X1,X2)" in inst]
+    f1_instances = [inst for inst in allInstances if "g(Y1)" in inst]
+    i0_instances = [inst for inst in allInstances if "i(" in inst]
+    
+    # Function with arity 2 should be included (in range [1;3])
+    assert len(f2_instances) > 0, "Function with arity 2 should be included"
+    
+    # Function with arity 1 should be included (in range [0;2])
+    assert len(f1_instances) > 0, "Function with arity 1 should be included"
+    
+    # Function with arity 0 should be included in instances where range is [0;2]
+    assert len(i0_instances) > 0, "Function with arity 0 should be included"
+    
+    # Check distinct constraint is enforced
+    for instance in allInstances:
+        if "f(X1,X2) = f(Y1,Y2)" in instance:
+            assert False, "Distinct constraint violated"
+            
+    # Validate complex patterns
+    assert any("f(X1,X2) = g(Y1)" in inst for inst in allInstances), "Missing expected pattern combination"
+    assert any("g(Z) = Z => p(Z, g(Z))" in inst for inst in allInstances), "Missing expected pattern in second formula"
 
 def test_A31():
     """
