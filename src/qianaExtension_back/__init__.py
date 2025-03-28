@@ -1,1 +1,0 @@
-from qianaExtension.Qiana import getOutput as qianaClosure
