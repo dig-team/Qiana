@@ -24,6 +24,30 @@ def test_getAllSchemeInfos_basic():
     assert schemeInfos[0].getSymbolTargets() == {"$f": "BASE_FUNCTION"}
     assert schemeInfos[0].symbolQuotationMatchings == {"$qf": "$f"}
 
+def test_arityRanges():
+    """
+    Test getAllSchemeInfos with arity ranges.
+    """
+    from src.qianaExtension.patternParsing import getAllSchemeInfos, _getSymbolAndArity, _readSchemeInfo, SchemeInfo
+    from src.qianaExtension.signature import Signature
+    lines = [
+        "FUNCTION f0 OF ARITY 0",
+        "FUNCTION f1 OF ARITY 1",
+        "FUNCTION f2 OF ARITY 2",
+        "FUNCTION f3 OF ARITY 3",
+        "FORMULA testFormula",
+        "BODY ![X1,...,X#] : $p(f(X1,...,X#))",
+        "DOT_ARITIES $f $f",
+        "RANGE $f[1;2] IN BASE_FUNCTION",
+    ]
+    schemeInfos, signature = getAllSchemeInfos(lines)
+    assert len(schemeInfos) == 1
+    assert isinstance(schemeInfos[0], SchemeInfo)
+    assert schemeInfos[0].getName() == "testFormula"
+    assert schemeInfos[0].getBody() == "![X1,...,X#] : $p(f(X1,...,X#))"
+    assert schemeInfos[0].getAritySymbols() == ["$f", "$f"]
+    assert "$f" in schemeInfos[0].getSymbolTargets() 
+    
 def test_getAllSchemeInfos_empty():
     """
     Test getAllSchemeInfos with empty input.

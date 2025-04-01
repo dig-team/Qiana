@@ -38,7 +38,9 @@ class SchemeInfo():
         if not all([symbol in sig.getAllFunctions() or symbol in sig.getAllPredicates() for symbol in case.values()]): return False
         if not self._respectDistinctPairs(case): return False
         for symbol, target in case.items():
-            if symbol not in self.artityRanges: continue # Symbols that quote another symbols are not in the arity ranges
+            if symbol not in self.artityRanges: 
+                assert symbol in self.symbolQuotationMatchings
+                continue # Symbols that quote another symbols are not in the arity ranges
             lower, upper = self.artityRanges[symbol]
             if not (lower <= sig.getArity(target) <= upper): return False
         return True
