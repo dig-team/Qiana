@@ -97,24 +97,29 @@ BODY ![X3] :(term(X1) => sub($x, $x, X3) = X3)
 RANGE $x IN QUOTED_VARIABLE
 
 FORMULA axiom30
-% TODO need to update scheme system to have different quoted variables
 BODY ![X3] :(term(X1) => sub($x, $y, X3) = $x)
 RANGE $x IN QUOTED_VARIABLE
 RANGE $y IN QUOTED_VARIABLE
+DISTINCT $x $y
 
 FORMULA axiom31
-BODY ![X1,...,X#, Y1, Y2] :((term(X1)&...&term(X#)) => sub($f(X1,...,X#), Y1, Y2) = $f(sub(X1, Y1, Y2),...,sub(X#, Y1, Y2)))
+BODY ![X1,...,X#, Y1] :((term(X1)&...&term(X#)) => sub($f(X1,...,X#), $x, Y1) = $f(sub(X1, $x, Y1),...,sub(X#, $x, Y1)))
 RANGE $f IN BASE_FUNCTION
 DOT_ARITIES $f $f $f $f
 
 FORMULA axiom32
-BODY ![X1, X2, X3] :((term(X1) & term(X2)) => sub(q_Forall(X1, X2), X1, X3) = q_Forall(X1, X2))
+BODY ![X1, X2] :((term(X1) & term(X2)) => sub(q_Forall($x, X1), $x, X2) = q_Forall($x, X1))
+RANGE $x IN QUOTED_VARIABLE
 
 FORMULA axiom33
-BODY ![X1, X2, X3, X4] :((term(X1) & term(X2)) => sub(q_Forall(X3, X1), X2, X4) = q_Forall(X3, sub(X1, X2, X4)))
+BODY ![X1, X2] :((term(X1) & term(X2)) => sub(q_Forall($y, X1), $x, X2) = q_Forall(X$y, sub(X1, $x, X2)))
+RANGE $x IN QUOTED_VARIABLE
+RANGE $y IN QUOTED_VARIABLE
+DISTINCT $x $y
 
 FORMULA axiom34
-BODY ![X1, X2, X3] :((term(X1) & term(X2)) => sub(q_Quote(X1), X2, X3) = q_Quote(X1))
+BODY ![X1, X2] :((term(X1) & term(X2)) => sub(q_Quote(X1), $x, X2) = q_Quote(X1))
+RANGE $x IN QUOTED_VARIABLE
 
 % Finite versions of infinite axioms
 FORMULA axiom1fin
