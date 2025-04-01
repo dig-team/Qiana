@@ -14,7 +14,8 @@ def getAllSchemesInstances(lines : List[str], signature: Signature = None) -> Li
     @return: List[str] - a list of all the instances of the formulas obtained by applying the patterns in lines, these are complete and valid tptp formulas
     """
     signature = signature if signature else Signature()
-    schemeInfos, signature = getAllSchemeInfos(lines)
+    schemeInfos, secondSignature = getAllSchemeInfos(lines)
+    signature.extendFromSignature(secondSignature)
     instances = []
     for schemeInfo in schemeInfos:
         instances.extend(getAllInstancesOfFormula(schemeInfo, signature))
@@ -54,10 +55,12 @@ def getAllInstancesOfFormula(schemeInfo : SchemeInfo, signature : Signature) -> 
     formulas = []
     if not allCombinations and not schemeInfo.containsSwapPatterns(): allCombinations = [dict()] # If there is no swap pattern we still need to generate a formula. However if there is no valid combaination but there is a swap pattern, we generate nothing at all
     for case in allCombinations:
+        if "romeo" in case.values():
+            pass
         arities = [signature.getArity(case[symbol]) for symbol in schemeInfo.getAritySymbols()]
         schemeBody = schemeInfo.getBody()
         schemeBody = applyAllPatternsOneInstance(schemeBody, arities, case)
-        schemeBody = "fof(" + schemeInfo.getName() + "_" + "_".join(case.values()) + "axiom,axiom," + schemeBody + ")."
+        schemeBody = "fof(" + schemeInfo.getName() + ("_" if case.values() else "") + "_".join(case.values()) + ",axiom," + schemeBody + ")."
         formulas.append(schemeBody)
     return formulas
 
