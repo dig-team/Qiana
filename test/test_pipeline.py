@@ -27,7 +27,7 @@ def test_runComputeForCLI():
         g(X2))).
     """
     pipeline.computeQianaClosure(tptp)
-    pipeline.computeProofTree()
+    pipeline.runCompute_CLI()
 
 def test_input_example_noindent():
     from os.path import join, dirname
@@ -36,7 +36,7 @@ def test_input_example_noindent():
     with open(join("..","test","testInputs","inputBasicNoIndent.p")) as file:
         tptp = file.read()
     pipeline.computeQianaClosure(tptp)
-    pipeline.computeProofTree()
+    pipeline.runCompute_CLI()
 
 def test_input_example1():
     from os.path import join, dirname
@@ -45,7 +45,7 @@ def test_input_example1():
     with open(join("..","test","testInputs","inputBasic.p")) as file:
         tptp = file.read()
     pipeline.computeQianaClosure(tptp)
-    pipeline.computeProofTree()
+    pipeline.runCompute_CLI()
 
 def test_input_example2():
     from os.path import join, dirname
@@ -54,4 +54,4 @@ def test_input_example2():
     with open(join("..","test","testInputs","RJbasic.p")) as file:
         tptp = file.read()
     pipeline.computeQianaClosure(tptp)
-    pipeline.computeProofTree()
+    pipeline.runCompute_CLI()

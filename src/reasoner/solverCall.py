@@ -34,25 +34,28 @@ class SolverCall:
 
         @param timeout: int - the timeout value for the solver
         """
-        args = ["./reasoner/vampire", "--mode",  "portfolio", "--schedule", "casc", "--output_mode", "smtcomp", "--time_limit", str(timeout)+"s"]
+        vampirepath = os.path.join(os.path.dirname(__file__), "vampire")
+
+        args = [vampirepath, "--mode",  "portfolio", "--schedule", "casc", "--output_mode", "smtcomp", "--time_limit", str(timeout)+"s"]
         result = subprocess.run(args, input=formulas, text=True, capture_output=True)
-        if result.stderr:
-            simpleResult = "error"
-            reasoningSteps = []
-        elif result.stdout == "sat\n":
+        if result.stdout == "sat\n":
             simpleResult = "sat"
             reasoningSteps = []
         elif result.stdout == "unknown\n" or result.stdout == "\n" or result.stdout == "":
             simpleResult = "unknown"
             reasoningSteps = []
         elif result.stdout == "unsat\n":
-            args = ["./reasoner/vampire", "--mode",  "portfolio", "--schedule", "casc", "--time_limit", str(timeout)+"s"]
+            args = [vampirepath, "--mode",  "portfolio", "--schedule", "casc", "--time_limit", str(timeout)+"s"]
             result = subprocess.run(args, input=formulas, text=True, capture_output=True)
             simpleResult = "unsat"
             reasoningSteps = TPTPOutputParser(result.stdout)
+        elif result.stderr:
+            simpleResult = "error"
+            reasoningSteps = []
+            raise ValueError("Vampire returned an error: " + result.stderr)
         else:
-            raise Exception("Vampire returned an unexpected result: " + result.stdout)
-        
+            raise ValueError("Vampire returned an unexpected result: " + result.stdout)
+
         return cls(formulas, simpleResult, reasoningSteps, result.stdout, result.stderr)
     
     def contradictionFound(self) -> bool:
@@ -61,6 +64,3 @@ class SolverCall:
         @return: bool - True if a contradiction was found, False otherwise
         """
         return self.simpleResult == "unsat"
-
-
-        

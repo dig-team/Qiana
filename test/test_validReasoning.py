@@ -7,7 +7,7 @@ def test_onlyTautologies():
     with open(join("..","test","testInputs","onlyTautologies.p")) as file:
         tptp = file.read()
     pipeline.computeQianaClosure(tptp)
-    pipeline.computeProofTree()
+    pipeline.runCompute_CLI()
     assert not pipeline.contradiction()
 
 def test_pureFOLcontradiction():
@@ -17,7 +17,7 @@ def test_pureFOLcontradiction():
     with open(join("..","test","testInputs","pureFOLcontradiction.p")) as file:
         tptp = file.read()
     pipeline.computeQianaClosure(tptp)
-    pipeline.computeProofTree()
+    pipeline.runCompute_CLI()
     assert pipeline.contradiction()
 
 def test_RJbasic():
@@ -27,7 +27,7 @@ def test_RJbasic():
     with open(join("..","test","testInputs","RJbasic.p")) as file:
         tptp = file.read()
     pipeline.computeQianaClosure(tptp)
-    pipeline.computeProofTree()
+    pipeline.runCompute_CLI()
     assert pipeline.contradiction()
 
 def test_RJbasic_noResult():
@@ -37,5 +37,5 @@ def test_RJbasic_noResult():
     with open(join("..","test","testInputs","RJbasic_noResult.p")) as file:
         tptp = file.read()
     pipeline.computeQianaClosure(tptp)
-    pipeline.computeProofTree()
+    pipeline.runCompute_CLI()
     assert not pipeline.contradiction()

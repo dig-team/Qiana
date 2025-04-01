@@ -32,7 +32,7 @@ class Pipeline:
         # self.qianaClosure : str = os.linesep.join(qianaClosure(input, variableNumber))
         self.qianaClosure = input + os.linesep + os.linesep.join(getAllSchemesInstances(schemeLines, signature))
 
-    def computeProofTree(self, timeout : int = 5) -> None:
+    def runCompute_CLI(self, timeout : int = 5) -> None:
         """
         Run the solver on the already computed qiana closure and stores the html representation of the proof tree in self.htmlTree
         This is for use in the CLI therefore requires the timeout value as an argument
@@ -41,7 +41,7 @@ class Pipeline:
         """
         self._callSolver(timeout)
 
-    def runCompute(self, input: str) -> None:
+    def runCompute_GUI(self, input: str) -> None:
         """
         Takes as input the tptpt representation of a set of formulas and returns the html representation of the reasoning steps performed to find a contradiction on the qiana closure of input. This is for use in the GUI and therefore uses the timeout value from the settings.
         @param input: str - the tptp representation of a set of formulas (not necessarily closed under qiana)
@@ -57,8 +57,10 @@ class Pipeline:
         Call the solver and store the result in self.reasoningSteps. Assumes the qiana closure has already been computed and stored in self.qianaClosure.
         @param timeout: int - the timeout value for the solver
         """
+        if not self.qianaClosure: raise ValueError("Qiana closure has not been computed yet. Please call computeQianaClosure() before running the solver.")
         solverCall : SolverCall = SolverCall.callVampire(self.qianaClosure, timeout)
         self.foundContradiction = solverCall.simpleResult == "unsat"
+        self.simpleResult = solverCall.simpleResult
         self.reasoningSteps = solverCall.reasoningSteps
         self.vampireOutput = solverCall.vampireOutput
         self.htmlTree = getHtmlFromSteps(self.reasoningSteps) if self.foundContradiction else getHtmlNoContradiction(self.vampireOutput)

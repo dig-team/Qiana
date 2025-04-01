@@ -4,7 +4,7 @@ import sys
 from pipeline import Pipeline
     
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='Example CLI for Qiana project.')
+    parser = argparse.ArgumentParser(description='Simple CLI to obtain the Qiana closure of a set of formulas or to pass said closure through the Vampire (https://vprover.github.io/) solver. By Simon Coumes, Fabian Suchanek, and Pierre-Henri Paris.')
 
     parser.add_argument('-v', '--verbose', action='store_true', help='Increase output verbosity')
 
@@ -12,9 +12,8 @@ if __name__ == "__main__":
     parser.add_argument('-o', '--outputFile', type=str, help='Target output file. If not set, output goes to stdout', required=False)
     parser.add_argument('-t', '--timeout', type=int, help='Maximum time before timeout when calling solver.', required=False)
     parser.add_argument('-c', '--closure', action='store_true', help='Only compute the qiana closure of the input. If false, contradictions will be sought and a solver called.', required=False)
-    parser.add_argument('-s', '--sat', action='store_true', help='Only return FOUND CONTRADICTION or FOUND NO CONTRADICTION, only used if the -c option is ommited.', required=False)
     parser.add_argument('-n', '--numberVars', type=int, help='Pick the number of quoted variables. Default value is 5.', required=False)
-
+    parser.add_argument('-m', '--outputMode', type=str, help='Set how to present the output of the solver. Options are sat, raw, and proofTree. Incompatible with the -c option.', required=False)
     
     # Positional arguments
     parser.add_argument('input_file', nargs='?', help='Input file to process. If not provided, reads from stdin.')
@@ -39,12 +38,6 @@ if __name__ == "__main__":
             print("Please either specify an input file or pipe data to stdin.", file=sys.stderr)
             sys.exit(1)
     
-    
-    # Process input content here...
-    # For demonstration purposes, just print the first 100 characters
-    if args.verbose:
-        print("Input preview:", input_content[:100] + ("..." if len(input_content) > 100 else ""))
-    
     varNum = args.numberVars if args.numberVars else 5
     timeout = args.timeout if args.timeout else 5
 
@@ -53,9 +46,14 @@ if __name__ == "__main__":
     if args.closure:
         output = pipeline.getQianaClosure()
     else:
-        pipeline.computeProofTree(timeout)
-        output = pipeline.getHtmlTree()
-        if args.sat: output = "FOUND CONTRADICTION" if pipeline.foundContradiction else "FOUND NO CONTRADICTION"
+        pipeline.runCompute_CLI(timeout)
+        outputMode = args.outputMode if args.outputMode else "raw"
+        if outputMode == "sat": output = pipeline.simpleResult
+        elif outputMode == "raw": output = pipeline.vampireOutput
+        elif outputMode == "proofTree": output = pipeline.getHtmlTree()
+        else: 
+            print(f"Invalid output mode: {outputMode}", file=sys.stderr)
+            sys.exit(1)
     if args.outputFile:
         try:
             with open(args.outputFile, 'w') as f:

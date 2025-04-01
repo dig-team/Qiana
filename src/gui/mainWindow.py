@@ -45,7 +45,7 @@ class MainWindow(QMainWindow):
     def run(self):
         tptp = self.editor.toPlainText()
         pipeline = Pipeline()
-        pipeline.runCompute(tptp)
+        pipeline.runCompute_GUI(tptp)
         self.display.setHtml(pipeline.getHtmlTree())
         self.display.setClosure(pipeline.getQianaClosure())
         self.display.setGraph(pipeline.getGraphDot())
