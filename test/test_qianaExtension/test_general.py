@@ -201,8 +201,10 @@ def test_arityRanges3():
     FUNCTION g OF ARITY 1
     FUNCTION h OF ARITY 3
     FUNCTION i OF ARITY 0
+    FUNCTION finf OF ARITY 8
     PREDICATE p OF ARITY 2
     PREDICATE q OF ARITY 1
+
     
     FORMULA complex_test
     BODY ![X1,...,X#, Y1,...,Y#] : (((wft(X1) &...& wft(X#)) & (term(Y1) &...& term(Y#))) => $f(X1,...,X#) = $g(Y1,...,Y#) & $p(X1,Y1))
@@ -226,7 +228,7 @@ def test_arityRanges3():
     FORMULA boundary_test
     BODY $f(X1,...,X#) = $f(Y1,...,Y#)
     DOT_ARITIES $f $f
-    RANGE $f[2;2] IN BASE_FUNCTION
+    RANGE $f[2;-1] IN BASE_FUNCTION
     """.splitlines()
     
     sig = Signature()
@@ -251,3 +253,6 @@ def test_arityRanges3():
     assert not any("h(" in instance for instance in complex_test_instances)
     assert not any("i(X" in instance for instance in complex_test_instances)
     assert not any("ff(" in instance for instance in additional_test_instances)
+    assert any("finf(" in instance for instance in boundary_test_instances)
+    assert not any("finf(" in instance for instance in complex_test_instances + additional_test_instances)
+
