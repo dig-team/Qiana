@@ -14,7 +14,7 @@ def getThree(formulas : str, timeout : int) -> Tuple[bool, List[ReasoningStep], 
     @param formulas: str - the tptp representation of a set of formulas
     @return: Tuple[bool, List[ReasoningStep], str] - a tuple containing a boolean indicating if a contradiction was found, the reasoning steps performed to find the contradiction, and the raw TPTP output of the reasoning
     """
-    args = ["./reasoner/vampire", "--output_mode", "smtcomp", "--time_limit", str(timeout)+"s"]
+    args = ["./reasoner/vampire", "--mode",  "portfolio", "--schedule", "casc", "--output_mode", "smtcomp", "--time_limit", str(timeout)+"s"]
     result = subprocess.run(args, input=formulas, text=True, capture_output=True)
     if result.stdout == "sat\n":
         return(False, [], result.stdout)
