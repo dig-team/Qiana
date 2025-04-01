@@ -33,7 +33,7 @@ def test_input_example_noindent():
     from os.path import join, dirname
     from src.pipeline import Pipeline
     pipeline = Pipeline()
-    with open(join("..","test","testFiles","inputBasicNoIndent.p")) as file:
+    with open(join("..","test","testInputs","inputBasicNoIndent.p")) as file:
         tptp = file.read()
     pipeline.computeQianaClosure(tptp)
     pipeline.computeProofTree()
@@ -42,7 +42,7 @@ def test_input_example1():
     from os.path import join, dirname
     from src.pipeline import Pipeline
     pipeline = Pipeline()
-    with open(join("..","test","testFiles","inputBasic.p")) as file:
+    with open(join("..","test","testInputs","inputBasic.p")) as file:
         tptp = file.read()
     pipeline.computeQianaClosure(tptp)
     pipeline.computeProofTree()
@@ -51,7 +51,7 @@ def test_input_example2():
     from os.path import join, dirname
     from src.pipeline import Pipeline
     pipeline = Pipeline()
-    with open(join("..","test","testFiles","RJbasic.p")) as file:
+    with open(join("..","test","testInputs","RJbasic.p")) as file:
         tptp = file.read()
     pipeline.computeQianaClosure(tptp)
     pipeline.computeProofTree()
