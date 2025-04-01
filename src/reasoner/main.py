@@ -26,3 +26,4 @@ def getThree(formulas : str, timeout : int) -> Tuple[bool, List[ReasoningStep], 
         return(True, TPTPOutputParser(result.stdout), result.stdout)
     else:
         raise Exception("Vampire returned an unexpected result: " + result.stdout)
+    

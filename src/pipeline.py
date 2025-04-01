@@ -1,7 +1,7 @@
 import os
 from os.path import join, dirname
 
-from reasoner import callSolver
+from reasoner import callSolver, SolverCall
 from qianaExtension import Signature, getAllSchemesInstances
 from htmlGeneration import getHtmlFromSteps, getHtmlNoContradiction
 from dotGeneration import getDotFromSteps
@@ -39,11 +39,7 @@ class Pipeline:
 
         @param timeout: int - the timeout value for the solver, default is 5 seconds
         """
-        self.foundContradiction, self.reasoningSteps, self.vampireOutput = callSolver(self.qianaClosure, timeout)
-        if self.foundContradiction:
-            self.htmlTree = getHtmlFromSteps(self.reasoningSteps)
-        else:
-            self.htmlTree = getHtmlNoContradiction(self.vampireOutput)
+        self._callSolver(timeout)
 
     def runCompute(self, input: str) -> None:
         """
@@ -54,11 +50,18 @@ class Pipeline:
         self.computeQianaClosure(input)
         from gui import Settings
         timeout = Settings.getTimeOutValue()
-        self.foundContradiction, self.reasoningSteps, self.vampireOutput = callSolver(self.qianaClosure, timeout)
-        if self.foundContradiction:
-            self.htmlTree = getHtmlFromSteps(self.reasoningSteps)
-        else:
-            self.htmlTree = getHtmlNoContradiction(self.vampireOutput)
+        self._callSolver(timeout)
+
+    def _callSolver(self, timeout: int) -> None:
+        """
+        Call the solver and store the result in self.reasoningSteps. Assumes the qiana closure has already been computed and stored in self.qianaClosure.
+        @param timeout: int - the timeout value for the solver
+        """
+        solverCall : SolverCall = SolverCall.callVampire(self.qianaClosure, timeout)
+        self.foundContradiction = solverCall.simpleResult == "unsat"
+        self.reasoningSteps = solverCall.reasoningSteps
+        self.vampireOutput = solverCall.vampireOutput
+        self.htmlTree = getHtmlFromSteps(self.reasoningSteps) if self.foundContradiction else getHtmlNoContradiction(self.vampireOutput)
 
     def contradiction(self) -> bool:
         return self.foundContradiction
