@@ -1,7 +1,7 @@
 import os
 from os.path import join, dirname
 
-from reasoner import callSolver, SolverCall
+from reasoner import SolverCall
 from qianaExtension import Signature, getAllSchemesInstances
 from htmlGeneration import getHtmlFromSteps, getHtmlNoContradiction
 from dotGeneration import getDotFromSteps
