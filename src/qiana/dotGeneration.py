@@ -1,5 +1,5 @@
 
-from interfaceTypes import ReasoningStep
+from qiana.interfaceTypes import ReasoningStep
 
 def getDotFromSteps(steps):
     """Returns the dot representation of the reasoning steps"""

@@ -2,7 +2,7 @@ from typing import Dict, List, Set, Tuple
 
 import os
 
-from qianaExtension.tptpParsing import parseSymbols
+from qiana.qianaExtension.tptpParsing import parseSymbols
 
 class Signature:
 

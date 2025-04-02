@@ -1,6 +1,10 @@
 import subprocess
-import os
-from gui import startGUI
+import sys
+from os.path import join, dirname
+
+sys.path.insert(0, dirname(dirname(__file__)))
+
+from qiana.gui import startGUI
 
 
 # if __name__ == "__main__":

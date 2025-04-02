@@ -5,8 +5,8 @@ import subprocess
 
 import json
 
-from reasoner.vampireParser import TPTPOutputParser
-from interfaceTypes import ReasoningStep
+from qiana.reasoner.vampireParser import TPTPOutputParser
+from qiana.interfaceTypes import ReasoningStep
 
 class SolverCall:
     """

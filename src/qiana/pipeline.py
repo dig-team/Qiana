@@ -1,10 +1,10 @@
 import os
 from os.path import join, dirname
 
-from reasoner import SolverCall
-from qianaExtension import Signature, getAllSchemesInstances
-from htmlGeneration import getHtmlFromSteps, getHtmlNoContradiction
-from dotGeneration import getDotFromSteps
+from qiana.reasoner import SolverCall
+from qiana.qianaExtension import Signature, getAllSchemesInstances
+from qiana.htmlGeneration import getHtmlFromSteps, getHtmlNoContradiction
+from qiana.dotGeneration import getDotFromSteps
 
 
 class Pipeline:
@@ -48,7 +48,7 @@ class Pipeline:
         @return: str - the html representation of the reasoning steps performed to find a contradiction on the qiana closure of input
         """
         self.computeQianaClosure(input)
-        from gui import Settings
+        from qiana.gui import Settings
         timeout = Settings.getTimeOutValue()
         self._callSolver(timeout)
 

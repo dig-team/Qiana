@@ -1,13 +1,5 @@
-# Testing and running in vscode
-Run from src folder. 
-In vscode add line "python.testing.cwd": "${workspaceFolder}/src" to the settings file and manually set the pytest argument ../test
-
-# TODO
-- More efficient proof strategies
-
-# Leads
-- https://github.com/sneeuwballen/zipperposition/blob/master/doc/dedukti_input_format.org
-
+# Testing
+The tests are meant to be run with Pytest. Give the `test` directory as input to pytest and ensure the `qiana` package located in `src/qiana` can be imported (this can be done by installing the package or setting the current working directory to `src`).
 
 # Writting new schemes
 The scheme language used to generate all the axioms of Qiana on a given signature is described bellow. For a real example, see ```src/qianaExtension/qianaAxio.schemes```

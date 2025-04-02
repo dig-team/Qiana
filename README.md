@@ -40,15 +40,17 @@ By convention, symbols starting with the letter q are quotations of the symbols 
 The main way to use Qiana as a tool is to use the Command Line Interface.
 To learn how to run the CLI, run 
 ```
-python3 qianaCLI.py -h
+python3 src/script/qianaCLI.py -h
 ```
 
 ## Graphical User Interface
 The GUI of Qiana is only meant for quick tests and as a demonstration. It can be quite brittle.
 To run the GUI for Qiana, run the following from the src directory.
 ```
-python3 qianaGUI.py
+python3 src/script/qianaGUI.py
 ```
+
+(On windows you might need to replaced "python3" with "python")
 
 ## Requirements
 
@@ -93,7 +95,7 @@ The quoted variables are written q_X1, q_X2, and so forth. Note that by default 
 
 # On logic signatures
 The signature at hand will automatically be deduced from the input TPTP formulas. However quoted symbols and predicates are not used for this (because it would be impossible to always know if they quote a function or a predicate). For this reason, each function or predicate that needs to be present in the signature of the logic should appear unquoted in the input formulas.
-This can always be done by adding a tautological formula with the symbol in question to the input. For exampla:
+This can always be done by adding a tautological formula with the symbol in question to the input. For example:
 ```
 fof(trivial_arity_2, axiom, ![X1] : ((p(f(x1,X1),f(X1,X1))) => (p(f(x1,X1),f(X1,X1))))).
 ```

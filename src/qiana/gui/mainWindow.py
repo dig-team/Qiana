@@ -3,10 +3,10 @@ from PySide6.QtCore import QUrl
 from PySide6.QtWidgets import QVBoxLayout, QHBoxLayout, QMainWindow, QTextEdit, QMenuBar, QWidget, QPushButton, QLineEdit
 from PySide6.QtWebEngineWidgets import QWebEngineView
 
-from pipeline import Pipeline
+from qiana.pipeline import Pipeline
 
-import examples
-from gui import DisplayOptions, Settings
+import qiana.examples as examples
+from qiana.gui import DisplayOptions, Settings
 
 class MainWindow(QMainWindow):
     def __init__(self):

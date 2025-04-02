@@ -1,7 +1,7 @@
 from typing import Tuple, Union, List
 import sys
 
-from interfaceTypes import ReasoningStep
+from qiana.interfaceTypes import ReasoningStep
 
 def _parseParentBlock(parentBlock : str) -> Tuple[str,List[str]]:
     """Parses the parent block of a line and returns the name of the transformation and the list of parent ids"""

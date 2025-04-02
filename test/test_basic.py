@@ -3,4 +3,4 @@ def test_basic():
     print(os.getcwd())
 
 def test_imports():
-    import gui
+    import qiana.gui

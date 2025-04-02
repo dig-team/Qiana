@@ -1,7 +1,7 @@
 import sys
 from PySide6.QtWidgets import QApplication
 
-from gui.mainWindow import MainWindow
+from qiana.gui.mainWindow import MainWindow
 
 def startGUI():
     app = QApplication(sys.argv)

@@ -1,7 +1,10 @@
 import argparse
 import sys
+from os.path import dirname
 
-from pipeline import Pipeline
+sys.path.insert(0, dirname(dirname(__file__)))
+
+from qiana.pipeline import Pipeline
     
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Simple CLI to obtain the Qiana closure of a set of formulas or to pass said closure through the Vampire (https://vprover.github.io/) solver. By Simon Coumes, Fabian Suchanek, and Pierre-Henri Paris.')

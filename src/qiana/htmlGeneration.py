@@ -1,7 +1,7 @@
 from typing import Dict, List
 import os
 
-from interfaceTypes import ReasoningStep
+from qiana.interfaceTypes import ReasoningStep
 
 def getHtmlNoContradiction(vampireOutput : str) -> str:
     return vampireOutput

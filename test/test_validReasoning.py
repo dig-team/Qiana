@@ -2,7 +2,7 @@
 
 def test_onlyTautologies():
     from os.path import join, dirname
-    from src.pipeline import Pipeline
+    from qiana.pipeline import Pipeline
     pipeline = Pipeline()
     with open(join("..","test","testInputs","onlyTautologies.p")) as file:
         tptp = file.read()
@@ -12,7 +12,7 @@ def test_onlyTautologies():
 
 def test_pureFOLcontradiction():
     from os.path import join, dirname
-    from src.pipeline import Pipeline
+    from qiana.pipeline import Pipeline
     pipeline = Pipeline()
     with open(join("..","test","testInputs","pureFOLcontradiction.p")) as file:
         tptp = file.read()
@@ -22,7 +22,7 @@ def test_pureFOLcontradiction():
 
 def test_RJbasic():
     from os.path import join, dirname
-    from src.pipeline import Pipeline
+    from qiana.pipeline import Pipeline
     pipeline = Pipeline()
     with open(join("..","test","testInputs","RJbasic.p")) as file:
         tptp = file.read()
@@ -32,7 +32,7 @@ def test_RJbasic():
 
 def test_RJbasic_noResult():
     from os.path import join, dirname
-    from src.pipeline import Pipeline
+    from qiana.pipeline import Pipeline
     pipeline = Pipeline()
     with open(join("..","test","testInputs","RJbasic_noResult.p")) as file:
         tptp = file.read()

@@ -1,15 +1,15 @@
 import pytest
 
 def test_import_qianaExtension():
-    from qianaExtension.formulaExtension import getAllSchemesInstances
+    from qiana.qianaExtension.formulaExtension import getAllSchemesInstances
 
 def test_findOperand():
-    from qianaExtension.formulaExtension import findOperands
+    from qiana.qianaExtension.formulaExtension import findOperands
     leftop, rightop, leftIndex, rightIndex = findOperands("t1,...,t2", 2)
 
 def test_schemes_basic():
-    from qianaExtension.formulaExtension import getAllSchemesInstances
-    from qianaExtension.signature import Signature
+    from qiana.qianaExtension.formulaExtension import getAllSchemesInstances
+    from qiana.qianaExtension.signature import Signature
     lines = """
     % FUNCTION and PREDICATE define new base functions and predicate, respectively (elements of $F_b$ and $P_b$)
     FUNCTION f OF ARITY 2
@@ -29,8 +29,8 @@ def test_schemes_basic():
     for instance in allInstances: assert "..." not in instance
 
 def test_schemes_harder():
-    from qianaExtension.formulaExtension import getAllSchemesInstances
-    from qianaExtension.signature import Signature
+    from qiana.qianaExtension.formulaExtension import getAllSchemesInstances
+    from qiana.qianaExtension.signature import Signature
     lines = """
     % FUNCTION and PREDICATE define new base functions and predicate, respectively (elements of $F_b$ and $P_b$)
     FUNCTION f OF ARITY 2
@@ -56,8 +56,8 @@ def test_noFunctions():
     """
     By not adding any base function we create a scheme that ranges over 0 functions
     """
-    from qianaExtension.formulaExtension import getAllSchemesInstances
-    from qianaExtension.signature import Signature
+    from qiana.qianaExtension.formulaExtension import getAllSchemesInstances
+    from qiana.qianaExtension.signature import Signature
     lines = """
     FORMULA A31
     BODY ![X1,...,X#, Y1, Y2] : ((term(X1)&...&term(X#)) => sub($f(X1,...,X#), Y1, Y2) = $f(sub(X1, Y1, Y2),...,sub(X#, Y1, Y2)))
@@ -73,8 +73,8 @@ def test_distincPairs():
     """
     Test schemes containing the DISTINCT keyword.
     """
-    from qianaExtension.formulaExtension import getAllSchemesInstances
-    from qianaExtension.signature import Signature
+    from qiana.qianaExtension.formulaExtension import getAllSchemesInstances
+    from qiana.qianaExtension.signature import Signature
     lines = """
     FUNCTION f OF ARITY 2
     FUNCTION ff OF ARITY 2
@@ -98,8 +98,8 @@ def test_distincPairs2():
     """
     Test schemes containing the DISTINCT keyword.
     """
-    from qianaExtension.formulaExtension import getAllSchemesInstances
-    from qianaExtension.signature import Signature
+    from qiana.qianaExtension.formulaExtension import getAllSchemesInstances
+    from qiana.qianaExtension.signature import Signature
    
     lines = """
     FUNCTION f OF ARITY 2
@@ -124,8 +124,8 @@ def test_A31():
     """
     Specifically test scheme A31
     """
-    from qianaExtension.formulaExtension import getAllSchemesInstances
-    from qianaExtension.signature import Signature
+    from qiana.qianaExtension.formulaExtension import getAllSchemesInstances
+    from qiana.qianaExtension.signature import Signature
     lines = """
     FUNCTION f OF ARITY 2
     FORMULA A31
@@ -142,9 +142,11 @@ def test_include_schemes():
     """
     Test the schemes included in the qianaExtension/qianaAxio.schemes file
     """
-    from qianaExtension.formulaExtension import getAllSchemesInstances
-    from qianaExtension.signature import Signature
-    with open("qianaExtension/qianaAxio.schemes") as f:
+    from qiana.qianaExtension.formulaExtension import getAllSchemesInstances
+    from qiana.qianaExtension.signature import Signature
+    from os.path import join, dirname
+    path = join(dirname(dirname(dirname(__file__))), "src", "qiana", "qianaExtension", "qianaAxio.schemes")
+    with open(path) as f:
         lines = f.readlines()
     sig = Signature()
     allInstances = getAllSchemesInstances(lines, sig)
@@ -154,7 +156,7 @@ def test_arityRanges1():
     """
     Test the qiana extension with arity ranges.
     """
-    from src.qianaExtension.formulaExtension import getAllSchemesInstances
+    from qiana.qianaExtension.formulaExtension import getAllSchemesInstances
     lines = [
         "FUNCTION f0 OF ARITY 0",
         "FUNCTION f1 OF ARITY 1",
@@ -174,8 +176,8 @@ def test_arityRanges2():
     """
     Test the qiana extension with arity ranges.
     """
-    from qianaExtension.formulaExtension import getAllSchemesInstances
-    from qianaExtension.signature import Signature
+    from qiana.qianaExtension.formulaExtension import getAllSchemesInstances
+    from qiana.qianaExtension.signature import Signature
     lines = """
     FUNCTION f OF ARITY 2
     FUNCTION ff OF ARITY 3
@@ -194,8 +196,8 @@ def test_arityRanges3():
     Test schemes containing complex ARITY range specifications with multiple functions,
     different arity ranges, and combined patterns.
     """
-    from qianaExtension.formulaExtension import getAllSchemesInstances
-    from qianaExtension.signature import Signature
+    from qiana.qianaExtension.formulaExtension import getAllSchemesInstances
+    from qiana.qianaExtension.signature import Signature
     lines = """
     FUNCTION ff OF ARITY 2
     FUNCTION g OF ARITY 1

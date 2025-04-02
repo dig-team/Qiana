@@ -2,7 +2,7 @@ from typing import List, Dict, Tuple
 
 import re
 
-from qianaExtension.signature import Signature
+from qiana.qianaExtension.signature import Signature
 
 class SchemeInfo():
     name :str

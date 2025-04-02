@@ -1,6 +1,6 @@
 def test_extend_from_tptp_simple():
     # Test with a simple predicate
-    from src.qianaExtension.signature import Signature
+    from qiana.qianaExtension.signature import Signature
     signature = Signature()
     signature.extendFromTptp("p(X1, X2)")
     assert "p" in signature.basePredicates
@@ -9,7 +9,7 @@ def test_extend_from_tptp_simple():
 
 def test_extend_from_tptp_with_function():
     # Test with a predicate containing a function
-    from src.qianaExtension.signature import Signature
+    from qiana.qianaExtension.signature import Signature
     signature = Signature()
     signature.extendFromTptp("p(f(X1), X2)")
     assert "p" in signature.basePredicates
@@ -19,7 +19,7 @@ def test_extend_from_tptp_with_function():
 
 def test_extend_from_tptp_nested_functions():
     # Test with nested functions
-    from src.qianaExtension.signature import Signature
+    from qiana.qianaExtension.signature import Signature
     signature = Signature()
     signature.extendFromTptp("q(f(g(X1)), h(X2, X3))")
     assert "q" in signature.basePredicates
@@ -33,7 +33,7 @@ def test_extend_from_tptp_nested_functions():
 
 def test_extend_from_tptp_with_quantifier():
     # Test with quantifiers
-    from src.qianaExtension.signature import Signature
+    from qiana.qianaExtension.signature import Signature
     signature = Signature()
     signature.extendFromTptp("![X1] : p(X1, f(X2))")
     assert "p" in signature.basePredicates
@@ -43,7 +43,7 @@ def test_extend_from_tptp_with_quantifier():
 
 def test_extend_from_tptp_complex():
     # Test with a complex formula
-    from src.qianaExtension.signature import Signature
+    from qiana.qianaExtension.signature import Signature
     signature = Signature()
     signature.extendFromTptp("r(a, f(b, g(c, d)), h(i(e)))")
     assert "r" in signature.basePredicates
@@ -70,7 +70,7 @@ def test_extend_from_tptp_complex():
 
 def test_extend_from_tptp_multiple_calls():
     # Test extending with multiple calls
-    from src.qianaExtension.signature import Signature
+    from qiana.qianaExtension.signature import Signature
     signature = Signature()
     signature.extendFromTptp("p(X1)")
     signature.extendFromTptp("q(f(X1))")
@@ -89,7 +89,7 @@ def test_extend_from_tptp_multiple_calls():
 
 def test_extend_from_tptp_only_variable():
     # Test with just a variable
-    from src.qianaExtension.signature import Signature
+    from qiana.qianaExtension.signature import Signature
     signature = Signature()
     signature.extendFromTptp("X1")
     assert not signature.basePredicates  # Should be empty
@@ -97,7 +97,7 @@ def test_extend_from_tptp_only_variable():
 
 def test_extend_from_tptp_constants():
     # Test with constants (0-arity functions)
-    from src.qianaExtension.signature import Signature
+    from qiana.qianaExtension.signature import Signature
     signature = Signature()
     signature.extendFromTptp("p(a, b, c)")
     assert "p" in signature.basePredicates
@@ -111,7 +111,7 @@ def test_extend_from_tptp_constants():
 
 def test_extend_from_tptp_logical_connectives():
     # Test with logical connectives
-    from src.qianaExtension.signature import Signature
+    from qiana.qianaExtension.signature import Signature
     signature = Signature()
     signature.extendFromTptp("p(X1) & q(X2) => r(f(X1), g(X2))")
     assert "p" in signature.basePredicates
@@ -127,7 +127,7 @@ def test_extend_from_tptp_logical_connectives():
 
 def test_extend_from_tptp_quoted_symbols():
     # Test with quoted symbols
-    from src.qianaExtension.signature import Signature
+    from qiana.qianaExtension.signature import Signature
     signature = Signature()
     signature.extendFromTptp("q(q_p(X1))")
     assert "q" in signature.basePredicates
@@ -137,7 +137,7 @@ def test_extend_from_tptp_quoted_symbols():
 
 def test_extend_from_full_tptpts():
     from os.path import join, dirname
-    from src.qianaExtension.signature import Signature
+    from qiana.qianaExtension.signature import Signature
 
     signature = Signature()
     with open(join("..","test","testInputs","RJbasic.p")) as file:

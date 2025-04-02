@@ -2,8 +2,8 @@ from typing import List, Tuple, Dict, Set
 
 from itertools import product
 
-from qianaExtension.signature import Signature
-from qianaExtension.patternParsing import SchemeInfo, getAllSchemeInfos
+from qiana.qianaExtension.signature import Signature
+from qiana.qianaExtension.patternParsing import SchemeInfo, getAllSchemeInfos
 
 def getAllSchemesInstances(lines : List[str], signature: Signature = None) -> List[str]:
     """
