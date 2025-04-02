@@ -47,7 +47,7 @@ python3 qianaCLI.py -h
 The GUI of Qiana is only meant for quick tests and as a demonstration. It can be quite brittle.
 To run the GUI for Qiana, run the following from the src directory.
 ```
-python3 main.py
+python3 qianaGUI.py
 ```
 
 ## Requirements
