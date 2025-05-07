@@ -80,12 +80,12 @@ No other symbol may start with $q\_$ except the ones listed bellow. In particula
 
 | Qiana      | TPTP translation      |
 | ------------- | ------------- |
-| $\mathbb{Q}$ | q_Quote |
-| $\textbf{T}$ | q_Truth |
-| $\underline{\neg}$ | q_Neg |
-| $\underline{\land}$ | q_And |
-| $\underline{\lor}$ | q_Or |
-| $\underline{\forall}$ | q_Forall |
+| $\mathbb{Q}$ | q\_Quote |
+| $\textbf{T}$ | q\_Truth |
+| $\underline{\neg}$ | q\_Neg |
+| $\underline{\land}$ | q\_And |
+| $\underline{\lor}$ | q\_Or |
+| $\underline{\forall}$ | q\_Forall |
 | E | eval |
 | isTerm | term |
 | Wft | wft |
