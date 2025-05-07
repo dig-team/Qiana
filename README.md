@@ -75,17 +75,17 @@ sudo apt install graphviz
 
 # Writting Qiana formulas in TPTP
 The following conventions are used within this tool to translate formal mathematical notations to TPTP formulas.
-For any function or predicate $f$ or $p$, their quotation is written $q\underline{\ } f$ (resp $q\underline{\ }p$).
-No other symbol may start with $q\_$ except the ones listed bellow. In particular, because functions and predicates cannot start with an uppercase letter, we list bellow all the symbols starting with $q\underline{\ }$ followed by an uppercase letter that are allowed.
+For any function or predicate ```f``` or ```p```, their quotation is written ```q_f``` (resp ```q_p```).
+No other symbol may start with ```q_``` except the ones listed bellow. In particular, because functions and predicates cannot start with an uppercase letter, we list bellow all the symbols starting with ```q_``` followed by an uppercase letter that are allowed.
 
 | Qiana      | TPTP translation      |
 | ------------- | ------------- |
-| $\mathbb{Q}$ | q\_Quote |
-| $\textbf{T}$ | q\_Truth |
-| $\underline{\neg}$ | q\_Neg |
-| $\underline{\land}$ | q\_And |
-| $\underline{\lor}$ | q\_Or |
-| $\underline{\forall}$ | q\_Forall |
+| $\mathbb{Q}$ | q_Quote |
+| $\textbf{T}$ | q_Truth |
+| $\underline{\neg}$ | q_Neg |
+| $\underline{\land}$ | q_And |
+| $\underline{\lor}$ | q_Or |
+| $\underline{\forall}$ | q_Forall |
 | E | eval |
 | isTerm | term |
 | Wft | wft |
