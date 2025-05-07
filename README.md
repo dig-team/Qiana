@@ -75,7 +75,7 @@ sudo apt install graphviz
 
 # Writting Qiana formulas in TPTP
 The following conventions are used within this tool to translate formal mathematical notations to TPTP formulas.
-For any function or predicate $f$ or $p$, their quotation is written $q\_f$ (resp $q\_p$).
+For any function or predicate $f$ or $p$, their quotation is written $q{\_}f$ (resp $q\_p$).
 No other symbol may start with $q\_$ except the ones listed bellow. In particular, because functions and predicates cannot start with an uppercase letter, we list bellow all the symbols starting with $q\_$ followed by an uppercase letter that are allowed.
 
 | Qiana      | TPTP translation      |
