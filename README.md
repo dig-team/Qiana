@@ -73,7 +73,7 @@ You also need to install Graphviz
 sudo apt install graphviz
 ```
 
-# Writting Qiana formulas in TPTP
+# Writing Qiana formulas in TPTP
 The following conventions are used within this tool to translate formal mathematical notations to TPTP formulas.
 For any function or predicate ```f``` or ```p```, their quotation is written ```q_f``` (resp ```q_p```).
 No other symbol may start with ```q_``` except the ones listed bellow. In particular, because functions and predicates cannot start with an uppercase letter, we list bellow all the symbols starting with ```q_``` followed by an uppercase letter that are allowed.
@@ -101,7 +101,7 @@ fof(trivial_arity_2, axiom, ![X1] : ((p(f(x1,X1),f(X1,X1))) => (p(f(x1,X1),f(X1,
 ```
 
 # Citing Qiana
-If you use Qiana in scientific work, please cite our article
+If you use Qiana in scientific work, please cite [our article](https://suchanek.name/work/publications/kr-2024.pdf)
 
 ```
 @inproceedings { Qiana, 
