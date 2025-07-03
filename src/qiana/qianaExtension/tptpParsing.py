@@ -16,8 +16,11 @@ def _goThroughStruct(struct : List[str | List], isATerm : bool) -> Dict[str,Tupl
     assert isinstance(struct[0], str)
     for element in struct[1:]: assert isinstance(element, list)
 
-    if struct[0] in ["=>", "<=>", "&", "|", "~", "!", "?", "="]:
+    if struct[0] in ["=>", "<=>", "&", "|", "~", "!", "?"]:
         symbols = {}
+    elif struct[0] == "=":
+        symbols = {}
+        isATerm = True # = is the only special symbol that acts as a predicate
     else:
         symbols = {struct[0] : (len(struct[1:]), isATerm)}
         isATerm = True

@@ -87,7 +87,7 @@ WITH $qf QUOTING $f
 DOT_ARITIES $f $f $f $f
 
 FORMULA axiom23
-BODY eval($qf) = $qf
+BODY eval($qf) = $f
 RANGE $f[0;0] IN BASE_FUNCTION
 WITH $qf QUOTING $f
 
@@ -169,8 +169,8 @@ FORMULA axiom3fin
 BODY ![X1] :(term(X1) => (q_Truth(q_Neg(X1)) <=> ~(q_Truth(X1))))
 
 FORMULA axiom4fin
-BODY ![X1] :(term(X1) => q_Truth(q_Forall(X1)) <=> (![X2] :q_Truth(sub(X1, X2, q_Quote(X2)))))
+BODY ![X1] :(term(X1,X3) => q_Truth(q_Forall(X1,X2)) <=> (![X3] :q_Truth(sub(X2, X1, q_Quote(X3)))))
 
 FORMULA axiom11fin
-BODY ![XC, X1] :((term(X1) => (ist(XC, q_Forall(X1)) => ![X2] :ist(XC, sub(X1, X2, q_Quote(X2))))))
+BODY ![XC, X1, X2] :((term(X1) => (ist(XC, q_Forall(X1,X2)) => ![X3] :ist(XC, sub(X2, X1, q_Quote(X2))))))
 
