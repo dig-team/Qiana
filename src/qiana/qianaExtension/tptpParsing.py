@@ -16,7 +16,7 @@ def _goThroughStruct(struct : List[str | List], isATerm : bool) -> Dict[str,Tupl
     assert isinstance(struct[0], str)
     for element in struct[1:]: assert isinstance(element, list)
 
-    if struct[0] in ["=>", "<=>", "&", "|", "~", "!", "?"]:
+    if struct[0] in ["=>", "<=>", "&", "|", "~", "!", "?", "="]:
         symbols = {}
     else:
         symbols = {struct[0] : (len(struct[1:]), isATerm)}
@@ -45,7 +45,7 @@ def _parseTopLevel(tptp : str) -> List[str]:
     """
     Parse a top level tptp formula into a list of strings, for each toplevel symbol or subterm. 
 
-    Example: "p(f(X1), g(X2))" returns ["p", "f(X1)", "g(X2)"] \n
+    Example: "p(f(X1), g(X2))" returns ["p", "f(X1)", "g(X2)"] 
              "(p(X1)) => (q(X2))") returns ["=>", "(p(X1))", "(q(X2))"]
     """
     assert tptp.count("(")  == tptp.count(")")
@@ -68,7 +68,7 @@ def _parseTopLevel(tptp : str) -> List[str]:
         args = _splitOnCommas(match.group(2))
         return [match.group(1)] + args
 
-    pattern = re.compile(r'(.*) (=>|<=>|&|\|) (.*)')
+    pattern = re.compile(r'(.*) (=>|<=>|=|&|\|) (.*)')
     match = pattern.fullmatch(tptp)
     if match:
         return [match.group(2), match.group(1), match.group(3)]

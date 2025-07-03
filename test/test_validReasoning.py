@@ -39,3 +39,27 @@ def test_RJbasic_noResult():
     pipeline.computeQianaClosure(tptp)
     pipeline.runCompute_CLI()
     assert not pipeline.contradiction()
+
+def test_nadim_transmutation():
+    """
+    Used to find a bug at some point and so kept in the tests.
+    """
+    from os.path import join, dirname
+    from qiana.pipeline import Pipeline
+    pipeline = Pipeline()
+    with open(join("..","test","testInputs","nadim_transmutation.p")) as file:
+        tptp = file.read()
+    pipeline.computeQianaClosure(tptp)
+    pipeline.runCompute_CLI()
+    assert not pipeline.contradiction()
+
+def test_minimal_quote():
+    from os.path import join, dirname
+    from qiana.pipeline import Pipeline
+    pipeline = Pipeline()
+    with open(join("..","test","testInputs","minimal_quote.p")) as file:
+        tptp = file.read()
+    pipeline.computeQianaClosure(tptp)
+    pipeline.runCompute_CLI()
+    assert pipeline.contradiction()
+

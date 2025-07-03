@@ -67,6 +67,20 @@ class Pipeline:
 
     def contradiction(self) -> bool:
         return self.foundContradiction
+    
+    def unknownResult(self) -> bool:
+        """
+        Check if the solver returned an unknown result
+        @return: bool - True if the solver returned an unknown result, False otherwise
+        """
+        return self.simpleResult == "unknown"
+    
+    def timeout(self) -> bool:
+        """
+        Check if the solver timed out
+        @return: bool - True if the solver timed out, False otherwise
+        """
+        return self.simpleResult == "timeout"
 
     def getHtmlTree(self) -> str:
         return self.htmlTree
@@ -76,5 +90,10 @@ class Pipeline:
     
     def getGraphDot(self) -> str:
         return getDotFromSteps(self.reasoningSteps)
+    
+    def getVampireOutput(self) -> str:
+        return self.vampireOutput
+    
+    
     
 
