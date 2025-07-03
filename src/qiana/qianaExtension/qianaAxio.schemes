@@ -46,7 +46,7 @@ BODY $f = $f
 RANGE $f[0;0] IN BASE_FUNCTION
 
 FORMULA axiom16
-BODY ![X1,...,X#, Y1,...,Y#] :((X1 = Y1&...&X# = Y#) => $p(X1,...,X#) <=> $p(Y1,...,Y#))
+BODY ![X1,...,X#, Y1,...,Y#] :((X1 = Y1&...&X# = Y#) => ($p(X1,...,X#) <=> $p(Y1,...,Y#)))
 RANGE $p[1;-1] IN BASE_PREDICATE
 DOT_ARITIES $p $p $p $p $p
 
