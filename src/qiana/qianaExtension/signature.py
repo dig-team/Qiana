@@ -104,7 +104,7 @@ class Signature:
     def extendFromTptp(self, tptpFormula: str) -> None:
         """
         Read the body of a TPTP formula and extend the signature with the functions and predicates found in the formula.
-        @param tptpFormula: The body of a TPTP formula, example : "![X1] p(f(X1),X1)"
+        @param tptpFormula: The body of a TPTP formula, example : "![X1] : p(f(X1),X1)"
         """
         for symbol, (arity, isFunction) in parseSymbols(tptpFormula).items():
             if symbol[0].isupper(): continue # We don't want to add variables
