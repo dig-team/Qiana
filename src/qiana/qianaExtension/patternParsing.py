@@ -2,6 +2,7 @@ from typing import List, Dict, Tuple
 
 import re
 
+from qiana.qianaExtension.tptpUtils import quoteSymbol
 from qiana.qianaExtension.signature import Signature
 
 class SchemeInfo():
@@ -120,7 +121,7 @@ class SchemeInfo():
         @return: The same dictionary, but (possibly) with more matchings
         """
         for quoting, quoted in self.symbolQuotationMatchings.items():
-           symbolDict[quoting] = Signature.quoteSymbol(symbolDict[quoted]) 
+           symbolDict[quoting] = quoteSymbol(symbolDict[quoted]) 
            # symbolDict matches a swap pattern symbol like $f to an actual function symbol like "multiply", symbolQuotationMatchings matches a swap pattern symbol that is a quotation to the swap pattern symbol it needs to be a quotation of (for example matching $qf to $f). So we need to find what the actual symbol associated to $f is, quote it, and then associate that quotation to $qf in symbolDict
         return symbolDict
 

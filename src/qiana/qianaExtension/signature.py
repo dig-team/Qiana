@@ -2,6 +2,7 @@ from typing import Dict, List, Set, Tuple
 
 import os
 
+from qiana.qianaExtension.tptpUtils import quoteSymbol, unquoteSymbol, isQuoted, getSpecialFunctions, getTruthPredicate
 from qiana.qianaExtension.tptpParsing import parseSymbols
 
 class Signature:
@@ -31,30 +32,14 @@ class Signature:
         self.basePredicates[symbol] = arity
 
     def getArity(self, symbol: str) -> int:
-        symbol = Signature.unquoteSymbol(symbol) or symbol
+        symbol = unquoteSymbol(symbol) or symbol
         if symbol in self.baseFunctions: return self.baseFunctions[symbol]
         if symbol in self.basePredicates: return self.basePredicates[symbol]
         if symbol in self.getQuotedVars(): return 0
-        if symbol == self.getTruthPredicate(): return 1
-        if symbol in self._getSpecialFunctions(): return self._getSpecialFunctions()[symbol]
+        if symbol == getTruthPredicate(): return 1
+        if symbol in getSpecialFunctions(): return getSpecialFunctions()[symbol]
         raise ValueError("Symbol not found in signature")
-    
-    @classmethod
-    def quoteSymbol(cls, symbol: str) -> str:
-        return f"q_{symbol}"
-    
-    @classmethod
-    def unquoteSymbol(cls, symbol: str) -> str | None:
-        """
-        Unquotes a symbol if it is quoted, otherwise returns None
-        """
-        if symbol.startswith("q_"): return symbol[2:]
-        return None
-    
-    @classmethod
-    def isQuoted(cls, symbol: str) -> bool:
-        return symbol.startswith("q_")
-    
+
     def getBaseFunctions(self) -> List[str]:
         return self.baseFunctions.keys()
     
@@ -65,25 +50,16 @@ class Signature:
         @return: List of all functions in the signature. Should be equal to all base functions + all quoted functions + all quoted predicates + special functions + quotedVariables
         """
         return list(self.baseFunctions.keys()) + \
-            [Signature.quoteSymbol(var) for var in self.baseFunctions] + \
-            [Signature.quoteSymbol(var) for var in self.basePredicates] +\
-            [Signature.quoteSymbol(var) for var in self._getSpecialFunctions()] +\
-            [Signature.quoteSymbol(var) for var in self.getQuotedVars()]
-
-    def _getSpecialFunctions(self) -> Dict[str,int]:
-        return {"q_Quote" : 1, "q_Neg" : 1, "q_And" : 2, "q_Or" : 2, "q_Forall" : 2}
-    
-    def getTruthPredicate(self) -> str:
-        """
-        Returns the name of the truth predicate in the signature
-        """
-        return "q_Truth"
+            [quoteSymbol(var) for var in self.baseFunctions] + \
+            [quoteSymbol(var) for var in self.basePredicates] +\
+            [quoteSymbol(var) for var in getSpecialFunctions()] +\
+            [quoteSymbol(var) for var in self.getQuotedVars()]
     
     def getBasePredicates(self) -> List[str]:
         return list(self.basePredicates.keys())
     
     def getAllPredicates(self) -> List[str]:
-        return self.getBasePredicates() + [self.getTruthPredicate()]
+        return self.getBasePredicates() + [getTruthPredicate()]
     
     def getQuotedVars(self) -> List[str]:
         return [f"q_X{i}" for i in range(1, self.nbrQuotedVars + 1)]
@@ -108,8 +84,8 @@ class Signature:
         """
         for symbol, (arity, isFunction) in parseSymbols(tptpFormula).items():
             if symbol[0].isupper(): continue # We don't want to add variables
-            if symbol in self._getSpecialFunctions() or symbol == self.getTruthPredicate(): continue
-            if Signature.isQuoted(symbol): continue # We can't know if it's a quoted function or predicate, so we skip the case. 
+            if symbol in getSpecialFunctions() or symbol == getTruthPredicate(): continue
+            if isQuoted(symbol): continue # We can't know if it's a quoted function or predicate, so we skip the case. 
             if isFunction: self.addFunction(symbol, arity)
             else: self.addPredicate(symbol, arity)
 
