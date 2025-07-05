@@ -2,7 +2,7 @@ from typing import Dict, List, Set, Tuple
 
 import os
 
-from qiana.qianaExtension.tptpUtils import quoteSymbol, unquoteSymbol, isQuoted, getSpecialFunctions, getTruthPredicate
+from qiana.qianaExtension.tptpUtils import quoteSymbol, unquoteSymbol, isQuoted, get_special_functions_arities, getTruthPredicate
 from qiana.qianaExtension.tptpParsing import parseSymbols
 
 class Signature:
@@ -37,7 +37,7 @@ class Signature:
         if symbol in self.basePredicates: return self.basePredicates[symbol]
         if symbol in self.getQuotedVars(): return 0
         if symbol == getTruthPredicate(): return 1
-        if symbol in getSpecialFunctions(): return getSpecialFunctions()[symbol]
+        if symbol in get_special_functions_arities(): return get_special_functions_arities()[symbol]
         raise ValueError("Symbol not found in signature")
 
     def getBaseFunctions(self) -> List[str]:
@@ -52,7 +52,7 @@ class Signature:
         return list(self.baseFunctions.keys()) + \
             [quoteSymbol(var) for var in self.baseFunctions] + \
             [quoteSymbol(var) for var in self.basePredicates] +\
-            [quoteSymbol(var) for var in getSpecialFunctions()] +\
+            [quoteSymbol(var) for var in get_special_functions_arities()] +\
             [quoteSymbol(var) for var in self.getQuotedVars()]
     
     def getBasePredicates(self) -> List[str]:
@@ -84,7 +84,7 @@ class Signature:
         """
         for symbol, (arity, isFunction) in parseSymbols(tptpFormula).items():
             if symbol[0].isupper(): continue # We don't want to add variables
-            if symbol in getSpecialFunctions() or symbol == getTruthPredicate(): continue
+            if symbol in get_special_functions_arities() or symbol == getTruthPredicate(): continue
             if isQuoted(symbol): continue # We can't know if it's a quoted function or predicate, so we skip the case. 
             if isFunction: self.addFunction(symbol, arity)
             else: self.addPredicate(symbol, arity)

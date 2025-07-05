@@ -1,3 +1,7 @@
+from typing import List, Dict
+import re
+
+from qiana.qianaExtension.tptpUtils import isQuoted, quoteSymbol, get_special_function
 
 def applyMacros(text: str) -> str:
     """
@@ -19,13 +23,6 @@ def applyMacros(text: str) -> str:
         processed_lines.append(processed_line)
     
     return '\n'.join(processed_lines)
-
-def _quote(text: str) -> str:
-    """
-    Take as input a formula or term and returns it qiana quotation.
-    """
-    
-
 
 def _apply_macro_transformation(line: str) -> str:
     """
@@ -95,3 +92,139 @@ def _split_arguments(args_str: str) -> list:
         args.append(current_arg.strip())
     
     return args
+
+def _quote(text: str) -> str:
+    """
+    Take as input a formula or term and returns it qiana quotation.
+    """
+    pass
+
+def _formula_from_struct(struct : List[str | List]) -> str:
+    """
+    Take as input a formula represented as a nested list of lists and strings (as produced by tptpParsing.parseStruct) and outputs a matching TPTP formula.
+    Example: ["f", "a", "b"] => "f(a,b)"
+    """
+    assert len(struct) > 0, "Input structure cannot be empty" 
+    assert isinstance(struct[0], str), "First element of structure must be a string representing the symbol"
+
+    symbol = struct[0]
+
+    # Leaf case
+    if len(struct) == 1: return symbol
+
+    # List of variables
+    if symbol == ",":
+        assert len(struct) > 1, "Comma must have at least one argument"
+        assert all(isinstance(arg, str) for arg in struct[1:]), "All arguments after comma must be strings"
+        return ', '.join(struct[1:])
+
+    # Quantification
+    if symbol in ["!", "?"]:
+        assert len(struct) == 3
+        symbol, variables, body = struct
+        return f"{symbol}[{_formula_from_struct(variables)}] : ({_formula_from_struct(body)})"
+
+    # Binary operators and logical connectives
+    if symbol in ["=>", "<=>", "=", "&", "|"]:
+        assert len(struct) == 3, f"Binary operator {symbol} must have exactly two arguments"
+        return f"({_formula_from_struct(struct[1])} {symbol} {_formula_from_struct(struct[2])})"
+    
+    # Negation
+    if symbol == "~":
+        assert len(struct) == 2, "Negation must have exactly one argument"
+        return f"~{_formula_from_struct(struct[1])}"
+    
+    # Function or predicate application
+    assert re.match(r'\w*$', symbol), f"Symbol '{symbol}' must contain only alphanumeric characters and underscores"
+
+    return f"{symbol}({', '.join(_formula_from_struct(arg) for arg in struct[1:])})" # We know that struct[1:] is not empty here because we handled the leaf case above
+    
+def _quote_from_struct(struct : List, qvars  : List[str], var_to_qvar : Dict[str, str]) -> str:
+    """
+    @param qvars : List of quoted variables not yet in use.
+    """
+    if var_to_qvar is None : var_to_qvar = {}
+    assert len(struct) > 0, "Input structure cannot be empty"
+    assert isinstance(struct[0], str), "First element of structure must be a string representing the symbol"
+
+    symbol = struct[0]
+
+    # If the symbol is quoted, we use apply q_Quote and assume everything beyond is already quoted
+    # TODO : this relies on implicit assumptions that everything beyond is also already quoted and does not react well to special symbols
+    if isQuoted(symbol):
+        q_Quote = get_special_function("q_Quote")
+        return f"{q_Quote}({_formula_from_struct(struct)})"
+
+    # Leaf cases
+    ## Variable case
+    if len(struct) == 1 and re.match(r'^[A-Z]\w*$', symbol):
+        if symbol not in var_to_qvar:
+            # Pick a fresh variable from qvars
+            if not qvars: raise ValueError("Ran out of quantification variables")
+            fresh_var = qvars.pop(0)
+            var_to_qvar[symbol] = fresh_var
+        return var_to_qvar[symbol]
+    
+    ## Function or predicate with no arguments case
+    if len(struct) == 1 and re.match(r'^[a-z_]\w*$', symbol):
+        quoted_symbol = quoteSymbol(symbol)
+        return f"{quoted_symbol}"
+        
+    # Quantification
+    ## Lazy (codewise) way to flatten the structure when the quantification has more than one variable
+    if symbol in ["!", "?"] and len(struct) == 3 and len(struct[1]) > 1:
+        assert len(struct) == 3, f"Quantification {symbol} must have exactly two arguments"
+        assert isinstance(struct[1], list), "Quantification variables must be a list"
+        assert all(isinstance(var, str) for var in struct[1]), "All quantification variables must be strings"
+        _, variables, body = struct
+
+        assert variables[0] == ","
+        variables = variables[1:]
+
+        top_var, other_vars = variables[0], variables[1:]
+        flatter_struct = [symbol, [top_var], [symbol, other_vars, body]]
+        return _quote_from_struct(flatter_struct, qvars, var_to_qvar)
+    
+    ## Universal quantification with a single variable
+    if symbol == "!":
+        assert len(struct) == 3, f"Quantification {symbol} must have exactly two arguments"
+        _, variable, body = struct
+        quoted_symbol = get_special_function("q_Forall") 
+        variable = _quote_from_struct(variable, qvars, var_to_qvar)
+        body = _quote_from_struct(body, qvars, var_to_qvar)
+        return f"{quoted_symbol}({variable}, {body})"
+    
+    ## Existential quantification with a single variable
+    if symbol == "?":
+        assert len(struct) == 3, f"Quantification {symbol} must have exactly two arguments"
+        _, variable, body = struct
+        quoted_symbol = get_special_function("q_Forall") 
+        neg_symbol = get_special_function("q_Neg")
+        body = _quote_from_struct(body, qvars, var_to_qvar)
+        variable = _quote_from_struct(variable, qvars, var_to_qvar)
+        return f"{neg_symbol}({quoted_symbol}({variable}, {neg_symbol}({body})))"
+ 
+    # Binary operators and logical connectives
+    if symbol in ["&", "|"]:
+        assert len(struct) == 3, f"Binary operator {symbol} must have exactly two arguments"
+        left = _quote_from_struct(struct[1], qvars, var_to_qvar)
+        right = _quote_from_struct(struct[2], qvars, var_to_qvar)
+        quoted_symbol = get_special_function("q_And") if symbol == "&" else get_special_function("q_Or")
+        return f"{quoted_symbol}({left}, {right})"
+    
+    # Negation
+    if symbol == "~":
+        assert len(struct) == 2, "Negation must have exactly one argument"
+        body = _quote_from_struct(struct[1], qvars, var_to_qvar)
+        quoted_symbol = get_special_function("q_Neg")
+        return f"{quoted_symbol}({body})"
+    
+
+    if symbol == ",":
+        raise ValueError("Comma is not a valid symbol in this context, it should be handled separately")
+
+    
+    # Function or predicate application
+    assert re.match(r'^[a-z_]\w*$', symbol), f"Symbol '{symbol}' must contain only lowercase alphanumeric characters and underscores"
+    quoted_symbol = quoteSymbol(symbol)
+    return f"{quoted_symbol}({', '.join(_quote_from_struct(arg, qvars, var_to_qvar) for arg in struct[1:])})" # We know that struct[1:] is not empty here because we handled the leaf case above
