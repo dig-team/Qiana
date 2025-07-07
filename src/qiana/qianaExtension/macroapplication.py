@@ -177,6 +177,7 @@ def _quote_from_struct(struct : List, var_to_qvar : Dict[str, str]) -> str:
 
     # If the symbol is quoted, we use apply q_Quote and assume everything beyond is already quoted
     # TODO : this relies on implicit assumptions that everything beyond is also already quoted and does not react well to special symbols
+    # It would be nice if we could handle quotation of free variables, but that would require more complex macros
     if isQuoted(symbol):
         q_Quote = get_special_function("q_Quote")
         return f"{q_Quote}({_formula_from_struct(struct)})"

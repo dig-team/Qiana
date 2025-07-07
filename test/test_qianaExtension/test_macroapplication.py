@@ -120,16 +120,18 @@ def test_applyMacros():
     def app_mac(text):
         return applyMacros(text).replace(" ", "")
 
-    # Test no macros
+    # No macros
     assert app_mac("p") == "p"
     assert app_mac("f(a,b)") == "f(a,b)"
     assert app_mac("![X]: p(X)") == "![X]:p(X)"
     assert app_mac("fof(test,axiom,? [X]: p(X))") == "fof(test,axiom,?[X]:p(X))"
 
-    # Test simple macro application
+    # Simple macro application
     assert app_mac("fof(test,axiom, !believes(alice,p(c)))") == "fof(test,axiom,ist(believes(alice),q_p(q_c)))"
     assert app_mac("fof(test,axiom, !believes(alice,p(c,d)))") == "fof(test,axiom,ist(believes(alice),q_p(q_c,q_d)))"
 
-    #  Test nested macro application
-    val = app_mac("fof(test,axiom, !believes(alice,!believes(bob,flat(earth))))") 
-    assert val == "fof(test,axiom,ist(believes(alice),q_ist(q_believes(q_bob),q_Quote(q_flat(q_earth)))))"
+    # Nested macro application
+    assert app_mac("fof(test,axiom, !believes(alice,!believes(bob,flat(earth))))") == "fof(test,axiom,ist(believes(alice),q_ist(q_believes(q_bob),q_Quote(q_flat(q_earth)))))"
+    
+    # Nester macro application with multiple macros and quantification 
+    assert app_mac("fof(test,axiom, (!believes(alice,? [X]: p(X))) & !believes(alice,!believes(bob,p(q))))") == "fof(test,axiom,(ist(believes(alice),q_Neg(q_Forall(q_X1,q_Neg(q_p(q_X1))))))&ist(believes(alice),q_ist(q_believes(q_bob),q_Quote(q_p(q_q)))))"
