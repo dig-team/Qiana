@@ -103,3 +103,17 @@ def test_minimal_quote():
     pipeline.runCompute_CLI()
     assert pipeline.contradiction()
 
+def test_nadim_1():
+    input_text = """
+!wrote(nadim, ![X] : (contemporary(X,rhazes) => !believes(X,transmutate(rhazes,copper)))).
+![X] : (ist(wrote(nadim),X) => q_Truth(X)).
+![X] : (contemporary(X,rhazes) => !believes(X,transmutate(rhazes,copper))).
+contemporary(alice,rhazes).
+~!believes(alice,transmutate(rhazes,copper)).
+    """
+    from qiana.pipeline import Pipeline
+    pipeline = Pipeline()
+    pipeline.computeQianaClosure(input_text, quotedVariableNumber=5, simplified_input=True, expand_macros=True)
+    text = pipeline.getQianaClosure()
+    pipeline.runCompute_CLI()
+    assert pipeline.foundContradiction

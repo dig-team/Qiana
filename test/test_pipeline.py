@@ -55,3 +55,15 @@ def test_input_example2():
         tptp = file.read()
     pipeline.computeQianaClosure(tptp)
     pipeline.runCompute_CLI()
+
+def test_nadim():
+    input_text = """
+!wrote(nadim, (![X] : contemporary(X,rhaze) => transmutates(X))).
+![X] : (ist(wrote(nadim),X) => q_Truth(X)).
+contemporary(alice,rhaze).
+~!believes(alice,transmutate(alice)).
+    """
+    from qiana.pipeline import Pipeline
+    pipeline = Pipeline()
+    pipeline.computeQianaClosure(input_text, quotedVariableNumber=5, simplified_input=True, expand_macros=True)
+    # text = pipeline.getQianaClosure()
