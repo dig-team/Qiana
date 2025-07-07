@@ -2,7 +2,7 @@ from typing import Dict, List, Set, Tuple
 
 import os
 
-from qiana.qianaExtension.tptpUtils import quoteSymbol, unquoteSymbol, isQuoted, get_special_functions_arities, getTruthPredicate
+from qiana.qianaExtension.tptpUtils import quoteSymbol, unquoteSymbol, isQuoted, get_special_functions_arities, getTruthPredicate, next_quoted_var
 from qiana.qianaExtension.tptpParsing import parseSymbols
 
 class Signature:
@@ -10,6 +10,7 @@ class Signature:
     baseFunctions : Dict[str,int] # Dict macthing function names to arity, corresponds to functions from F_b
     basePredicates : Dict[str,int]
     nbrQuotedVars : int
+    quotedVars : str
 
     def __init__(self, functions: Dict[str,int] = None, predicates: Dict[str,int] = None, nbrQuotedVars: int = 5):
         self.baseFunctions = functions if functions else {}
@@ -62,7 +63,7 @@ class Signature:
         return self.getBasePredicates() + [getTruthPredicate()]
     
     def getQuotedVars(self) -> List[str]:
-        return [f"q_X{i}" for i in range(1, self.nbrQuotedVars + 1)]
+        return next_quoted_var([], self.nbrQuotedVars)
     
     def extendFromTptps(self, tptpFormulas: str) -> None:
         """
