@@ -55,12 +55,16 @@ BODY ![X1] :(term(q_Quote(X1)))
 
 FORMULA axiom18
 BODY ![X1,...,X#] :((term(X1)&...&term(X#)) => term($f(X1,...,X#)))
-RANGE $f[1;-1] IN BASE_FUNCTION
+RANGE $f[1;-1] IN ANY_FUNCTION
 DOT_ARITIES $f $f $f
 
 FORMULA axiom18_const
 BODY term($f)
-RANGE $f[0;0] IN BASE_FUNCTION
+RANGE $f[0;0] IN ANY_FUNCTION
+
+FORMULA axiom18_quoted_vars
+BODY term($f)
+RANGE $f IN QUOTED_VARIABLE
 
 FORMULA axiom19
 BODY ![X1] :(wft(q_Quote(X1)))
@@ -169,7 +173,7 @@ FORMULA axiom3fin
 BODY ![X1] :(term(X1) => (q_Truth(q_Neg(X1)) <=> ~(q_Truth(X1))))
 
 FORMULA axiom4fin
-BODY ![X1] :(term(X1,X3) => q_Truth(q_Forall(X1,X2)) <=> (![X3] :q_Truth(sub(X2, X1, q_Quote(X3)))))
+BODY ![X1,X2] : (term(X1,X2) => (q_Truth(q_Forall(X1,X2)) <=> (![X3] : q_Truth(sub(X2, X1, q_Quote(X3))))))
 
 FORMULA axiom11fin
 BODY ![XC, X1, X2] :((term(X1) => (ist(XC, q_Forall(X1,X2)) => ![X3] :ist(XC, sub(X2, X1, q_Quote(X2))))))

@@ -60,6 +60,19 @@ def test_truth3():
     pipeline.runCompute_CLI()
     assert pipeline.contradiction()
 
+def test_truth4():
+    from os.path import join, dirname
+    from qiana.pipeline import Pipeline
+    pipeline = Pipeline()
+    tptp = """
+    q_Truth(q_Forall(q_X1, q_p(q_X1))).
+    ~(![X] : q_Truth(sub(q_p(q_X1), q_X1, X))).
+    """
+    
+    pipeline.computeQianaClosure(tptp, simplified_input=True)
+    pipeline.runCompute_CLI()
+    assert pipeline.contradiction()
+
 def test_RJbasic():
     from os.path import join, dirname
     from qiana.pipeline import Pipeline

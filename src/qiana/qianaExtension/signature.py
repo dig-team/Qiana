@@ -55,6 +55,7 @@ class Signature:
             [quoteSymbol(var) for var in self.basePredicates] +\
             [quoteSymbol(var) for var in get_special_functions_arities()] +\
             [quoteSymbol(var) for var in self.getQuotedVars()]
+    # TODO : in the line above, why are the quoted variables getting quoted again?
     
     def getBasePredicates(self) -> List[str]:
         return list(self.basePredicates.keys())
