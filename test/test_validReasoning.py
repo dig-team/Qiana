@@ -20,6 +20,46 @@ def test_pureFOLcontradiction():
     pipeline.runCompute_CLI()
     assert pipeline.contradiction()
 
+def test_sub1():
+    from os.path import join, dirname
+    from qiana.pipeline import Pipeline
+    pipeline = Pipeline()
+    with open(join("..","test","testInputs","sub1.p")) as file:
+        tptp = file.read()
+    pipeline.computeQianaClosure(tptp)
+    pipeline.runCompute_CLI()
+    assert pipeline.contradiction()
+
+def test_truth1():
+    from os.path import join, dirname
+    from qiana.pipeline import Pipeline
+    pipeline = Pipeline()
+    with open(join("..","test","testInputs","truth1.p")) as file:
+        tptp = file.read()
+    pipeline.computeQianaClosure(tptp)
+    pipeline.runCompute_CLI()
+    assert pipeline.contradiction()
+
+def test_truth2():
+    from os.path import join, dirname
+    from qiana.pipeline import Pipeline
+    pipeline = Pipeline()
+    with open(join("..","test","testInputs","truth2.p")) as file:
+        tptp = file.read()
+    pipeline.computeQianaClosure(tptp)
+    pipeline.runCompute_CLI()
+    assert pipeline.contradiction()
+
+def test_truth3():
+    from os.path import join, dirname
+    from qiana.pipeline import Pipeline
+    pipeline = Pipeline()
+    with open(join("..","test","testInputs","truth3.p")) as file:
+        tptp = file.read()
+    pipeline.computeQianaClosure(tptp)
+    pipeline.runCompute_CLI()
+    assert pipeline.contradiction()
+
 def test_RJbasic():
     from os.path import join, dirname
     from qiana.pipeline import Pipeline

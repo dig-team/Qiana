@@ -2,9 +2,10 @@ import os
 from os.path import join, dirname
 
 from qiana.reasoner import SolverCall
-from qiana.qianaExtension import Signature, getAllSchemesInstances
+from qiana.qianaExtension import Signature, getAllSchemesInstances, applyMacros
 from qiana.htmlGeneration import getHtmlFromSteps, getHtmlNoContradiction
 from qiana.dotGeneration import getDotFromSteps
+from qiana.extendsimplifiedsyntax import extend_simplified_syntax
 
 
 class Pipeline:
@@ -15,13 +16,18 @@ class Pipeline:
         self.qianaClosure = None
         self.htmlTree = None
 
-    def computeQianaClosure(self, input: str, quotedVariableNumber: int | None = 5) -> None:
+    def computeQianaClosure(self, input: str, quotedVariableNumber: int | None = 5, simplified_input : bool = False, expand_macros : bool = False) -> None:
         """
         Compute the qiana closure of the input and store it in self.qianaClosure
 
         @param input: str - the tptp representation of a set of formulas
         @param QuotedVariableNumber: int | None - the number of quoted variables to use in the qiana closure, default is 5. This argument should ideally always be specified when calling for the CLI as otherwise the value stored in Settings will be used.
+        @param simplified_input: bool - if true the headers on formulas will be automatically added. 
+        @param expand_macros: bool - if true the qiana specific macros will be expanded before computing the qiana closure
         """
+        if simplified_input: input = extend_simplified_syntax(input)
+        if expand_macros: input = applyMacros(input)
+
         path_to_schemes = join(dirname(__file__), "qianaExtension/qianaAxio.schemes")
         with open(path_to_schemes, "r") as f: schemeLines = f.readlines()
         if not quotedVariableNumber:

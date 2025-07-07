@@ -7,7 +7,7 @@ def parseSymbols(tptp : str) -> Dict[str,Tuple[int, bool]]:
     Parse a tptp formula into a dictionary of symbols to their arity and whether they are functions (if not, it means they are predicats). Note that variables are included in the output as functions and need to be filtered out if necessary.
     @param tptp: The tptp formula to parse
     """
-    return _goThroughStruct(_parseStruct(tptp), False)
+    return _goThroughStruct(parseStruct(tptp), False)
 
 def _goThroughStruct(struct : List[str | List], isATerm : bool) -> Dict[str,Tuple[int, bool]]:
     """
@@ -16,8 +16,11 @@ def _goThroughStruct(struct : List[str | List], isATerm : bool) -> Dict[str,Tupl
     assert isinstance(struct[0], str)
     for element in struct[1:]: assert isinstance(element, list)
 
-    if struct[0] in ["=>", "<=>", "&", "|", "~", "!", "?", "="]:
+    if struct[0] in ["=>", "<=>", "&", "|", "~", "!", "?"]:
         symbols = {}
+    elif struct[0] in [",", "="]:
+        symbols = {}
+        isATerm = True 
     else:
         symbols = {struct[0] : (len(struct[1:]), isATerm)}
         isATerm = True
@@ -25,7 +28,7 @@ def _goThroughStruct(struct : List[str | List], isATerm : bool) -> Dict[str,Tupl
         symbols.update(_goThroughStruct(element, isATerm))
     return symbols
 
-def _parseStruct(tptp : str) -> List[str | List]:
+def parseStruct(tptp : str) -> List[str | List]:
     """
     Parse a tptp formula body into a tree structure on the sole basis of the parentheses and commas
     """
@@ -38,7 +41,7 @@ def _parseStruct(tptp : str) -> List[str | List]:
         if match:
             elements.append([element])
         else:
-            elements.append(_parseStruct(element))
+            elements.append(parseStruct(element))
     return elements
 
 def _parseTopLevel(tptp : str) -> List[str]:
@@ -52,15 +55,15 @@ def _parseTopLevel(tptp : str) -> List[str]:
     tptp = re.sub(r'\s+', ' ', tptp)
     tptp = _removeTopLevelParenthesis(tptp)
 
-    pattern = re.compile(r'[!\?] ?\[(\w+(?:,\w+)*)\] ?: ?\((.*)\)')
+    pattern = re.compile(r'([!\?]) ?\[(\w+(?:,\w+)*)\] ?: ?\((.*)\)')
     match = pattern.fullmatch(tptp)
     if match:
-        return ["!", match.group(2)] # Remark that we don't bother including the variables in the structure
+        return [match.group(1), match.group(2), match.group(3)] # Remark that we don't bother including the variables in the structure
     
-    pattern = re.compile(r'[!\?] ?\[(\w+(?:,\w+)*)\] ?: ?(.*)')
+    pattern = re.compile(r'([!\?]) ?\[(\w+(?:,\w+)*)\] ?: ?(.*)')
     match = pattern.fullmatch(tptp)
     if match:
-        return ["!", match.group(2)]
+        return [match.group(1), match.group(2), match.group(3)] # Remark that we don't bother including the variables in the structure
  
     pattern = re.compile(r'(\w+)\(([\w, \(\)]*)\)')
     match = pattern.fullmatch(tptp)
@@ -82,6 +85,15 @@ def _parseTopLevel(tptp : str) -> List[str]:
     match = pattern.fullmatch(tptp)
     if match:
         return [tptp]
+
+    pattern = re.compile(r'[A-Z]\w*(?:,[A-Z]\w*)*')
+    match = pattern.fullmatch(tptp)
+    if match:
+        if "," in tptp:
+            return [","] + [var.strip() for var in tptp.split(",")]
+        else:
+            return [tptp.strip()]
+
 
     assert False
 

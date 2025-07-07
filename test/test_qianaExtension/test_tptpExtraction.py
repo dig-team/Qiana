@@ -26,13 +26,17 @@ def test_parseTopLevel():
         assert True
 
 def test_parseStruct():
-    from qiana.qianaExtension.tptpParsing import _parseStruct
-    assert _parseStruct("p(f(X1), g(X2))") == ["p", ["f", ["X1"]], ["g", ["X2"]]]
-    assert _parseStruct("(p(X1)) => (q(X2))") == ["=>", ["p", ["X1"]], ["q", ["X2"]]]
-    assert _parseStruct("p(X1) & q(X2)") == ["&", ["p", ["X1"]], ["q", ["X2"]]]
-    assert _parseStruct("p(X1) | q(X2)") == ["|", ["p", ["X1"]], ["q", ["X2"]]]
-    assert _parseStruct("~p(X1)") == ["~", ["p", ["X1"]]]
-    assert _parseStruct("p(X1) & q(X2) => r(f(X1), g(X2))") == ['=>', ['&', ['p', ['X1']], ['q', ['X2']]], ['r', ['f', ['X1']], ['g', ['X2']]]]
+    from qiana.qianaExtension.tptpParsing import parseStruct
+    assert parseStruct("p(f(X1), g(X2))") == ["p", ["f", ["X1"]], ["g", ["X2"]]]
+    assert parseStruct("(p(X1)) => (q(X2))") == ["=>", ["p", ["X1"]], ["q", ["X2"]]]
+    assert parseStruct("p(X1) & q(X2)") == ["&", ["p", ["X1"]], ["q", ["X2"]]]
+    assert parseStruct("p(X1) | q(X2)") == ["|", ["p", ["X1"]], ["q", ["X2"]]]
+    assert parseStruct("~p(X1)") == ["~", ["p", ["X1"]]]
+    assert parseStruct("p(X1) & q(X2) => r(f(X1), g(X2))") == ['=>', ['&', ['p', ['X1']], ['q', ['X2']]], ['r', ['f', ['X1']], ['g', ['X2']]]]
+    assert parseStruct("![X] : (p(X))") == ["!", ["X"], ["p", ["X"]]]
+    assert parseStruct("?[X] : (p(X))") == ["?", ["X"], ["p", ["X"]]]
+    assert parseStruct("p(X1) = q(X2)") == ["=", ["p", ["X1"]], ["q", ["X2"]]]
+    assert parseStruct("![X1,X2] : (?[Y1,Y2] : (p(X1,X2,Y1,Y2)))") == ["!", [",", ["X1"], ["X2"]], ["?", [",", ["Y1"], ["Y2"]], ["p", ["X1"], ["X2"], ["Y1"], ["Y2"]]]]
 
 def test_parseSymbols():
     from qiana.qianaExtension.tptpParsing import parseSymbols
