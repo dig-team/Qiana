@@ -61,8 +61,9 @@ def test_nadim():
 !wrote(nadim, (![X] : contemporary(X,rhaze) => transmutates(X))).
 ![X] : (ist(wrote(nadim),X) => q_Truth(X)).
 contemporary(alice,rhaze).
-~transmutate(alice).
+~!believes(alice,transmutate(alice)).
     """
     from qiana.pipeline import Pipeline
     pipeline = Pipeline()
     pipeline.computeQianaClosure(input_text, quotedVariableNumber=5, simplified_input=True, expand_macros=True)
+    # text = pipeline.getQianaClosure()
