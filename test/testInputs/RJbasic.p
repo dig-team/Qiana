@@ -5,7 +5,7 @@ fof(h1,axiom,
 ).
 
 fof(h5,axiom,
-    ist(say(friar), q_Forall(q_x0, q_Not(q_And(q_drinkPotion(q_x0),q_Not(q_appearDead(q_x0))))))
+    ist(say(friar), q_Forall(q_X1, q_Not(q_And(q_drinkPotion(q_X1),q_Not(q_appearDead(q_X1))))))
 ).
 
 fof(h2,axiom,
@@ -35,6 +35,7 @@ fof(h9,axiom,
 )).
 
 % The formula bellow provides the truth of the friar's assertion directly as otherwise we hit a timeout
+% But a separate tests shows it is redundant with the rest, so this is indeed a timeout and not a cheat
 fof(redundant_1,axiom, ![X] : (drinkPotion(X) => appearDead(X))).
 
 fof(h10,axiom,

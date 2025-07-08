@@ -109,47 +109,33 @@ def test_sub():
     """
     run_assert(tptp, True)
 
-def test_truth1():
-    from os.path import join, dirname
-    from qiana.pipeline import Pipeline
-    pipeline = Pipeline()
-    with open(join("..","test","testInputs","truth1.p")) as file:
-        tptp = file.read()
-    pipeline.computeQianaClosure(tptp)
-    pipeline.runCompute_CLI()
-    assert pipeline.contradiction()
-
-def test_truth2():
-    from os.path import join, dirname
-    from qiana.pipeline import Pipeline
-    pipeline = Pipeline()
-    with open(join("..","test","testInputs","truth2.p")) as file:
-        tptp = file.read()
-    pipeline.computeQianaClosure(tptp)
-    pipeline.runCompute_CLI()
-    assert pipeline.contradiction()
-
-def test_truth3():
-    from os.path import join, dirname
-    from qiana.pipeline import Pipeline
-    pipeline = Pipeline()
-    tptp = """
-fof(h1,axiom,p(f(a)) | ~p(f(a))).
-fof(h1,axiom,q_Truth(q_Forall(q_X1, q_p(q_X1)))).
-fof(goal,conjecture,![X] : q_Truth(sub(q_p(q_X1), q_X1, q_Quote(X)))).
-    """
-    pipeline.computeQianaClosure(tptp)
-    pipeline.runCompute_CLI()
-    assert pipeline.contradiction()
-
-def test_truth4():
+def test_truth():
     from os.path import join, dirname
     from qiana.pipeline import Pipeline
     def run_assert(tptp, expect_contra : bool):
         pipeline = Pipeline()
         pipeline.computeQianaClosure(tptp)
-        pipeline.runCompute_CLI()
+        pipeline.runCompute_CLI(timeout=60) # Some of these take a while
         assert pipeline.contradiction() == expect_contra
+
+    tptp = """
+    fof(h2,axiom,q_Truth(q_p)).
+    fof(goal,conjecture,p).
+    """
+    run_assert(tptp, True)
+
+    tptp = """
+    fof(h2,axiom,q_Truth(q_p(q_c))).
+    fof(goal,conjecture,p(c)).
+    """
+    run_assert(tptp, True)
+
+    tptp = """
+    fof(h1,axiom,p(f(a)) | ~p(f(a))).
+    fof(h1,axiom,q_Truth(q_Forall(q_X1, q_p(q_X1)))).
+    fof(goal,conjecture,![X] : q_Truth(sub(q_p(q_X1), q_X1, q_Quote(X)))).
+    """
+    run_assert(tptp, True)
 
     tptp = """
     fof(goal, conjecture, (q_Truth(q_Forall(q_X1,q_X2)) <=> (![X3] : q_Truth(sub(q_X2, q_X1, q_Quote(X3)))))).
@@ -163,6 +149,48 @@ def test_truth4():
     """
     run_assert(tptp, True)
 
+    tptp = """
+    fof(h2, axiom, q_Truth(q_Forall(q_X1, q_p(q_X1)))).
+    fof(goal, conjecture, ![X] : p(X)).
+    """
+    run_assert(tptp, True)
+
+    tptp = """
+    fof(h1, axiom, p(f(a)) | ~p(f(a))).
+    fof(h1, axiom, p(f(b)) | ~p(f(b))).
+    fof(h2, axiom, q_Truth(q_And(q_p(q_a),q_p(q_b)))).
+    fof(goal, conjecture, p(a)).
+    """
+    run_assert(tptp, True)
+
+    tptp = """
+    fof(h1, axiom, q_Truth(q_Forall(q_X1, q_Not(q_And(q_drinkPotion(q_X1),q_Not(q_appearDead(q_X1))))))).
+    fof(goal,conjecture, ![X] : (drinkPotion(X) => appearDead(X))).
+    """
+    run_assert(tptp, True)
+
+def test_lemma_RJbasic():
+    from os.path import join, dirname
+    from qiana.pipeline import Pipeline
+    def run_assert(tptp, expect_contra : bool):
+        pipeline = Pipeline()
+        pipeline.computeQianaClosure(tptp)
+        pipeline.runCompute_CLI(timeout=60) # Some of these take a while
+        assert pipeline.contradiction() == expect_contra
+    tptp = """
+    fof(h1,axiom,
+        ! [X] : 
+            (ist(say(friar), X) => q_Truth(X))
+    ).
+
+    fof(h5,axiom,
+        ist(say(friar), q_Forall(q_X1, q_Not(q_And(q_drinkPotion(q_X1),q_Not(q_appearDead(q_X1))))))
+    ).
+
+    fof(redundant_1,conjecture, ![X] : (drinkPotion(X) => appearDead(X))).
+    """
+    run_assert(tptp, True)
+
 def test_RJbasic():
     from os.path import join, dirname
     from qiana.pipeline import Pipeline
@@ -170,7 +198,7 @@ def test_RJbasic():
     with open(join("..","test","testInputs","RJbasic.p")) as file:
         tptp = file.read()
     pipeline.computeQianaClosure(tptp)
-    pipeline.runCompute_CLI()
+    pipeline.runCompute_CLI(timeout=180)  # This test can take a while
     assert pipeline.contradiction()
 
 def test_RJbasic_noResult():
@@ -206,7 +234,22 @@ def test_minimal_quote():
     pipeline.runCompute_CLI()
     assert pipeline.contradiction()
 
-def test_nadim_1():
+def test_nadim():
+    from os.path import join, dirname
+    from qiana.pipeline import Pipeline
+    def run_assert(tptp, expect_contra : bool, simplified_input : bool = True):
+        pipeline = Pipeline()
+        pipeline.computeQianaClosure(tptp, simplified_input=simplified_input, expand_macros=True)
+        pipeline.runCompute_CLI(timeout=180) # Some of these take a while
+        assert pipeline.contradiction() == expect_contra
+
+    input_text = """
+    fof(h1,axiom,ist(wrote(nadim), q_Forall(q_X1, q_Or(q_Neg(q_contemporary(q_X1, q_rhazes)), q_trust(q_X1, q_rhazes))))).
+    fof(h2, axiom, ![X] : (ist(wrote(nadim),X) => q_Truth(X))).
+    fof(goal, conjecture, ![X] : (contemporary(X,rhazes) => trust(X,rhazes))).
+    """
+    run_assert(input_text, True, simplified_input=False)
+
     input_text = """
 !wrote(nadim, ![X] : (contemporary(X,rhazes) => !believes(X,transmutate(rhazes,copper)))).
 ![X] : (ist(wrote(nadim),X) => q_Truth(X)).
@@ -214,14 +257,9 @@ def test_nadim_1():
 contemporary(alice,rhazes).
 ~!believes(alice,transmutate(rhazes,copper)).
     """
-    from qiana.pipeline import Pipeline
-    pipeline = Pipeline()
-    pipeline.computeQianaClosure(input_text, quotedVariableNumber=5, simplified_input=True, expand_macros=True)
-    text = pipeline.getQianaClosure()
-    pipeline.runCompute_CLI()
-    assert pipeline.foundContradiction
 
-def test_simple_nadim():
+    run_assert(input_text, True)
+
     input_text = """
 !believes(alice,fraud(rhazes) | transmutates_gold_copper(rhazes)).
 !believes(alice,~fraud(rhazes)).
@@ -230,12 +268,8 @@ contemporary(rhazes, alice).
 good_biographer(nadim).
 ~!believes(alice,transmutates_gold_copper(rhazes)).
     """
-    from qiana.pipeline import Pipeline
-    pipeline = Pipeline()
-    pipeline.computeQianaClosure(input_text, quotedVariableNumber=5, simplified_input=True, expand_macros=True)
-    text = pipeline.getQianaClosure()
-    pipeline.runCompute_CLI()
-    assert pipeline.foundContradiction
+
+    run_assert(input_text, True)
 
     input_text = """
 !believes(alice,fraud(rhazes) | transmutates_gold_copper(rhazes)).
@@ -244,3 +278,6 @@ contemporary(rhazes, alice).
 good_biographer(nadim).
 ~!believes(alice,transmutates_gold_copper(rhazes)).
     """
+
+    run_assert(input_text, True)
+
