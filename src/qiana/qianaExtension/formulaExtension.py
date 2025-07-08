@@ -40,7 +40,7 @@ def getAllInstancesOfFormula(schemeInfo : SchemeInfo, signature : Signature) -> 
             swapValues[symbol] = signature.getBaseFunctions()
         elif target == "ANY_PREDICATE":
             swapValues[symbol] = signature.getAllPredicates()
-        elif target == "ANY_FUNCTION":
+        elif target == "QIANA_FUNCTION":
             swapValues[symbol] = signature.getAllFunctions()
         elif target == "QUOTED_VARIABLE":
             swapValues[symbol] = signature.getQuotedVars()
@@ -55,8 +55,6 @@ def getAllInstancesOfFormula(schemeInfo : SchemeInfo, signature : Signature) -> 
     formulas = []
     if not allCombinations and not schemeInfo.containsSwapPatterns(): allCombinations = [dict()] # If there is no swap pattern we still need to generate a formula. However if there is no valid combaination but there is a swap pattern, we generate nothing at all
     for case in allCombinations:
-        if "romeo" in case.values():
-            pass
         arities = [signature.getArity(case[symbol]) for symbol in schemeInfo.getAritySymbols()]
         schemeBody = schemeInfo.getBody()
         schemeBody = applyAllPatternsOneInstance(schemeBody, arities, case)

@@ -1,13 +1,8 @@
 % The special symbols of the logic are q_Neg, q_And, q_Or, q_Forall, q_Truth, and q_Quote. These are not defined in the schemes but already exist implicitly
 % In addition, we always include the following
 PREDICATE ist OF ARITY 2
-FUNCTION sub OF ARITY 3
-FUNCTION eval OF ARITY 1
-% eval is simply called "E" in the article
-PREDICATE wft OF ARITY 1
-PREDICATE term OF ARITY 1
 
-% Default QIANA axioms
+% Default finite QIANA axioms
 FORMULA axiom5
 BODY ![XC, X1, X2] :(ist(XC, q_And(X1, X2)) => (ist(XC, X1) & ist(XC, X2)))
 
@@ -21,10 +16,10 @@ FORMULA axiom8
 BODY ![XC, X1, X2, X3] :(ist(XC, q_And(q_And(X1, X2), X3)) <=> ist(XC, q_And(X1, q_And(X2, X3))))
 
 FORMULA axiom9
-BODY ![XC, X1, X2, X3] :(ist(XC, q_Or(q_And(X1, X2), X3)) <=> ist(XC, q_And(q_OR(X1, X3), q_Or(X2, X3))))
+BODY ![XC, X1, X2, X3] :(ist(XC, q_Or(q_And(X1, X2), X3)) <=> ist(XC, q_And(q_Or(X1, X3), q_Or(X2, X3))))
 
 FORMULA axiom10
-BODY ![XC, X1, X2] :((((ist(XC, q_Or(X1, X2)) & ist(XC, q_Neg(X1)))) => ist(XC, X2)))
+BODY ![XC, X1, X2] :((ist(XC, q_Or(X1, X2)) & ist(XC, q_Neg(X1))) => ist(XC, X2))
 
 % Axioms specific to the finite axiomatization process
 FORMULA axiom12
@@ -55,12 +50,12 @@ BODY ![X1] :(term(q_Quote(X1)))
 
 FORMULA axiom18
 BODY ![X1,...,X#] :((term(X1)&...&term(X#)) => term($f(X1,...,X#)))
-RANGE $f[1;-1] IN ANY_FUNCTION
+RANGE $f[1;-1] IN QIANA_FUNCTION
 DOT_ARITIES $f $f $f
 
 FORMULA axiom18_const
 BODY term($f)
-RANGE $f[0;0] IN ANY_FUNCTION
+RANGE $f[0;0] IN QIANA_FUNCTION
 
 FORMULA axiom18_quoted_vars
 BODY term($f)
@@ -70,7 +65,8 @@ FORMULA axiom19
 BODY ![X1] :(wft(q_Quote(X1)))
 
 FORMULA axiom20
-BODY ![X1] :(wft(X1))
+BODY wft($x)
+RANGE $x IN QUOTED_VARIABLE
 
 FORMULA axiom21
 BODY ![X1,...,X#] :((wft(X1)&...&wft(X#)) => wft($f(X1,...,X#)))
@@ -131,7 +127,7 @@ DISTINCT $x $y
 
 FORMULA axiom31
 BODY ![X1,...,X#, Y1] :((term(X1)&...&term(X#)) => sub($f(X1,...,X#), $x, Y1) = $f(sub(X1, $x, Y1),...,sub(X#, $x, Y1)))
-RANGE $f[1;-1] IN ANY_FUNCTION
+RANGE $f[1;-1] IN QIANA_FUNCTION
 RANGE $x IN QUOTED_VARIABLE
 DOT_ARITIES $f $f $f $f
 
@@ -167,7 +163,7 @@ RANGE $p[0;0] IN BASE_PREDICATE
 WITH $qp QUOTING $p
 
 FORMULA axiom2fin
-BODY ![X1, X2] :((term(X1) & term(X2)) => q_Truth(q_And(X1, X2)) <=> (q_Truth(X1) & q_Truth(X2)))
+BODY ![X1, X2] :((term(X1) & term(X2)) => (q_Truth(q_And(X1, X2)) <=> (q_Truth(X1) & q_Truth(X2))))
 
 FORMULA axiom3fin
 BODY ![X1] :(term(X1) => (q_Truth(q_Neg(X1)) <=> ~(q_Truth(X1))))

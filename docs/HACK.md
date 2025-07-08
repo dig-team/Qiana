@@ -16,10 +16,12 @@ The formula expression is the body of a TPTP formula, except it can contain the 
 
 1. **swap Patterns**: 
    - `$f`, `$p` - Pattern variables that will be replaced with concrete symbols
-   - The `RANGE` directive specifies which set of symbols to use for substitution. The valid targets are BASE_FUNCTION, BASE_PREDICATE, ANY_FUNCTION, ANY_PREDICATE, and QUOTED_VARIABLE. These correspond to the sets $F_b$, $P_b$, $F$, $P$, and $V$ as defined in the formalization of Qiana. Is is also possible to assign a range of possible arities to the symbols. Examples:
+   - The `RANGE` directive specifies which set of symbols to use for substitution. The valid targets are BASE_FUNCTION, BASE_PREDICATE, QIANA_FUNCTION, ANY_PREDICATE, and QUOTED_VARIABLE. These correspond to the sets $F_b$, $P_b$, $F$, $P$, and the quotation of $V$ as defined in the formalization of Qiana. Is is also possible to assign a range of possible arities to the symbols. Examples:
      - `RANGE $p IN ANY_PREDICATE`
      - `RANGE $f IN BASE_FUNCTION`
      - `RANGE $f[1;-1] IN BASE_FUNCTION` note the use of `-1` to designate positive infinity. This is equivalent to excluding functions of arity 0 (constants).
+
+Remark that QIANA_FUNCTION does not span over the symbols added in the finite axiomattization of Qiana and instead rangers only over all functions of the general semantic of Qiana.
 
 2. **Dots Pattern**:
    - `X1,...,X#` - Represents a variable-length list of parameters. The symbol "," at each end of the end can be replaced with other desired symbols. The # indicates where the counter number substitution will be done to range on the list.

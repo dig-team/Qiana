@@ -20,7 +20,7 @@ def test_schemes_basic():
     BODY ![X1,...,X#] : ((wft(X1) &...& wft(X#)) => truth($qp(X1,...,X#)))
     DOT_ARITIES $p $p $p
     RANGE $p IN BASE_PREDICATE
-    % Alternatives are BASE_PREDICATE, BASE_FUNCTION, ANY_FUNCTION, ANY_PREDICATE, QUOTED_VARIABLE
+    % Alternatives are BASE_PREDICATE, BASE_FUNCTION, QIANA_FUNCTION, ANY_PREDICATE, QUOTED_VARIABLE
     WITH $qp QUOTING $p
     """
     lines = lines.strip().splitlines()
@@ -42,7 +42,7 @@ def test_schemes_harder():
     BODY ![X1,...,X#] : ((wft(X1) &...& wft(X#)) => truth($qp(X1,...,X#)))
     DOT_ARITIES $p $p $p
     RANGE $p IN BASE_PREDICATE
-    % Alternatives are BASE_PREDICATE, BASE_FUNCTION, ANY_FUNCTION, ANY_PREDICATE, QUOTED_VARIABLE
+    % Alternatives are BASE_PREDICATE, BASE_FUNCTION, QIANA_FUNCTION, ANY_PREDICATE, QUOTED_VARIABLE
     WITH $qp QUOTING $p
     """
     lines = lines.strip().splitlines()
