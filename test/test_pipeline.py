@@ -5,7 +5,6 @@ def test_onEmptyClosure():
     pipeline = Pipeline()
     pipeline.computeQianaClosure("")
 
-
 def test_nonEmptyClosure():
     from qiana.pipeline import Pipeline
     pipeline = Pipeline()
@@ -55,6 +54,19 @@ def test_input_example2():
         tptp = file.read()
     pipeline.computeQianaClosure(tptp)
     pipeline.runCompute_CLI()
+
+def test_A30():
+    """
+    Scheme A30 handles distinct quoted variables for sub. Here we ensure they are properly distinct.
+    """
+    from os.path import join, dirname
+    from qiana.pipeline import Pipeline
+    pipeline = Pipeline()
+    tptp = ""
+    pipeline.computeQianaClosure(tptp)
+    closure = pipeline.qianaClosure
+    assert any(line for line in closure.splitlines())
+    assert all(not "axiom30" in line or not "sub(q_X1, q_X1" in line for line in closure.splitlines())
 
 def test_nadim():
     input_text = """

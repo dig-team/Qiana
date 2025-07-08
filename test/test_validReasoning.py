@@ -133,8 +133,11 @@ def test_truth3():
     from os.path import join, dirname
     from qiana.pipeline import Pipeline
     pipeline = Pipeline()
-    with open(join("..","test","testInputs","truth3.p")) as file:
-        tptp = file.read()
+    tptp = """
+fof(h1,axiom,p(f(a)) | ~p(f(a))).
+fof(h1,axiom,q_Truth(q_Forall(q_X1, q_p(q_X1)))).
+fof(goal,conjecture,![X] : q_Truth(sub(q_p(q_X1), q_X1, q_Quote(X)))).
+    """
     pipeline.computeQianaClosure(tptp)
     pipeline.runCompute_CLI()
     assert pipeline.contradiction()

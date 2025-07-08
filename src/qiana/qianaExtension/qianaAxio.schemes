@@ -33,12 +33,12 @@ BODY ![X1, X2, X3] :((X1 = X2 & X2 = X3) => X1 = X3)
 
 FORMULA axiom15
 BODY ![X1,...,X#, Y1,...,Y#] :((X1 = Y1&...&X# = Y#) => $f(X1,...,X#) = $f(Y1,...,Y#))
-RANGE $f[1;-1] IN BASE_FUNCTION
+RANGE $f[1;-1] IN QIANA_FUNCTION
 DOT_ARITIES $f $f $f $f $f
 
 FORMULA axiom15_const
 BODY $f = $f
-RANGE $f[0;0] IN BASE_FUNCTION
+RANGE $f[0;0] IN QIANA_FUNCTION
 
 FORMULA axiom16
 BODY ![X1,...,X#, Y1,...,Y#] :((X1 = Y1&...&X# = Y#) => ($p(X1,...,X#) <=> $p(Y1,...,Y#)))
@@ -70,23 +70,24 @@ RANGE $x IN QUOTED_VARIABLE
 
 FORMULA axiom21
 BODY ![X1,...,X#] :((wft(X1)&...&wft(X#)) => wft($f(X1,...,X#)))
-RANGE $f[1;-1] IN BASE_FUNCTION
+RANGE $f[1;-1] IN QIANA_FUNCTION
 DOT_ARITIES $f $f $f
 
 FORMULA axiom21_const
 BODY wft(f)
-RANGE $f[0;0] IN BASE_FUNCTION
+RANGE $f[0;0] IN QIANA_FUNCTION
 
 FORMULA axiom22
 BODY ![X1] :(term(X1) => eval(q_Quote(X1)) = X1)
 
+% TODO : In the article this ranges over F, which I think is a typo in the article
 FORMULA axiom23
 BODY ![X1,...,X#] :((term(X1)&...&term(X#)) => eval($qf(X1,...,X#)) = $f(eval(X1),...,eval(X#)))
 RANGE $f[1;-1] IN BASE_FUNCTION
 WITH $qf QUOTING $f
 DOT_ARITIES $f $f $f $f
 
-FORMULA axiom23
+FORMULA axiom23_const
 BODY eval($qf) = $f
 RANGE $f[0;0] IN BASE_FUNCTION
 WITH $qf QUOTING $f
@@ -130,6 +131,7 @@ BODY ![X1,...,X#, Y1] :((term(X1)&...&term(X#)) => sub($f(X1,...,X#), $x, Y1) = 
 RANGE $f[1;-1] IN QIANA_FUNCTION
 RANGE $x IN QUOTED_VARIABLE
 DOT_ARITIES $f $f $f $f
+DISTINCT $f q_Quote
 
 FORMULA axiom31_const
 BODY ![X1,X2] : sub($qf, X1, X2) = $qf
@@ -141,7 +143,7 @@ BODY ![X1, X2] :((term(X1) & term(X2)) => sub(q_Forall($x, X1), $x, X2) = q_Fora
 RANGE $x IN QUOTED_VARIABLE
 
 FORMULA axiom33
-BODY ![X1, X2] :((term(X1) & term(X2)) => sub(q_Forall($y, X1), $x, X2) = q_Forall(X$y, sub(X1, $x, X2)))
+BODY ![X1, X2] :((term(X1) & term(X2)) => sub(q_Forall($y, X1), $x, X2) = q_Forall($y, sub(X1, $x, X2)))
 RANGE $x IN QUOTED_VARIABLE
 RANGE $y IN QUOTED_VARIABLE
 DISTINCT $x $y
@@ -152,7 +154,7 @@ RANGE $x IN QUOTED_VARIABLE
 
 % Finite versions of infinite axioms
 FORMULA axiom1fin
-BODY ![X1,...,X#] :((wft(X1)&...&wft(X#)) => q_Truth($qp(X1,...,X#)) <=> $p(eval(X1),...,eval(X#)))
+BODY ![X1,...,X#] :((wft(X1)&...&wft(X#)) => (q_Truth($qp(X1,...,X#)) <=> $p(eval(X1),...,eval(X#))))
 DOT_ARITIES $p $p $p $p
 RANGE $p[1;-1] IN BASE_PREDICATE
 WITH $qp QUOTING $p
@@ -169,8 +171,10 @@ FORMULA axiom3fin
 BODY ![X1] :(term(X1) => (q_Truth(q_Neg(X1)) <=> ~(q_Truth(X1))))
 
 FORMULA axiom4fin
-BODY ![X1,X2] : (term(X1) & term(X2) => (q_Truth(q_Forall(X1,X2)) <=> (![X3] : q_Truth(sub(X2, X1, q_Quote(X3))))))
+BODY ![X2] : ((term(X1) & term(X2)) => (q_Truth(q_Forall($x,X2)) <=> (![X3] : q_Truth(sub(X2, $x, q_Quote(X3))))))
+RANGE $x IN QUOTED_VARIABLE
 
 FORMULA axiom11fin
-BODY ![XC, X1, X2] :((term(X1) => (ist(XC, q_Forall(X1,X2)) => ![X3] :ist(XC, sub(X2, X1, q_Quote(X2))))))
+BODY ![XC, X2] :(term(X2) => (ist(XC, q_Forall($x,X2)) => ![X3] :ist(XC, sub(X2, $x, q_Quote(X2)))))
+RANGE $x IN QUOTED_VARIABLE
 
