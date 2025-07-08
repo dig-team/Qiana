@@ -153,24 +153,21 @@ def test_include_schemes():
     for instance in allInstances: assert "..." not in instance
 
 def test_arityRanges1():
-    """
-    Test the qiana extension with arity ranges.
-    """
-    from qiana.qianaExtension.formulaExtension import getAllSchemesInstances
+    from qiana.qianaExtension.patternParsing import getAllSchemeInfos, _getSymbolAndArity, _readSchemeInfo, SchemeInfo
+    from qiana.qianaExtension.signature import Signature
+
     lines = [
-        "FUNCTION f0 OF ARITY 0",
-        "FUNCTION f1 OF ARITY 1",
-        "FUNCTION f2 OF ARITY 2",
-        "FUNCTION f3 OF ARITY 3",
         "FORMULA testFormula",
-        "BODY ![X1,...,X#] : p($f(X1,...,X#))",
-        "DOT_ARITIES $f $f",
-        "RANGE $f[1;2] IN BASE_FUNCTION",
+        "BODY f(x, y)",
+        "DOT_ARITIES $f",
+        "RANGE $f IN BASE_FUNCTION"
     ]
-    instances = getAllSchemesInstances(lines)
-    assert not any("f0" in instance for instance in instances)
-    assert any("f2" in instance for instance in instances)
-    assert not any("f3" in instance for instance in instances)
+    schemeInfo = _readSchemeInfo(lines)
+    assert schemeInfo.getName() == "testFormula"
+    assert schemeInfo.getBody() == "f(x, y)"
+    assert schemeInfo.getAritySymbols() == ["$f"]
+    assert schemeInfo.getSymbolTargets() == {"$f": "BASE_FUNCTION"}
+    assert schemeInfo.symbolQuotationMatchings == {}
 
 def test_arityRanges2():
     """
@@ -258,3 +255,18 @@ def test_arityRanges3():
     assert any("finf(" in instance for instance in boundary_test_instances)
     assert not any("finf(" in instance for instance in complex_test_instances + additional_test_instances)
 
+def test_quoted_variables():
+    from qiana.qianaExtension.patternParsing import getAllSchemeInfos, _getSymbolAndArity, _readSchemeInfo, SchemeInfo
+    from qiana.qianaExtension.formulaExtension import getAllSchemesInstances
+    from qiana.qianaExtension.signature import Signature
+
+    lines = [
+        "FORMULA testFormula",
+        "BODY p($f)",
+        "RANGE $f IN QUOTED_VARIABLE",
+    ]
+    sig = Signature(nbrQuotedVars=5)
+    allInstances = getAllSchemesInstances(lines, sig)
+    assert len(allInstances) == 5
+    assert all("p(q_X" in instance for instance in allInstances)
+    assert any("p(q_X4)" in instance for instance in allInstances)

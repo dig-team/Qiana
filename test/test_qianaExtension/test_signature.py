@@ -1,3 +1,19 @@
+def test_quoted_variables():
+    from qiana.qianaExtension.signature import Signature
+    signature = Signature()
+    vars = signature.getQuotedVars()
+    assert vars == ["q_X1", "q_X2", "q_X3", "q_X4", "q_X5"]
+
+    signature2 = Signature(nbrQuotedVars=10)
+    vars2 = signature2.getQuotedVars()
+    assert vars2 == ["q_X1", "q_X2", "q_X3", "q_X4", "q_X5", "q_X6", "q_X7", "q_X8", "q_X9", "q_X10"]
+
+def test_get_all_functions():
+    from qiana.qianaExtension.signature import Signature
+    signature = Signature()
+    all_functions = signature.getAllFunctions()
+    assert all(not func.startswith("q_q_") for func in all_functions), "All functions should not start with 'q_'"
+
 def test_extend_from_tptp_simple():
     # Test with a simple predicate
     from qiana.qianaExtension.signature import Signature

@@ -17,13 +17,15 @@ def test_parseTopLevel():
     assert _parseTopLevel("p(X1) & q(X2)") == ["&", "p(X1)", "q(X2)"]
     assert _parseTopLevel("p(X1) | q(X2)") == ["|", "p(X1)", "q(X2)"]
     assert _parseTopLevel("~p(X1)") == ["~", "p(X1)"]
-    assert _parseTopLevel("p(X1) & q(X2) => r(f(X1), g(X2))") == ['=>', 'p(X1) & q(X2)', 'r(f(X1), g(X2))']
+    assert _parseTopLevel("(p(X1) & q(X2)) => r(f(X1), g(X2))") == ['=>', '(p(X1) & q(X2))', 'r(f(X1), g(X2))']
+    assert _parseTopLevel("(a=b) => (p(a) => p(b))") == ["=>", "(a=b)", "(p(a) => p(b))"]
 
     try:
         _parseTopLevel("f())")
         raise Exception("_parseTopLevel returned on an ill formated input")
     except AssertionError:
         assert True
+
 
 def test_parseStruct():
     from qiana.qianaExtension.tptpParsing import parseStruct

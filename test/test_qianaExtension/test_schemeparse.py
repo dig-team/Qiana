@@ -183,3 +183,20 @@ def test_readSchemeInfo_no_quotations():
     assert schemeInfo.getSymbolTargets() == {"$f": "BASE_FUNCTION"}
     assert schemeInfo.symbolQuotationMatchings == {}
 
+def test_quoted_vars():
+    """
+    Test that the quoted variables are correctly initialized.
+    """
+    from qiana.qianaExtension.patternParsing import getAllSchemeInfos, _getSymbolAndArity, _readSchemeInfo, SchemeInfo
+    from qiana.qianaExtension.signature import Signature
+
+    lines = [
+        "FORMULA testFormula",
+        "BODY f",
+        "RANGE $f IN QUOTED_VARIABLE"
+    ]
+    schemeInfo = _readSchemeInfo(lines)
+    assert schemeInfo.getName() == "testFormula"
+    assert schemeInfo.getBody() == "f"
+    assert schemeInfo.getSymbolTargets() == {"$f": "QUOTED_VARIABLE"}
+    assert schemeInfo.symbolQuotationMatchings == {}

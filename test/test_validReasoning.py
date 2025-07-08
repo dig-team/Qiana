@@ -30,6 +30,79 @@ def test_sub1():
     pipeline.runCompute_CLI()
     assert pipeline.contradiction()
 
+def test_term():
+    from os.path import join, dirname
+    from qiana.pipeline import Pipeline
+    
+    def run(tptp):
+        pipeline = Pipeline()
+        pipeline.computeQianaClosure(tptp)
+        pipeline.runCompute_CLI()
+        return pipeline.contradiction()
+
+    tptp = """
+    fof(goal, conjecture, term(q_X1)).
+    """
+    assert run(tptp)
+
+    tptp = """
+    fof(goal, conjecture, term(q_Forall(q_X1, q_p(q_X1)))).
+    """
+    assert run(tptp)
+
+def test_equal():
+    from os.path import join, dirname
+    from qiana.pipeline import Pipeline
+    
+    def run_assert(tptp, expect_contra : bool):
+        pipeline = Pipeline()
+        pipeline.computeQianaClosure(tptp)
+        pipeline.runCompute_CLI()
+        assert pipeline.contradiction() == expect_contra
+
+    tptp = """
+    fof(goal,conjecture, f = f).
+    """
+    run_assert(tptp, True)
+
+    tptp = """
+    fof(goal,conjecture, (a = b) => (p(a) => p(b))).
+    """
+    run_assert(tptp, True)
+
+def test_sub():
+    from os.path import join, dirname
+    from qiana.pipeline import Pipeline
+    
+    def run_assert(tptp, expect_contra : bool):
+        pipeline = Pipeline()
+        pipeline.computeQianaClosure(tptp)
+        pipeline.runCompute_CLI()
+        assert pipeline.contradiction() == expect_contra
+
+    tptp = """
+    fof(goal, conjecture, sub(q_X1, q_X1, q_X2) = q_X2).
+    """
+    run_assert(tptp, True)
+
+    tptp = """
+    fof(h1, axiom, p(sub(q_X1, q_X1, q_X2))).
+    fof(goal, conjecture, p(q_X2)).
+    """
+    run_assert(tptp, True)
+
+    tptp = """
+    fof(goal, conjecture, sub(q_f(q_X1), q_X1, q_X2) = q_f(sub(q_X1,q_X1,q_X2))).
+    """
+    run_assert(tptp, True)
+
+    tptp = """
+    fof(h1,axiom,p(sub(q_f(q_X1),q_X1,q_X2))).
+    fof(goal,conjecture,p(q_f(q_X2))).
+    %fof(goal,conjecture,term(c)).
+    """
+    # run_assert(tptp, True)
+
 def test_truth1():
     from os.path import join, dirname
     from qiana.pipeline import Pipeline
@@ -123,6 +196,21 @@ def test_nadim_1():
 ![X] : (contemporary(X,rhazes) => !believes(X,transmutate(rhazes,copper))).
 contemporary(alice,rhazes).
 ~!believes(alice,transmutate(rhazes,copper)).
+    """
+    from qiana.pipeline import Pipeline
+    pipeline = Pipeline()
+    pipeline.computeQianaClosure(input_text, quotedVariableNumber=5, simplified_input=True, expand_macros=True)
+    text = pipeline.getQianaClosure()
+    pipeline.runCompute_CLI()
+    assert pipeline.foundContradiction
+
+def test_simple_belief():
+    input_text = """
+!believes(nadim, contemporary(rhazes, alice) => !believes(alice,transmutates_gold_copper(rhazes))).
+![X] : (ist(wrote(nadim),X) => q_Truth(X)).
+contemporary(rhazes, alice) => !believes(alice,transmutates_gold_copper(rhazes))
+contemporary(alice,rhazes).
+~!believes(alice,transmutates_gold_copper(rhazes)).
     """
     from qiana.pipeline import Pipeline
     pipeline = Pipeline()

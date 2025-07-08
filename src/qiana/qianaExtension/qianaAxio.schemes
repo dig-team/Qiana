@@ -120,11 +120,11 @@ BODY (eval($x) = $x)
 RANGE $x IN QUOTED_VARIABLE
 
 FORMULA axiom29
-BODY ![X3] :(term(X1) => sub($x, $x, X3) = X3)
+BODY ![X3] :(term(X3) => sub($x, $x, X3) = X3)
 RANGE $x IN QUOTED_VARIABLE
 
 FORMULA axiom30
-BODY ![X3] :(term(X1) => sub($x, $y, X3) = $x)
+BODY ![X3] :(term(X3) => sub($x, $y, X3) = $x)
 RANGE $x IN QUOTED_VARIABLE
 RANGE $y IN QUOTED_VARIABLE
 DISTINCT $x $y

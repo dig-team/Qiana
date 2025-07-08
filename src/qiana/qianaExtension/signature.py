@@ -33,12 +33,13 @@ class Signature:
         self.basePredicates[symbol] = arity
 
     def getArity(self, symbol: str) -> int:
-        symbol = unquoteSymbol(symbol) or symbol
-        if symbol in self.baseFunctions: return self.baseFunctions[symbol]
-        if symbol in self.basePredicates: return self.basePredicates[symbol]
         if symbol in self.getQuotedVars(): return 0
         if symbol == getTruthPredicate(): return 1
         if symbol in get_special_functions_arities(): return get_special_functions_arities()[symbol]
+
+        symbol = unquoteSymbol(symbol) or symbol
+        if symbol in self.baseFunctions: return self.baseFunctions[symbol]
+        if symbol in self.basePredicates: return self.basePredicates[symbol]
         raise ValueError("Symbol not found in signature")
 
     def getBaseFunctions(self) -> List[str]:
@@ -53,9 +54,9 @@ class Signature:
         return list(self.baseFunctions.keys()) + \
             [quoteSymbol(var) for var in self.baseFunctions] + \
             [quoteSymbol(var) for var in self.basePredicates] +\
-            [quoteSymbol(var) for var in get_special_functions_arities()] +\
-            [quoteSymbol(var) for var in self.getQuotedVars()]
-    # TODO : in the line above, why are the quoted variables getting quoted again?
+            [var for var in get_special_functions_arities()] +\
+            [var for var in self.getQuotedVars()]
+    # TODO : I fixed a bug here where the quoted variables where quoted again, but maybe I was wrong. To check.
     
     def getBasePredicates(self) -> List[str]:
         return list(self.basePredicates.keys())
