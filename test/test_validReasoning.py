@@ -204,12 +204,13 @@ contemporary(alice,rhazes).
     pipeline.runCompute_CLI()
     assert pipeline.foundContradiction
 
-def test_simple_belief():
+def test_simple_nadim():
     input_text = """
-!believes(nadim, contemporary(rhazes, alice) => !believes(alice,transmutates_gold_copper(rhazes))).
-![X] : (ist(wrote(nadim),X) => q_Truth(X)).
-contemporary(rhazes, alice) => !believes(alice,transmutates_gold_copper(rhazes))
-contemporary(alice,rhazes).
+!believes(alice,fraud(rhazes) | transmutates_gold_copper(rhazes)).
+!believes(alice,~fraud(rhazes)).
+good_biographer(nadim) => (contemporary(rhazes, alice) => !believes(alice,~fraud(rhazes))).
+contemporary(rhazes, alice).
+good_biographer(nadim).
 ~!believes(alice,transmutates_gold_copper(rhazes)).
     """
     from qiana.pipeline import Pipeline
@@ -218,3 +219,11 @@ contemporary(alice,rhazes).
     text = pipeline.getQianaClosure()
     pipeline.runCompute_CLI()
     assert pipeline.foundContradiction
+
+    input_text = """
+!believes(alice,fraud(rhazes) | transmutates_gold_copper(rhazes)).
+good_biographer(nadim) => (contemporary(rhazes, alice) => !believes(alice,~fraud(rhazes))).
+contemporary(rhazes, alice).
+good_biographer(nadim).
+~!believes(alice,transmutates_gold_copper(rhazes)).
+    """

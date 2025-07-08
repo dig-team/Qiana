@@ -237,6 +237,16 @@ def _quote_from_struct(struct : List, var_to_qvar : Dict[str, str]) -> str:
         quoted_symbol = get_special_function("q_And") if symbol == "&" else get_special_function("q_Or")
         return f"{quoted_symbol}({left}, {right})"
     
+    if symbol in ["=>", "<=>"]:
+        assert len(struct) == 3, f"Binary operator {symbol} must have exactly two arguments"
+        left = struct[1]
+        right = struct[2]
+        if symbol == "=>":
+            new_struct = ["|", ["~", left], right]
+        else:
+            new_struct = ["&", ["=>", left, right], ["=>", right, left]]
+        return _quote_from_struct(new_struct, var_to_qvar)
+    
     # Negation
     if symbol == "~":
         assert len(struct) == 2, "Negation must have exactly one argument"

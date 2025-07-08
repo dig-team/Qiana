@@ -21,10 +21,10 @@ FORMULA axiom8
 BODY ![XC, X1, X2, X3] :(ist(XC, q_And(q_And(X1, X2), X3)) <=> ist(XC, q_And(X1, q_And(X2, X3))))
 
 FORMULA axiom9
-BODY ![XC, X1, X2, X3] :(ist(XC, q_OR(q_And(X1, X2), X3)) <=> ist(XC, q_And(q_OR(X1, X3), q_OR(X2, X3))))
+BODY ![XC, X1, X2, X3] :(ist(XC, q_Or(q_And(X1, X2), X3)) <=> ist(XC, q_And(q_OR(X1, X3), q_Or(X2, X3))))
 
 FORMULA axiom10
-BODY ![XC, X1, X2] :((ist(XC, q_OR(X1, X2)) & ist(XC, q_Neg(X1))) => ist(XC, X2))
+BODY ![XC, X1, X2] :((((ist(XC, q_Or(X1, X2)) & ist(XC, q_Neg(X1)))) => ist(XC, X2)))
 
 % Axioms specific to the finite axiomatization process
 FORMULA axiom12
