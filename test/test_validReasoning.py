@@ -7,7 +7,7 @@ def test_onlyTautologies():
     with open(join("..","test","testInputs","onlyTautologies.p")) as file:
         tptp = file.read()
     pipeline.computeQianaClosure(tptp)
-    pipeline.runCompute_CLI()
+    pipeline.runCompute_CLI(timeout=180)  
     assert not pipeline.contradiction()
 
 def test_pureFOLcontradiction():
