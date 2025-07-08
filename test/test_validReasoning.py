@@ -50,6 +50,11 @@ def test_term():
     """
     assert run(tptp)
 
+    tptp = """
+    fof(goal, conjecture, term(q_f(q_X1))).
+    """
+    assert run(tptp)
+
 def test_equal():
     from os.path import join, dirname
     from qiana.pipeline import Pipeline
@@ -92,16 +97,17 @@ def test_sub():
     run_assert(tptp, True)
 
     tptp = """
+    fof(f, axiom, p(f(a)) | ~p(f(a))).
     fof(goal, conjecture, sub(q_f(q_X1), q_X1, q_X2) = q_f(sub(q_X1,q_X1,q_X2))).
     """
     run_assert(tptp, True)
 
     tptp = """
+    fof(f, axiom, p(f(a)) | ~p(f(a))).
     fof(h1,axiom,p(sub(q_f(q_X1),q_X1,q_X2))).
     fof(goal,conjecture,p(q_f(q_X2))).
-    %fof(goal,conjecture,term(c)).
     """
-    # run_assert(tptp, True)
+    run_assert(tptp, True)
 
 def test_truth1():
     from os.path import join, dirname
@@ -136,15 +142,23 @@ def test_truth3():
 def test_truth4():
     from os.path import join, dirname
     from qiana.pipeline import Pipeline
-    pipeline = Pipeline()
+    def run_assert(tptp, expect_contra : bool):
+        pipeline = Pipeline()
+        pipeline.computeQianaClosure(tptp)
+        pipeline.runCompute_CLI()
+        assert pipeline.contradiction() == expect_contra
+
     tptp = """
-    q_Truth(q_Forall(q_X1, q_p(q_X1))).
-    ~(![X] : q_Truth(sub(q_p(q_X1), q_X1, X))).
+    fof(goal, conjecture, (q_Truth(q_Forall(q_X1,q_X2)) <=> (![X3] : q_Truth(sub(q_X2, q_X1, q_Quote(X3)))))).
     """
-    
-    pipeline.computeQianaClosure(tptp, simplified_input=True)
-    pipeline.runCompute_CLI()
-    assert pipeline.contradiction()
+    run_assert(tptp, True)
+
+    tptp = """
+    fof(h1, axiom, p(f(a)) | ~p(f(a))).
+    fof(h2, axiom, q_Truth(q_Forall(q_X1, q_p(q_X1)))).
+    fof(goal, conjecture, ![X] : q_Truth(sub(q_p(q_X1), q_X1, q_Quote(X)))).
+    """
+    run_assert(tptp, True)
 
 def test_RJbasic():
     from os.path import join, dirname

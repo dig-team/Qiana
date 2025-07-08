@@ -128,14 +128,20 @@ def test_A31():
     from qiana.qianaExtension.signature import Signature
     lines = """
     FUNCTION f OF ARITY 2
-    FORMULA A31
-    BODY ![X1,...,X#, Y1, Y2] : ((term(X1)&...&term(X#)) => sub($f(X1,...,X#), Y1, Y2) = $f(sub(X1, Y1, Y2),...,sub(X#, Y1, Y2)))
-    RANGE $f IN BASE_FUNCTION
+    FUNCTION g OF ARITY 2
+
+    FORMULA axiom31
+    BODY ![X1,...,X#, Y1] :((term(X1)&...&term(X#)) => sub($qf(X1,...,X#), $x, Y1) = $qf(sub(X1, $x, Y1),...,sub(X#, $x, Y1)))
+    RANGE $f[1;-1] IN BASE_FUNCTION
+    RANGE $x IN QUOTED_VARIABLE
+    WITH $qf QUOTING $f
     DOT_ARITIES $f $f $f $f
     """.splitlines()
     sig = Signature()
     allInstances = getAllSchemesInstances(lines, sig)
-    for instance in allInstances: assert "..." not in instance
+    assert all("..." not in instance for instance in allInstances)
+    assert len(allInstances) == 10, "There should be exactly one instance of axiom31"
+    assert any("q_f" in instance for instance in allInstances)
 
 
 def test_include_schemes():

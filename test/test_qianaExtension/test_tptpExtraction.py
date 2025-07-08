@@ -34,7 +34,7 @@ def test_parseStruct():
     assert parseStruct("p(X1) & q(X2)") == ["&", ["p", ["X1"]], ["q", ["X2"]]]
     assert parseStruct("p(X1) | q(X2)") == ["|", ["p", ["X1"]], ["q", ["X2"]]]
     assert parseStruct("~p(X1)") == ["~", ["p", ["X1"]]]
-    assert parseStruct("p(X1) & q(X2) => r(f(X1), g(X2))") == ['=>', ['&', ['p', ['X1']], ['q', ['X2']]], ['r', ['f', ['X1']], ['g', ['X2']]]]
+    assert parseStruct("(p(X1) & q(X2)) => r(f(X1), g(X2))") == ['=>', ['&', ['p', ['X1']], ['q', ['X2']]], ['r', ['f', ['X1']], ['g', ['X2']]]]
     assert parseStruct("![X] : (p(X))") == ["!", ["X"], ["p", ["X"]]]
     assert parseStruct("?[X] : (p(X))") == ["?", ["X"], ["p", ["X"]]]
     assert parseStruct("p(X1) = q(X2)") == ["=", ["p", ["X1"]], ["q", ["X2"]]]

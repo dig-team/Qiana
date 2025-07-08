@@ -130,13 +130,13 @@ RANGE $y IN QUOTED_VARIABLE
 DISTINCT $x $y
 
 FORMULA axiom31
-BODY ![X1,...,X#, Y1] :((term(X1)&...&term(X#)) => sub($qf(X1,...,X#), $x, Y1) = $qf(sub(X1, $x, Y1),...,sub(X#, $x, Y1)))
-RANGE $f[1;-1] IN BASE_FUNCTION
-WITH $qf QUOTING $f
+BODY ![X1,...,X#, Y1] :((term(X1)&...&term(X#)) => sub($f(X1,...,X#), $x, Y1) = $f(sub(X1, $x, Y1),...,sub(X#, $x, Y1)))
+RANGE $f[1;-1] IN ANY_FUNCTION
+RANGE $x IN QUOTED_VARIABLE
 DOT_ARITIES $f $f $f $f
 
 FORMULA axiom31_const
-BODY sub($qf) = $qf
+BODY ![X1,X2] : sub($qf, X1, X2) = $qf
 RANGE $f[0;0] IN BASE_FUNCTION
 WITH $qf QUOTING $f
 
@@ -173,7 +173,7 @@ FORMULA axiom3fin
 BODY ![X1] :(term(X1) => (q_Truth(q_Neg(X1)) <=> ~(q_Truth(X1))))
 
 FORMULA axiom4fin
-BODY ![X1,X2] : (term(X1,X2) => (q_Truth(q_Forall(X1,X2)) <=> (![X3] : q_Truth(sub(X2, X1, q_Quote(X3))))))
+BODY ![X1,X2] : (term(X1) & term(X2) => (q_Truth(q_Forall(X1,X2)) <=> (![X3] : q_Truth(sub(X2, X1, q_Quote(X3))))))
 
 FORMULA axiom11fin
 BODY ![XC, X1, X2] :((term(X1) => (ist(XC, q_Forall(X1,X2)) => ![X3] :ist(XC, sub(X2, X1, q_Quote(X2))))))
