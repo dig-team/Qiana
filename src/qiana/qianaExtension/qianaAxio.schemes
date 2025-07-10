@@ -42,7 +42,7 @@ RANGE $f[0;0] IN QIANA_FUNCTION
 
 FORMULA axiom16
 BODY ![X1,...,X#, Y1,...,Y#] :((X1 = Y1&...&X# = Y#) => ($p(X1,...,X#) <=> $p(Y1,...,Y#)))
-RANGE $p[1;-1] IN BASE_PREDICATE
+RANGE $p[1;-1] IN ANY_PREDICATE
 DOT_ARITIES $p $p $p $p $p
 
 FORMULA axiom17
@@ -69,16 +69,18 @@ BODY wft($x)
 RANGE $x IN QUOTED_VARIABLE
 
 FORMULA axiom21
-BODY ![X1,...,X#] :((wft(X1)&...&wft(X#)) => wft($f(X1,...,X#)))
+BODY ![X1,...,X#] :((wft(X1)&...&wft(X#)) => wft($qf(X1,...,X#)))
 RANGE $f[1;-1] IN QIANA_FUNCTION
+WITH $qf QUOTING $f
 DOT_ARITIES $f $f $f
 
 FORMULA axiom21_const
-BODY wft(f)
+BODY wft($qf)
 RANGE $f[0;0] IN QIANA_FUNCTION
+WITH $qf QUOTING $f
 
 FORMULA axiom22
-BODY ![X1] :(term(X1) => eval(q_Quote(X1)) = X1)
+BODY ![X1] :(eval(q_Quote(X1)) = X1)
 
 % TODO : In the article this ranges over F, which I think is a typo in the article
 FORMULA axiom23
