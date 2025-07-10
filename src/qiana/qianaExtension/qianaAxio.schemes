@@ -132,6 +132,7 @@ RANGE $f[1;-1] IN QIANA_FUNCTION
 RANGE $x IN QUOTED_VARIABLE
 DOT_ARITIES $f $f $f $f
 DISTINCT $f q_Quote
+DISTINCT $f q_Forall
 
 FORMULA axiom31_const
 BODY ![X1,X2] : sub($qf, X1, X2) = $qf
