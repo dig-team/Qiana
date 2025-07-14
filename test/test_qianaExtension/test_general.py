@@ -17,7 +17,7 @@ def test_schemes_basic():
     FUNCTION c OF ARITY 0
 
     FORMULA test
-    BODY ![X1,...,X#] : ((wft(X1) &...& wft(X#)) => truth($qp(X1,...,X#)))
+    BODY ![X1,...,X#] : ((q_Wft(X1) &...& q_Wft(X#)) => truth($qp(X1,...,X#)))
     DOT_ARITIES $p $p $p
     RANGE $p IN BASE_PREDICATE
     % Alternatives are BASE_PREDICATE, BASE_FUNCTION, QIANA_FUNCTION, ANY_PREDICATE, QUOTED_VARIABLE
@@ -39,7 +39,7 @@ def test_schemes_harder():
     FUNCTION c OF ARITY 0
 
     FORMULA test
-    BODY ![X1,...,X#] : ((wft(X1) &...& wft(X#)) => truth($qp(X1,...,X#)))
+    BODY ![X1,...,X#] : ((q_Wft(X1) &...& q_Wft(X#)) => truth($qp(X1,...,X#)))
     DOT_ARITIES $p $p $p
     RANGE $p IN BASE_PREDICATE
     % Alternatives are BASE_PREDICATE, BASE_FUNCTION, QIANA_FUNCTION, ANY_PREDICATE, QUOTED_VARIABLE
@@ -60,7 +60,7 @@ def test_noFunctions():
     from qiana.qianaExtension.signature import Signature
     lines = """
     FORMULA A31
-    BODY ![X1,...,X#, Y1, Y2] : ((term(X1)&...&term(X#)) => sub($f(X1,...,X#), Y1, Y2) = $f(sub(X1, Y1, Y2),...,sub(X#, Y1, Y2)))
+    BODY ![X1,...,X#, Y1, Y2] : ((q_Term(X1)&...&q_Term(X#)) => q_Sub($f(X1,...,X#), Y1, Y2) = $f(q_Sub(X1, Y1, Y2),...,q_Sub(X#, Y1, Y2)))
     RANGE $f IN BASE_FUNCTION
     DOT_ARITIES $f $f $f $f
     """.splitlines()
@@ -82,7 +82,7 @@ def test_distincPairs():
     FUNCTION c OF ARITY 0
 
     FORMULA test
-    BODY ![X1,...,X#, Y1, Y2] : ((term(X1)&...&term(X#)) => sub($f(X1,...,X#), Y1, Y2) = $g(sub(X1, Y1, Y2),...,sub(X#, Y1, Y2)))
+    BODY ![X1,...,X#, Y1, Y2] : ((q_Term(X1)&...&q_Term(X#)) => q_Sub($f(X1,...,X#), Y1, Y2) = $g(q_Sub(X1, Y1, Y2),...,q_Sub(X#, Y1, Y2)))
     RANGE $f IN BASE_FUNCTION
     RANGE $g IN BASE_FUNCTION
     DOT_ARITIES $f $f $f $f
@@ -131,7 +131,7 @@ def test_A31():
     FUNCTION g OF ARITY 2
 
     FORMULA axiom31
-    BODY ![X1,...,X#, Y1] :((term(X1)&...&term(X#)) => sub($qf(X1,...,X#), $x, Y1) = $qf(sub(X1, $x, Y1),...,sub(X#, $x, Y1)))
+    BODY ![X1,...,X#, Y1] :((q_Term(X1)&...&q_Term(X#)) => q_Sub($qf(X1,...,X#), $x, Y1) = $qf(q_Sub(X1, $x, Y1),...,q_Sub(X#, $x, Y1)))
     RANGE $f[1;-1] IN BASE_FUNCTION
     RANGE $x IN QUOTED_VARIABLE
     WITH $qf QUOTING $f
@@ -186,7 +186,7 @@ def test_arityRanges2():
     FUNCTION ff OF ARITY 3
 
     FORMULA test
-    BODY ![X1,...,X#] : ((wft(X1) &...& wft(X#)) => truth($f(X1,...,X#)))
+    BODY ![X1,...,X#] : ((q_Wft(X1) &...& q_Wft(X#)) => truth($f(X1,...,X#)))
     DOT_ARITIES $f $f $f
     RANGE $f[0;2] IN BASE_FUNCTION
     """.splitlines()
@@ -212,7 +212,7 @@ def test_arityRanges3():
 
     
     FORMULA complex_test
-    BODY ![X1,...,X#, Y1,...,Y#] : (((wft(X1) &...& wft(X#)) & (term(Y1) &...& term(Y#))) => $f(X1,...,X#) = $g(Y1,...,Y#) & $p(X1,Y1))
+    BODY ![X1,...,X#, Y1,...,Y#] : (((q_Wft(X1) &...& q_Wft(X#)) & (q_Term(Y1) &...& q_Term(Y#))) => $f(X1,...,X#) = $g(Y1,...,Y#) & $p(X1,Y1))
     DOT_ARITIES $f $g $f $g $f $g
     RANGE $f[1;2] IN BASE_FUNCTION
     RANGE $g[0;2] IN BASE_FUNCTION

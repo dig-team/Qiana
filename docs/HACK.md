@@ -36,7 +36,7 @@ Remark that QIANA_FUNCTION does not span over the symbols added in the finite ax
 ## Example
 ```
 FORMULA axiom24
-BODY ![X1,...,X#] :((term(X1)&...&term(X#)) => eval($qp(X1,...,X#)) = $qp(X1,...,X#))
+BODY ![X1,...,X#] :((q_Term(X1)&...&q_Term(X#)) => q_Eval($qp(X1,...,X#)) = $qp(X1,...,X#))
 RANGE $p IN BASE_PREDICATE
 WITH $qp QUOTING $p
 DOT_ARITIES $p $p $p $p
@@ -45,5 +45,5 @@ This would expand to multiple formulas, one for each predicate in BASE_PREDICATE
 
 For example if there is a predicate p of arity 2 in the base predicates this will generate:
 ```
-fof(axiom24_p, axiom, ![X1,X2] :((term(X1)&term(X2)) => eval(q_p(X1,X2)) = q_p(X1,X2))).
+fof(axiom24_p, axiom, ![X1,X2] :((q_Term(X1)&q_Term(X2)) => q_Eval(q_p(X1,X2)) = q_p(X1,X2))).
 ```

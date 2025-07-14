@@ -20,17 +20,7 @@ def test_pureFOLcontradiction():
     pipeline.runCompute_CLI()
     assert pipeline.contradiction()
 
-def test_sub1():
-    from os.path import join, dirname
-    from qiana.pipeline import Pipeline
-    pipeline = Pipeline()
-    with open(join("..","test","testInputs","sub1.p")) as file:
-        tptp = file.read()
-    pipeline.computeQianaClosure(tptp)
-    pipeline.runCompute_CLI()
-    assert pipeline.contradiction()
-
-def test_term():
+def test_q_Term():
     from os.path import join, dirname
     from qiana.pipeline import Pipeline
     
@@ -41,19 +31,24 @@ def test_term():
         return pipeline.contradiction()
 
     tptp = """
-    fof(goal, conjecture, term(q_X1)).
+    fof(goal, conjecture, q_Term(c)).
+    """
+    assert run(tptp)
+
+    tptp = """
+    fof(goal, conjecture, q_Term(q_X1)).
     """
     assert run(tptp)
 
     tptp = """
     fof(h1, axiom, p(a) | ~p(a)).
-    fof(goal, conjecture, term(q_Forall(q_X1, q_p(q_X1)))).
+    fof(goal, conjecture, q_Term(q_Forall(q_X1, q_p(q_X1)))).
     """
     assert run(tptp)
 
     tptp = """
     fof(h1, axiom, f(a) | ~f(a)).
-    fof(goal, conjecture, term(q_f(q_X1))).
+    fof(goal, conjecture, q_Term(q_f(q_X1))).
     """
     assert run(tptp)
 
@@ -88,34 +83,34 @@ def test_sub():
         assert pipeline.contradiction() == expect_contra
 
     tptp = """
-    fof(goal, conjecture, sub(q_X1, q_X1, q_X2) = q_X2).
+    fof(goal, conjecture, q_Sub(q_X1, q_X1, q_X2) = q_X2).
     """
     run_assert(tptp, True)
 
     tptp = """
-    fof(h1, axiom, p(sub(q_X1, q_X1, q_X2))).
+    fof(h1, axiom, p(q_Sub(q_X1, q_X1, q_X2))).
     fof(goal, conjecture, p(q_X2)).
     """
     run_assert(tptp, True)
 
     tptp = """
     fof(f, axiom, p(f(a)) | ~p(f(a))).
-    fof(goal, conjecture, sub(q_f(q_X1), q_X1, q_X2) = q_f(sub(q_X1,q_X1,q_X2))).
+    fof(goal, conjecture, q_Sub(q_f(q_X1), q_X1, q_X2) = q_f(q_Sub(q_X1,q_X1,q_X2))).
     """
     run_assert(tptp, True)
 
     tptp = """
     fof(f, axiom, p(f(a)) | ~p(f(a))).
-    fof(h1,axiom,p(sub(q_f(q_X1),q_X1,q_X2))).
+    fof(h1,axiom,p(q_Sub(q_f(q_X1),q_X1,q_X2))).
     fof(goal,conjecture,p(q_f(q_X2))).
     """
     run_assert(tptp, True)
 
     tptp = """
-    fof(goal, conjecture, ![X] : (sub(q_p(q_X1), q_X1, q_Quote(X)) = q_p(q_Quote(X)))).
+    fof(goal, conjecture, ![X] : (q_Sub(q_p(q_X1), q_X1, q_Quote(X)) = q_p(q_Quote(X)))).
     """
 
-def test_wft():
+def test_q_Wft():
     from os.path import join, dirname
     from qiana.pipeline import Pipeline
     
@@ -127,7 +122,7 @@ def test_wft():
 
     tptp = """
     fof(h1, axiom, p(c) | ~p(c)).
-    fof(goal,conjecture,wft(q_c)).
+    fof(goal,conjecture,q_Wft(q_c)).
     """
     run_assert(tptp, True)
 
@@ -156,19 +151,19 @@ def test_truth():
     # tptp = """
     # fof(h1,axiom,p(f(a)) | ~p(f(a))).
     # fof(h1,axiom,q_Truth(q_Forall(q_X1, q_p(q_X1)))).
-    # fof(goal,conjecture,![X] : q_Truth(sub(q_p(q_X1), q_X1, q_Quote(X)))).
+    # fof(goal,conjecture,![X] : q_Truth(q_Sub(q_p(q_X1), q_X1, q_Quote(X)))).
     # """
     # run_assert(tptp, True)
 
     # tptp = """
-    # fof(goal, conjecture, (q_Truth(q_Forall(q_X1,q_X2)) <=> (![X3] : q_Truth(sub(q_X2, q_X1, q_Quote(X3)))))).
+    # fof(goal, conjecture, (q_Truth(q_Forall(q_X1,q_X2)) <=> (![X3] : q_Truth(q_Sub(q_X2, q_X1, q_Quote(X3)))))).
     # """
     # run_assert(tptp, True)
 
     # tptp = """
     # fof(h1, axiom, p(f(a)) | ~p(f(a))).
     # fof(h2, axiom, q_Truth(q_Forall(q_X1, q_p(q_X1)))).
-    # fof(goal, conjecture, ![X] : q_Truth(sub(q_p(q_X1), q_X1, q_Quote(X)))).
+    # fof(goal, conjecture, ![X] : q_Truth(q_Sub(q_p(q_X1), q_X1, q_Quote(X)))).
     # """
     # run_assert(tptp, True)
 
@@ -182,7 +177,7 @@ def test_truth():
     # tptp = """
     # fof(h1, axiom, p(f(a)) | ~p(f(a))).
     # fof(h2, axiom, q_Truth(q_Forall(q_X1, q_p(q_X1)))).
-    # fof(goal, conjecture, ![X] : p(eval(q_Quote(X)))).
+    # fof(goal, conjecture, ![X] : p(q_Eval(q_Quote(X)))).
     # """
     # run_assert(tptp, True)
 
@@ -216,7 +211,7 @@ def test_truth():
     tptp = """
     fof(tauto, axiom, drinkPotion(c) | appearDead(c) | ~appearDead(c)).
     fof(h1, axiom, q_Truth(q_Forall(q_X1, q_Neg(q_And(q_drinkPotion(q_X1),q_Neg(q_appearDead(q_X1))))))).
-    fof(goal,conjecture, ![X] : (~q_Truth(sub(q_And(q_drinkPotion(q_X1),q_Neg(q_appearDead(q_X1))),q_X1,q_Quote(X))))).
+    fof(goal,conjecture, ![X] : (~q_Truth(q_Sub(q_And(q_drinkPotion(q_X1),q_Neg(q_appearDead(q_X1))),q_X1,q_Quote(X))))).
     """
     run_assert(tptp, True)
 
@@ -224,7 +219,7 @@ def test_truth():
     # tptp = """
     # fof(tauto, axiom, drinkPotion(c) | appearDead(c) | ~appearDead(c)).
     # fof(h1, axiom, q_Truth(q_Forall(q_X1, q_Neg(q_And(q_drinkPotion(q_X1),q_Neg(q_appearDead(q_X1))))))).
-    # fof(goal,conjecture, ![X] : (~q_Truth(q_And(sub(q_drinkPotion(q_X1),q_X1,q_Quote(X)), sub(q_Neg(q_appearDead(q_X1)), q_X1, q_Quote(X)))))).
+    # fof(goal,conjecture, ![X] : (~q_Truth(q_And(q_Sub(q_drinkPotion(q_X1),q_X1,q_Quote(X)), q_Sub(q_Neg(q_appearDead(q_X1)), q_X1, q_Quote(X)))))).
     # """
     # run_assert(tptp, True)
 

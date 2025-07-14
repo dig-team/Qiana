@@ -86,10 +86,10 @@ No other symbol may start with ```q_``` except the ones listed bellow. In partic
 | $\underline{\land}$ | q_And |
 | $\underline{\lor}$ | q_Or |
 | $\underline{\forall}$ | q_Forall |
-| E | eval |
-| isTerm | term |
-| Wft | wft |
-| sub | sub |
+| E | q_Eval |
+| isTerm | q_Term |
+| Wft | q_Wft |
+| q_Sub | q_Sub |
 
 The quoted variables are written q_X1, q_X2, and so forth. Note that by default 5 quoted variables are used, so the complete list of quoted variables is q_X1, q_X2, q_X3, q_X4, and q_X5.
 

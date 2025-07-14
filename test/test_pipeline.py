@@ -66,7 +66,7 @@ def test_A30():
     pipeline.computeQianaClosure(tptp)
     closure = pipeline.qianaClosure
     assert any(line for line in closure.splitlines())
-    assert all(not "axiom30" in line or not "sub(q_X1, q_X1" in line for line in closure.splitlines())
+    assert all(not "axiom30" in line or not "q_Sub(q_X1, q_X1" in line for line in closure.splitlines())
 
 def test_nadim():
     input_text = """
