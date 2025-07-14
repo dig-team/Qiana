@@ -30,7 +30,8 @@ def _goThroughStruct(struct : List[str | List], isATerm : bool) -> Dict[str,Tupl
 
 def parseStruct(tptp : str) -> List[str | List]:
     """
-    Parse a tptp formula body into a tree structure on the sole basis of the parentheses and commas
+    Derive the syntactic tree of a tptp formula. The first element of the list is the top level symbol, the rest are its arguments, which can be either symbols or sub-structures.
+    Example : "![X] : (p(X) => q(X,X))" returns ["!", ["X"], ["=>", ["p", ["X"]], ["q", ["X", "X"]]]]
     """
     topLevel : List = _parseTopLevel(tptp)
     symbol, args = topLevel[0], topLevel[1:]
@@ -45,6 +46,7 @@ def parseStruct(tptp : str) -> List[str | List]:
     return elements
 
 def _parseTopLevel(tptp : str) -> List[str]:
+
     """
     Parse a top level tptp formula into a list of strings, for each toplevel symbol or subterm. 
 
@@ -58,12 +60,12 @@ def _parseTopLevel(tptp : str) -> List[str]:
     pattern = re.compile(r'([!\?]) ?\[(\w+(?:,\w+)*)\] ?: ?\((.*)\)')
     match = pattern.fullmatch(tptp)
     if match:
-        return [match.group(1), match.group(2), match.group(3)] # Remark that we don't bother including the variables in the structure
+        return [match.group(1), match.group(2), match.group(3)] 
     
     pattern = re.compile(r'([!\?]) ?\[(\w+(?:,\w+)*)\] ?: ?(.*)')
     match = pattern.fullmatch(tptp)
     if match:
-        return [match.group(1), match.group(2), match.group(3)] # Remark that we don't bother including the variables in the structure
+        return [match.group(1), match.group(2), match.group(3)] 
  
     pattern = re.compile(r'(\w+)\(([\w, \(\)]*)\)')
     match = pattern.fullmatch(tptp)
