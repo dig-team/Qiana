@@ -1,0 +1,50 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "qiana"
+version = "1.0.0"
+description = "A logic framework for reasoning with contexts"
+readme = "README.md"
+license = {text = "MIT"}
+authors = [
+    {name = "Simon Coumes"},
+    {name = "Pierre-Henri Paris"},
+    {name = "François Schwarzentruber"},
+    {name = "Fabian Suchanek"}
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Scientific/Engineering :: Mathematics",
+]
+requires-python = ">=3.8"
+dependencies = []
+
+[project.optional-dependencies]
+gui = [
+    "pydotplus",
+    "pyside6"
+]
+
+[project.urls]
+Homepage = "https://github.com/NoRDF/Qiana"
+Documentation = "https://github.com/NoRDF/Qiana"
+Repository = "https://github.com/NoRDF/Qiana"
+
+[project.scripts]
+qiana = "qiana.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-dir]
+"" = "src"
