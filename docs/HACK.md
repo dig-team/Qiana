@@ -1,3 +1,19 @@
+# Structure
+Most of the important functions in the code have docstrings, which form most of the documentation.
+This file contains some usual trivia information on the code. Including the fact that the entry points to the code are ```src/qiana/pipeline.py``` and ```src/qiana/cli.py``` and the following outline of the structure:
+
+src/qiana:
+- examples : examples available through the GUI, not to be confused with the toplevel "examples" directory containing example files for the CLI.
+- gui
+- qianaExtension : computing the qiana closure
+- reasoner: call the embeded first-order theorem prover vampire
+- cli
+- dotGeneration : generate a graph for the gui
+- extendsimplifiedsyntax : see README for info in the simplified syntax
+- htmlGeneration : for the tree view in the gui
+- interfaceTypes : utils
+- pipeline : centralize the different steps to compute the Qiana closure of the input and call the solver + parse its output
+
 # Testing
 The tests are meant to be run with Pytest. Give the `test` directory as input to pytest and ensure the `qiana` package located in `src/qiana` can be imported (this can be done by installing the package or setting the current working directory to `src`).
 

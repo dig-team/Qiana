@@ -8,6 +8,8 @@ Qiana is a logic framework for reasoning with contexts. Qiana takes as input log
 
 These formulas say: everyone believes everything Einstein says; everything Einstein says is true; and Einstein says that not all that glitters is gold. Qiana can translate these formulas to first order logic, so that a standard first-order-logic reasoner such as [Vampire](https://vprover.github.io/) can do theorem proving on these formulas. 
 
+_These formula do not use the real TPTP syntax for Qiana, see bellow for concrete examples._
+
 To learn more about Qiana, read the "Qiana-journal-preprint.pdf" file in the "publication" directory.
 
 This repository contains
