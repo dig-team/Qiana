@@ -22,7 +22,7 @@ def run_qiana(input : str, quotedVariableNumber: int = 5, simplified_input: bool
     """
     pipeline = QianaPipeline()
     pipeline.compute_qiana_closure(input, quotedVariableNumber, simplified_input, expand_macros)
-    pipeline.run_compute(timeout)
+    pipeline.run_compute(timeout, compute_steps=False)
     if pipeline.get_solver_result().simpleResult == "error":
         raise ValueError(f"Vampire returned an error: {pipeline.get_solver_result().error} \n \n The standard output of the solver was: {pipeline.get_solver_result().vampireOutput}")
     return pipeline.get_solver_result().simpleResult
@@ -65,13 +65,14 @@ class QianaPipeline:
         # self.qianaClosure : str = os.linesep.join(qianaClosure(input, variableNumber))
         self.qianaClosure = input + os.linesep + os.linesep.join(getAllSchemesInstances(schemeLines, signature))
 
-    def run_compute(self, timeout : int = 5) -> None:
+    def run_compute(self, timeout : int = 5, compute_steps : bool = True) -> None:
         """
         Run the solver on the already computed qiana closure and update the internal state with the result.
 
         @param timeout: int - the timeout value for the solver, default is 5 seconds
+        @param compute_steps: bool - whether to compute the reasoning steps or not when a contradiction is found, default is True.
         """
-        self._callSolver(timeout)
+        self._callSolver(timeout, compute_steps)
 
     def run_pipeline(self, input: str, quotedVariableNumber: int | None = 5, simplified_input : bool = False, expand_macros : bool = False, timeout: int = 5) -> str:
         """
@@ -145,13 +146,14 @@ class QianaPipeline:
         timeout = Settings.getTimeOutValue()
         self._callSolver(timeout)
 
-    def _callSolver(self, timeout: int) -> None:
+    def _callSolver(self, timeout: int, get_reasonin_steps : bool) -> None:
         """
         Call the solver and store the result in self.reasoningSteps. Assumes the qiana closure has already been computed and stored in self.qianaClosure.
         @param timeout: int - the timeout value for the solver
+        @param compute_steps: bool - whether to compute the reasoning steps or not when a contradiction is found.
         """
         if not self.qianaClosure: raise ValueError("Qiana closure has not been computed yet. Please call computeQianaClosure() before running the solver.")
-        self.solver_call : SolverCall = SolverCall.callVampire(self.qianaClosure, timeout)
+        self.solver_call : SolverCall = SolverCall.callVampire(self.qianaClosure, timeout, get_reasonin_steps)
         self.foundContradiction = self.solver_call.simpleResult == "unsat"
         self.simpleResult = self.solver_call.simpleResult
         self.reasoningSteps = self.solver_call.reasoningSteps
