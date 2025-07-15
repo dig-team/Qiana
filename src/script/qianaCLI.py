@@ -4,7 +4,7 @@ from os.path import dirname
 
 sys.path.insert(0, dirname(dirname(__file__)))
 
-from qiana.pipeline import Pipeline
+from qiana.pipeline import QianaPipeline
     
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Simple CLI to obtain the Qiana closure of a set of formulas or to pass said closure through the Vampire (https://vprover.github.io/) solver. By Simon Coumes, Fabian Suchanek, and Pierre-Henri Paris.')
@@ -48,12 +48,12 @@ if __name__ == "__main__":
     simplified_input = args.simplifiedInput if args.simplifiedInput else False
     expand_macros = args.expandMacros if args.expandMacros else False
 
-    pipeline = Pipeline()
-    pipeline.computeQianaClosure(input_content, varNum, simplified_input, expand_macros)
+    pipeline = QianaPipeline()
+    pipeline.compute_qiana_closure(input_content, varNum, simplified_input, expand_macros)
     if args.closure:
-        output = pipeline.getQianaClosure()
+        output = pipeline.get_qiana_closure()
     else:
-        pipeline.runCompute_CLI(timeout)
+        pipeline.run_compute(timeout)
         outputMode = args.outputMode if args.outputMode else "raw"
         if outputMode == "sat": output = pipeline.simpleResult
         elif outputMode == "raw": output = pipeline.vampireOutput

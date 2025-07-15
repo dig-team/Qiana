@@ -18,14 +18,6 @@ class SolverCall:
     vampireOutput: str
     error: str
 
-    def __init__(self, inputTPTP: str, simpleResult: str, reasoningSteps: List[ReasoningStep], vampireOutput: str, error: str = "") -> None:
-        assert simpleResult in ["sat", "unsat", "unknown","error"]
-        self.inputTPTP = inputTPTP
-        self.simpleResult = simpleResult
-        self.reasoningSteps = reasoningSteps
-        self.vampireOutput = vampireOutput
-        self.error = error
-
     @classmethod
     def callVampire(cls, formulas: str, timeout: int) -> "SolverCall":
         """
@@ -58,9 +50,19 @@ class SolverCall:
 
         return cls(formulas, simpleResult, reasoningSteps, result.stdout, result.stderr)
     
+    def __init__(self, inputTPTP: str, simpleResult: str, reasoningSteps: List[ReasoningStep], vampireOutput: str, error: str = "") -> None:
+        assert simpleResult in ["sat", "unsat", "unknown","error"]
+        self.inputTPTP = inputTPTP
+        self.simpleResult = simpleResult
+        self.reasoningSteps = reasoningSteps
+        self.vampireOutput = vampireOutput
+        self.error = error
+
+
     def contradictionFound(self) -> bool:
         """
         Check if a contradiction was found
         @return: bool - True if a contradiction was found, False otherwise
         """
         return self.simpleResult == "unsat"
+    
