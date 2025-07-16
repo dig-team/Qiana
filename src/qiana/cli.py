@@ -21,7 +21,7 @@ def main():
     parser.add_argument('-c', '--closure', action='store_true', help='Only compute the qiana closure of the input. If false, contradictions will be sought and a solver called.', required=False)
     parser.add_argument('-n', '--numberVars', type=int, help='Pick the number of quoted variables. Default value is 5.', required=False)
     parser.add_argument('-m', '--outputMode', type=str, help='Set how to present the output of the solver. Options are sat, raw, and proofTree. Incompatible with the -c option.', required=False)
-    parser.add_argument('--simplifiedInput', action='store_true', help='If set, the input will be treated as simplified syntax (no headers required, only TPTP bodies separated by dots).', required=False)
+    parser.add_argument('--simplifiedInput', action='store_true', help='If set, the input will be treated as simplified syntax (no headers required, only TPTP bodies separated by dots). This implies --expand macros.', required=False)
     parser.add_argument('--expandMacros', action='store_true', help='If set, the qiana specific macros will be expanded before computing the qiana closure.', required=False)
     
     # Positional arguments
@@ -50,7 +50,7 @@ def main():
     varNum = args.numberVars if args.numberVars else 5
     timeout = args.timeout if args.timeout else 5
     simplified_input = args.simplifiedInput if args.simplifiedInput else False
-    expand_macros = args.expandMacros if args.expandMacros else False
+    expand_macros = simplified_input or (args.expandMacros if args.expandMacros else False)
 
     pipeline = QianaPipeline()
     pipeline.compute_qiana_closure(input_content, varNum, simplified_input, expand_macros)
