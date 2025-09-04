@@ -27,7 +27,7 @@ For example, here is the same statement in natural language, in the Qiana formal
 
 # Repository structure
 This repository contains
-1. our publication about Qiana, published at the conference KR 2024, which explains our formalism. The extended version includes appendices.
+1. our publications about Qiana, both the article published at KR 2024 and a preprint of the upcoming JAIR journal article
 2. the code that transforms a theory with contexts into a first-order-logic theory
 3. an example input with an example output
 
@@ -111,6 +111,8 @@ If you use Qiana in scientific work, please cite [our article](https://suchanek.
     year     = 2024
 }
 ```
+
+A extended jounral version of Qiana was also accepter for publication in the [Journal of Artificial Intelligence Research](https://www.jair.org/index.php/jair). For now, a preprint is available in the publication forlder.
 
 # License
 Qiana was developed by [Simon Coumes](https://perso.eleves.ens-rennes.fr/people/simon.coumes/index.html), [Pierre-Henri Paris](https://phparis.net/), [Fabian Suchanek](https://suchanek.name/), and [François Schwarzentruber](https://people.irisa.fr/Francois.Schwarzentruber/). The code in this repository is available under the MIT license, see the file LICENSE.md.
