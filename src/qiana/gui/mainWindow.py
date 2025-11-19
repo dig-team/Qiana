@@ -3,7 +3,7 @@ from PySide6.QtCore import QUrl
 from PySide6.QtWidgets import QVBoxLayout, QHBoxLayout, QMainWindow, QTextEdit, QMenuBar, QWidget, QPushButton, QLineEdit
 from PySide6.QtWebEngineWidgets import QWebEngineView
 
-from qiana.pipeline import Pipeline
+from qiana.pipeline import QianaPipeline
 
 import qiana.examples as examples
 from qiana.gui import DisplayOptions, Settings
@@ -38,17 +38,17 @@ class MainWindow(QMainWindow):
 
     def getClosure(self):
         tptp = self.editor.toPlainText()
-        pipeline = Pipeline()
-        pipeline.computeQianaClosure(tptp)
-        self.display.setClosure(pipeline.getQianaClosure())
+        pipeline = QianaPipeline()
+        pipeline.compute_qiana_closure(tptp)
+        self.display.setClosure(pipeline.get_qiana_closure())
 
     def run(self):
         tptp = self.editor.toPlainText()
-        pipeline = Pipeline()
+        pipeline = QianaPipeline()
         pipeline.runCompute_GUI(tptp)
         self.display.setHtml(pipeline.getHtmlTree())
-        self.display.setClosure(pipeline.getQianaClosure())
-        self.display.setGraph(pipeline.getGraphDot())
+        self.display.setClosure(pipeline.get_qiana_closure())
+        self.display.setGraph(pipeline.get_graphdot())
 
     def expandHtml(self):
         self.display.expandHtml()

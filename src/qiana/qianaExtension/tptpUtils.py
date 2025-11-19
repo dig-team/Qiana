@@ -5,7 +5,8 @@ def quoteSymbol(symbol: str) -> str:
 
 def unquoteSymbol(symbol: str) -> str | None:
     """
-    Unquotes a symbol if it is quoted, otherwise returns None
+    Unquotes a symbol if it is quoted, otherwise returns None.
+    Does not check if the symbol is a special symbol.
     """
     if symbol.startswith("q_"): return symbol[2:]
     return None

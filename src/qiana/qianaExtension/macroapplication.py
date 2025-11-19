@@ -120,7 +120,7 @@ def _split_arguments(args_str: str) -> list:
 
 def _quote(text: str) -> str:
     """
-    Take as input a formula or term and returns it qiana quotation.
+    Take as input a formula or q_Term and returns it qiana quotation.
     """
     return _quote_from_struct(parseStruct(text), {})
 

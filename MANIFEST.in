@@ -1,0 +1,13 @@
+include README.md
+include LICENSE.md
+include requirements.txt
+include requirements_gui.txt
+recursive-include src/qiana *
+recursive-include docs *
+recursive-include example *
+recursive-include publication *
+global-exclude *.pyc
+global-exclude __pycache__
+global-exclude .git*
+global-exclude *.png
+prune test

@@ -30,7 +30,8 @@ def _goThroughStruct(struct : List[str | List], isATerm : bool) -> Dict[str,Tupl
 
 def parseStruct(tptp : str) -> List[str | List]:
     """
-    Parse a tptp formula body into a tree structure on the sole basis of the parentheses and commas
+    Derive the syntactic tree of a tptp formula. The first element of the list is the top level symbol, the rest are its arguments, which can be either symbols or sub-structures.
+    Example : "![X] : (p(X) => q(X,X))" returns ["!", ["X"], ["=>", ["p", ["X"]], ["q", ["X", "X"]]]]
     """
     topLevel : List = _parseTopLevel(tptp)
     symbol, args = topLevel[0], topLevel[1:]
@@ -45,6 +46,7 @@ def parseStruct(tptp : str) -> List[str | List]:
     return elements
 
 def _parseTopLevel(tptp : str) -> List[str]:
+
     """
     Parse a top level tptp formula into a list of strings, for each toplevel symbol or subterm. 
 
@@ -58,12 +60,12 @@ def _parseTopLevel(tptp : str) -> List[str]:
     pattern = re.compile(r'([!\?]) ?\[(\w+(?:,\w+)*)\] ?: ?\((.*)\)')
     match = pattern.fullmatch(tptp)
     if match:
-        return [match.group(1), match.group(2), match.group(3)] # Remark that we don't bother including the variables in the structure
+        return [match.group(1), match.group(2), match.group(3)] 
     
     pattern = re.compile(r'([!\?]) ?\[(\w+(?:,\w+)*)\] ?: ?(.*)')
     match = pattern.fullmatch(tptp)
     if match:
-        return [match.group(1), match.group(2), match.group(3)] # Remark that we don't bother including the variables in the structure
+        return [match.group(1), match.group(2), match.group(3)] 
  
     pattern = re.compile(r'(\w+)\(([\w, \(\)]*)\)')
     match = pattern.fullmatch(tptp)
@@ -71,10 +73,15 @@ def _parseTopLevel(tptp : str) -> List[str]:
         args = _splitOnCommas(match.group(2))
         return [match.group(1)] + args
 
-    pattern = re.compile(r'(.*) (=>|<=>|=|&|\|) (.*)')
-    match = pattern.fullmatch(tptp)
+    # Find binary operators (<=>, =>, &, |, =) at the top level; need a helper function to check for balanced parentheses
+    match = _findBalancedBinaryOperator(tptp)
     if match:
-        return [match.group(2), match.group(1), match.group(3)]
+        left_part, operator, right_part = match
+        return [operator, left_part, right_part]
+    # pattern = re.compile(r'(.*) (=>|<=>|=|&|\|) (.*)')
+    # match = pattern.fullmatch(tptp)
+    # if match:
+    #     return [match.group(2), match.group(1), match.group(3)]
     
     pattern = re.compile(r'~(.*)')
     match = pattern.fullmatch(tptp)
@@ -94,8 +101,34 @@ def _parseTopLevel(tptp : str) -> List[str]:
         else:
             return [tptp.strip()]
 
-
     assert False
+
+def _findBalancedBinaryOperator(tptp: str) -> Tuple[str, str, str] | None:
+    """
+    Find a binary operator (=>, <=>, =, &, |) that is at the top level (not inside parentheses).
+    Returns (left_part, operator, right_part) if found, None otherwise.
+    """
+    operators = ["<=>", "=>", "=", "&", "|"]  # Order matters: check longer operators first
+    
+    parenthesis_depth = 0
+    for i, char in enumerate(tptp):
+        if char == "(":
+            parenthesis_depth += 1
+        elif char == ")":
+            parenthesis_depth -= 1
+        elif parenthesis_depth == 0:
+            # Check all operators at this position
+            for op in operators:
+                if (i + len(op) <= len(tptp) and tptp[i:i+len(op)] == op):
+                    # Check if it's not part of a larger alphanumeric token
+                    left_ok = i == 0 or not tptp[i-1].isalnum()
+                    right_ok = i+len(op) == len(tptp) or not tptp[i+len(op)].isalnum()
+                    if left_ok and right_ok:
+                        left_part = tptp[:i].strip()
+                        right_part = tptp[i+len(op):].strip()
+                        return (left_part, op, right_part)
+    
+    return None
 
 def _splitOnCommas(tptp : str) -> List[str]:
     """

@@ -209,7 +209,7 @@ def _readSchemeInfo(lines: list[str]) -> SchemeInfo:
         elif bool(re.match(r"^RANGE \S+ IN \S+$", line)):
             _, symbol, _, target = line.split(" ")
             foundASwapPattern = True
-            assert target in {"BASE_PREDICATE", "BASE_FUNCTION", "ANY_PREDICATE", "ANY_FUNCTION", "QUOTED_VARIABLE"}
+            assert target in {"BASE_PREDICATE", "BASE_FUNCTION", "ANY_PREDICATE", "QIANA_FUNCTION", "QUOTED_VARIABLE"}
             swapValues[symbol] = target
         elif bool(re.match(r"^WITH \S+ QUOTING \S+$", line)):
             _, symbol, _, quotedSymbol = line.split(" ")

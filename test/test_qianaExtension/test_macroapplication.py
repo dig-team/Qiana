@@ -12,7 +12,7 @@ def test_formula_from_struct():
     # Test function/predicate application
     assert ffs(["f", ["a"], ["b"]]) == "f(a,b)"
     assert ffs(["pred", ["x"]]) == "pred(x)"
-    assert ffs(["relation", ["term1"], ["term2"], ["term3"]]) == "relation(term1,term2,term3)"
+    assert ffs(["relation", ["q_Term1"], ["q_Term2"], ["q_Term3"]]) == "relation(q_Term1,q_Term2,q_Term3)"
     
     # Test function with no arguments (should return just the symbol)
     assert ffs(["constant"]) == "constant"
@@ -61,8 +61,7 @@ def test_quote_from_struct():
     # Test function/predicate application
     assert qfs(["f", ["a"], ["b"]]) == "q_f(q_a,q_b)"
     assert qfs(["pred", ["x"]]) == "q_pred(q_x)"
-    assert qfs(["relation", ["term1"], ["term2"], ["term3"]]) == "q_relation(q_term1,q_term2,q_term3)"
-
+    assert qfs(["relation", ["q_Term1"], ["q_Term2"], ["q_Term3"]]) == "q_relation(q_Quote(q_Term1),q_Quote(q_Term2),q_Quote(q_Term3))"
     # Test comma operator (variable lists)
     try : 
         qfs([",", "x", "y"])
