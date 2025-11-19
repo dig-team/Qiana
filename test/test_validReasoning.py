@@ -341,3 +341,20 @@ good_biographer(nadim).
 
     run_assert(input_text, True)
 
+def test_simple_example_for_dissertation():
+    from os.path import join, dirname
+    from qiana.pipeline import QianaPipeline
+    def run_assert(tptp, expect_contra : bool, simplified_input : bool = True):
+        pipeline = QianaPipeline()
+        pipeline.compute_qiana_closure(tptp, simplified_input=simplified_input, expand_macros=True)
+        pipeline.run_compute(timeout=180) # Some of these take a while
+        assert pipeline.contradiction() == expect_contra
+
+    input_text = """
+    fof(ax1, axiom, love(romeo,juliet)).
+    fof(ax2, axiom, drink(juliet,potion)).
+    fof(ax3, axiom, drink(juliet,potion) => ![C] : ist(C, q_dead(q_juliet))).
+    fof(ax4, axiom, ist(bel(romeo),q_dead(q_juliet)) => die(romeo)).
+    fof(concl, conjecture, die(romeo)).
+    """
+    run_assert(input_text, True, simplified_input=False)

@@ -36,7 +36,12 @@ class SolverCall:
         if result.stdout == "sat\n":
             simpleResult = "sat"
             reasoningSteps = []
-        elif result.stdout == "unknown\n":
+        elif result.stderr:
+            # It is important to check stderr before stdout, otherwise the fact stdout is empty when there is an error would mean we miss the error and treat it as a timeout
+            simpleResult = "error"
+            reasoningSteps = []
+        elif result.stdout == "unknown\n" or not result.stdout.strip():
+            # If stdout is empty it is most likely a timeout
             simpleResult = "unknown"
             reasoningSteps = []
         elif result.stdout == "unsat\n" and compute_steps:
@@ -46,9 +51,6 @@ class SolverCall:
             reasoningSteps = TPTPOutputParser(result.stdout)
         elif result.stdout == "unsat\n" and not compute_steps:
             simpleResult = "unsat"
-            reasoningSteps = []
-        elif result.stderr:
-            simpleResult = "error"
             reasoningSteps = []
         else:
             raise ValueError("Vampire returned an unexpected result: " + result.stdout)

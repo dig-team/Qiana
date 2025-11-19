@@ -153,7 +153,7 @@ class QianaPipeline:
         @param compute_steps: bool - whether to compute the reasoning steps or not when a contradiction is found.
         """
         if not self.qianaClosure: raise ValueError("Qiana closure has not been computed yet. Please call computeQianaClosure() before running the solver.")
-        self.solver_call : SolverCall = SolverCall.callVampire(self.qianaClosure, timeout, get_reasonin_steps)
+        self.solver_call : SolverCall = SolverCall.call_solver(self.qianaClosure, timeout, get_reasonin_steps)
         self.foundContradiction = self.solver_call.simpleResult == "unsat"
         self.simpleResult = self.solver_call.simpleResult
         self.reasoningSteps = self.solver_call.reasoningSteps
