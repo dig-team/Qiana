@@ -47,11 +47,14 @@ class SchemeInfo():
         return True
 
     def _respectDistinctPairs(self, case: Dict[str, str]) -> bool:
-        """
-        Returns True if the case respects all the distinct pairs, False otherwise
+        """Check if the case respects all the distinct pairs.
 
-        @param case: Dict[str, str] - a mapping of swap pattern symbols to the concrete symbols they are replaced by
-        @return: bool - True if the case respects all the distinct pairs, False otherwise
+        Args:
+            case: A mapping of swap pattern symbols to the concrete symbols
+                they are replaced by.
+
+        Returns:
+            True if the case respects all the distinct pairs, False otherwise.
         """
         for (symbol1, symbol2) in self.distinctPairs:
             assert symbol1.startswith("$")
@@ -114,11 +117,17 @@ class SchemeInfo():
         return self.symbolTargets
     
     def enrichSymbolDict(self, symbolDict: Dict[str,str]) -> Dict[str,str]:
-        """
-        Enrich a dict matching pattern symbols (like $f) to their actual symbol (like "multiply") with more such matchings to account for symbols that represent the quotation of another symbol
+        """Enrich a symbol dict with quotation matchings.
 
-        @param symbolDict: a dictionary matching symbols to their actual meaning
-        @return: The same dictionary, but (possibly) with more matchings
+        Takes a dict matching pattern symbols (like $f) to their actual symbol
+        (like "multiply") and adds more matchings to account for symbols that
+        represent the quotation of another symbol.
+
+        Args:
+            symbolDict: A dictionary matching symbols to their actual meaning.
+
+        Returns:
+            The same dictionary, but (possibly) with more matchings.
         """
         for quoting, quoted in self.symbolQuotationMatchings.items():
            symbolDict[quoting] = quoteSymbol(symbolDict[quoted]) 
@@ -171,10 +180,16 @@ def getAllSchemeInfos(lines: list[str]) -> Tuple[List[SchemeInfo],Signature]:
     return schemeInfos, signature
 
 def _getSymbolAndArity(line:str) -> Tuple[str, int]:
-    """
-    Parses a line indicating a symbol's arity.
+    """Parse a line indicating a symbol's arity.
 
-    @return: Tuple[str, int] - the symbol and its arity
+    Line should be of the form "FUNCTION f OF ARITY 2" or
+    "PREDICATE p OF ARITY 1".
+
+    Args:
+        line: A line defining a symbol and its arity.
+
+    Returns:
+        A tuple of size 2 containing the symbol and its arity.
     """
     # line should be of the form "FUNCTION f OF ARITY 2" or "PREDICATE p OF ARITY 1"
     assert line.startswith("FUNCTION ") or line.startswith("PREDICATE ")

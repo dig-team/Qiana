@@ -62,8 +62,10 @@ def _find_bang_pattern(line: str) -> Tuple[str, str, str] | None:
     """
     Find the rightmost pattern of the form !name(x,y) in the line.
     Returns a tuple of (full_match, name, args_list) or None if no match.
+
     Example:
-    On "fof(test,axiom, !believes(alice,p(c,d))) return ("!believes(alice,p(c,d))", "believes", "alice,p(c,d)")
+        >>> "fof(test,axiom, !believes(alice,p(c,d))) i
+        ("!believes(alice,p(c,d))", "believes", "alice,p(c,d)")
     """
     pattern = r'!([a-zA-Z_][a-zA-Z0-9_]*)'  # Match ! followed by an identifier and parentheses with content
     matches = list(re.finditer(pattern, line))
@@ -127,7 +129,10 @@ def _quote(text: str) -> str:
 def _formula_from_struct(struct : List[str | List]) -> str:
     """
     Take as input a formula represented as a nested list of lists and strings (as produced by tptpParsing.parseStruct) and outputs a matching TPTP formula.
-    Example: ["f", "a", "b"] => "f(a,b)"
+
+    Example: 
+        >>> ["f", "a", "b"] 
+        "f(a,b)"
     """
     assert len(struct) > 0, "Input structure cannot be empty" 
     assert isinstance(struct[0], str), "First element of structure must be a string representing the symbol"
@@ -165,9 +170,14 @@ def _formula_from_struct(struct : List[str | List]) -> str:
     return f"{symbol}({', '.join(_formula_from_struct(arg) for arg in struct[1:])})" # We know that struct[1:] is not empty here because we handled the leaf case above
     
 def _quote_from_struct(struct : List, var_to_qvar : Dict[str, str]) -> str:
-    """
-    @param qvars : List of quoted variables not yet in use.
-    @param var_to_qvar : Dict mapping variable names to their quoted versions.
+    """Convert a parsed structure to its quoted representation.
+
+    Args:
+        struct: A parsed structure representing a formula.
+        var_to_qvar: Dict mapping variable names to their quoted versions.
+
+    Returns:
+        The quoted string representation of the structure.
     """
     if var_to_qvar is None : var_to_qvar = {}
     assert len(struct) > 0, "Input structure cannot be empty"

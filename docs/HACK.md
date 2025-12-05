@@ -1,3 +1,13 @@
+# Generating the documentation
+The documentation is generated using pdoc.
+Install pdoc and generate the doc with the following command run from the root directory (assuming bash and using firefox as browser):
+
+```bash
+pip install pdoc
+pdoc src/qiana --docformat google -o docs
+firefox docs/index.html
+```
+
 # Structure
 Most of the important functions in the code have docstrings, which form most of the documentation.
 This file contains some usual trivia information on the code. Including the fact that the entry points to the code are ```src/qiana/pipeline.py``` and ```src/qiana/cli.py``` and the following outline of the structure:
