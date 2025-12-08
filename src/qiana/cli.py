@@ -10,6 +10,9 @@ from qiana.pipeline import QianaPipeline
 def main():
     """
     Main function for the Qiana CLI.
+    This functions is the entry point when building Qiana as a command line tool.
+    It parses command line arguments and performs the requested operations (computing the Qiana closure with or without running the solver) with a variety of input and output options.
+    See the help message for more details ("qiana -h" with Qiana installed as a CLI tool).
     """
     parser = argparse.ArgumentParser(description='Simple CLI to obtain the Qiana closure of a set of formulas or to pass said closure through the Vampire (https://vprover.github.io/) solver. By Simon Coumes, Fabian Suchanek, and Pierre-Henri Paris.')
 

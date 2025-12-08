@@ -40,6 +40,7 @@ def _goThroughStruct(struct : List[str | List], isATerm : bool) -> Dict[str,Tupl
 def parseStruct(tptp : str) -> List[str | List]:
     """
     Derive the syntactic tree of a tptp formula. The first element of the list is the top level symbol, the rest are its arguments, which can be either symbols or sub-structures.
+    The resulting structure of nested lists and strings is refered to as a "formula struct" in various places in the code and documentation.
 
     Example: 
         >>> "![X] : (p(X) => q(X,X))"

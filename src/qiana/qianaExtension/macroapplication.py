@@ -28,7 +28,11 @@ def applyMacros(text: str) -> str:
 def _apply_macro_transformation(line: str) -> str:
     """
     Apply macro transformation to a single line, working from inside out.
-    Transforms !name(x,y) to ist(name(x),{_quote(y)})
+
+    Examples:
+
+    >>> _apply_macro_transformation("!name(x,y)") 
+    f"ist(name(x),{_quote(y)})"
     """
     import re
     
@@ -39,14 +43,14 @@ def _apply_macro_transformation(line: str) -> str:
         # Find the rightmost !name(x,y) pattern
         pattern_match = _find_bang_pattern(line)
         if not pattern_match: 
-            break
+            break # No more patterns to replace
         full_match, name, args = pattern_match
         
         # Split arguments by comma, but be careful with nested structures
         args_list = _split_arguments(args)
         
         if len(args_list) >= 2:
-            # Take first argument as x, and the rest as y (joined by comma if multiple)
+            # Take first argument as x, and the rest as y (joined by commas if multiple)
             x = args_list[0].strip()
             y = ', '.join(args_list[1:]).strip()
             
@@ -129,6 +133,7 @@ def _quote(text: str) -> str:
 def _formula_from_struct(struct : List[str | List]) -> str:
     """
     Take as input a formula represented as a nested list of lists and strings (as produced by tptpParsing.parseStruct) and outputs a matching TPTP formula.
+    See tptpParsing.parseStruct for more details on the input format.
 
     Example: 
         >>> ["f", "a", "b"] 
@@ -171,6 +176,7 @@ def _formula_from_struct(struct : List[str | List]) -> str:
     
 def _quote_from_struct(struct : List, var_to_qvar : Dict[str, str]) -> str:
     """Convert a parsed structure to its quoted representation.
+    See tptpParsing.parseStruct for more details on the input format.
 
     Args:
         struct: A parsed structure representing a formula.

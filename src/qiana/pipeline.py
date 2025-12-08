@@ -9,9 +9,11 @@ from qiana.extendsimplifiedsyntax import extend_simplified_syntax
 
 def run_qiana(input : str, quotedVariableNumber: int = 5, simplified_input: bool = False, expand_macros: bool = False, timeout: int = 5) -> str:
     """Compute the qiana closure of the input and run the solver on it.
+    This detects contradictions in the qiana closure of the input (which are indicated by the result "unsat").
+    If a conjecture and axioms are used in the input, the fact that the conjecture follows from the axioms is indicated by such a contradiction.
 
-    Only returns the result of the solver. If you need more granular control
-    or detailed results, use the QianaPipeline class instead.
+    This function only returns the simple result obtained by running the solver on the qiana closure. If you need more granular control or detailed results, use the QianaPipeline class instead.
+    This function is a convenience function entirely reliant on the QianaPipeline class.
 
     Args:
         input: The tptp representation of a set of formulas, either full
@@ -30,6 +32,12 @@ def run_qiana(input : str, quotedVariableNumber: int = 5, simplified_input: bool
         the solver to answer "unknown" and therefore may in rare cases be
         output where "unknown" would be more appropriate.
 
+    Examples:
+
+        >>>  input = "fof(axiom1, axiom, p(a)). \\n fof(conjecture1, conjecture, p(a))."
+        >>> run_qiana(input, False, False, 5)
+        'unsat'
+
     Raises:
         ValueError: If the solver returns an error or if the input is not a
             valid tptp representation of a set of formulas.
@@ -44,7 +52,17 @@ def run_qiana(input : str, quotedVariableNumber: int = 5, simplified_input: bool
 class QianaPipeline:
     """
     Class to handle the entire Qiana pipeline: compute the qiana closure, call the solver, and return the result.
+    To use this class in order to run computations on a set of formulas, one must instantiate it (calling its constructor) and then call its methods in order.
+    The typical order of method calls is:
+
+    >>> pipeline = QianaPipeline()
+    >>> pipeline.compute_qiana_closure(input, quotedVariableNumber, simplified_input, expand_macros)
+    >>> pipeline.run_compute(timeout, compute_steps)
+    >>> result = pipeline.get_solver_result()
+    >>> solver_output = pipeline.get_vampire_output()
+    >>> simple_result = result.simpleResult
     """
+
     qianaClosure : str | None
     htmlTree : str | None
     reasoningSteps : list[str] | None
