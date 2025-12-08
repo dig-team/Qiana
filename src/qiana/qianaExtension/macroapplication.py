@@ -20,12 +20,12 @@ def applyMacros(text: str) -> str:
             continue
         
         # Apply macro transformation to non-comment lines
-        processed_line = _apply_macro_transformation(line)
+        processed_line = _apply_macro_transformations(line)
         processed_lines.append(processed_line)
     
     return '\n'.join(processed_lines)
 
-def _apply_macro_transformation(line: str) -> str:
+def _apply_macro_transformations(line: str) -> str:
     """
     Apply all macro transformations to a single line, working from inside out.
     Replaces all instance of a "bang macro" with its extended form, where a bang macro is of the form !name(x,y), name being an identifier, x being a term, and y being a formula.
@@ -37,7 +37,7 @@ def _apply_macro_transformation(line: str) -> str:
 
     Examples:
 
-    >>> _apply_macro_transformation("!believes(alice,p(c,d)))")
+    >>> _apply_macro_transformations("!believes(alice,p(c,d)))")
     "ist(believes(alice),q_p(q_c,q_d))"
     """
     import re
