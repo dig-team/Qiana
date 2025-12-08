@@ -27,12 +27,18 @@ def applyMacros(text: str) -> str:
 
 def _apply_macro_transformation(line: str) -> str:
     """
-    Apply macro transformation to a single line, working from inside out.
+    Apply all macro transformations to a single line, working from inside out.
+    Replaces all instance of a "bang macro" with its extended form, where a bang macro is of the form !name(x,y), name being an identifier, x being a term, and y being a formula.
+    No verification is performed to ensure the nature of x and y.
+    All instances of this form are replaced by ist(name(x), z), with z being the quotation of y.
+
+    Nested macros are handled correctly by working from inside out. 
+    However quantification accross levels of quotation is not supported.
 
     Examples:
 
-    >>> _apply_macro_transformation("!name(x,y)") 
-    f"ist(name(x),{_quote(y)})"
+    >>> _apply_macro_transformation("!believes(alice,p(c,d)))")
+    "ist(believes(alice),q_p(q_c,q_d))"
     """
     import re
     
@@ -71,7 +77,7 @@ def _find_bang_pattern(line: str) -> Tuple[str, str, str] | None:
         >>> "fof(test,axiom, !believes(alice,p(c,d))) i
         ("!believes(alice,p(c,d))", "believes", "alice,p(c,d)")
     """
-    pattern = r'!([a-zA-Z_][a-zA-Z0-9_]*)'  # Match ! followed by an identifier and parentheses with content
+    pattern = r'!([a-zA-Z_][a-zA-Z0-9_]*)'  # Match ! followed by an identifier.
     matches = list(re.finditer(pattern, line))
     if not matches: return None
     match =  matches[-1]  # Return the rightmost match
