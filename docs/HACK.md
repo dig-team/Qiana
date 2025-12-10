@@ -27,6 +27,16 @@ src/qiana:
 # Testing
 The tests are meant to be run with Pytest. Give the `test` directory as input to pytest and ensure the `qiana` package located in `src/qiana` can be imported (this can be done by installing the package or setting the current working directory to `src`).
 
+If using VScode the following test configuration can directly be used in the file "settings.json" within the ".vscode" folder.
+```json
+{
+    "python.testing.pytestArgs": ["${workspaceFolder}/test"],
+    "python.testing.unittestEnabled": false,
+    "python.testing.pytestEnabled": true,
+    "python.testing.cwd": "${workspaceFolder}/src",
+}
+```
+
 # Writting new schemes
 The scheme language used to generate all the axioms of Qiana on a given signature is described bellow. For a real example, see ```src/qianaExtension/qianaAxio.schemes```
 
