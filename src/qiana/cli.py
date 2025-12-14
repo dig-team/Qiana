@@ -19,10 +19,10 @@ def main():
 
     # Main arguments
     parser.add_argument('-o', '--outputFile', type=str, help='Target output file. If not set, output goes to stdout', required=False)
-    parser.add_argument('-t', '--timeout', type=int, help='Maximum time before timeout when calling solver.', required=False)
+    parser.add_argument('-t', '--timeout', type=int, help='Maximum time before timeout when calling solver (in seconds). Default value is 5.', required=False)
     parser.add_argument('-c', '--closure', action='store_true', help='Only compute the qiana closure of the input. If false, contradictions will be sought and a solver called.', required=False)
     parser.add_argument('-n', '--numberVars', type=int, help='Pick the number of quoted variables. Default value is 5.', required=False)
-    parser.add_argument('-m', '--outputMode', type=str, help='Set how to present the output of the solver. Options are sat, raw, and proofTree. Incompatible with the -c option.', required=False)
+    parser.add_argument('-m', '--outputMode', type=str, help='Set how to present the output of the solver. Options are sat, raw, and proofTree. Incompatible with the -c option. Default value is raw, returning the raw solver output which can be empty.', required=False)
     parser.add_argument('--simplifiedInput', action='store_true', help='If set, the input will be treated as simplified syntax (no headers required, only TPTP bodies separated by dots). This implies --expand macros.', required=False)
     parser.add_argument('--expandMacros', action='store_true', help='If set, the qiana specific macros will be expanded before computing the qiana closure.', required=False)
     parser.add_argument('--cores', type=int, help='Number of CPU cores to use when calling the solver. Default is 1. Use 0 to use all available cores.', required=False)

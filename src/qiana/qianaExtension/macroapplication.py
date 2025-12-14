@@ -186,7 +186,7 @@ def _quote_from_struct(struct : List, var_to_qvar : Dict[str, str]) -> str:
 
     Args:
         struct: A parsed structure representing a formula.
-        var_to_qvar: Dict mapping variable names to their quoted versions.
+        var_to_qvar: Dict mapping variable names to their quoted versions. This is increased when entering quantifications, hence the variables within the scope of a quantification will have their mapping here. Variables not in this dict are considered free variables from a higher scope.
 
     Returns:
         The quoted string representation of the structure.
@@ -208,9 +208,10 @@ def _quote_from_struct(struct : List, var_to_qvar : Dict[str, str]) -> str:
     ## Variable case
     if len(struct) == 1 and re.match(r'^[A-Z]\w*$', symbol):
         if symbol not in var_to_qvar:
-            fresh_var = next_quoted_var(var_to_qvar.keys())
-            var_to_qvar[symbol] = fresh_var
-        return var_to_qvar[symbol]
+            # It is not quantified in this scope, we treat is as a free variable from a higher scope
+            q_Quote = get_special_function("q_Quote")
+            return f"{q_Quote}({symbol})"
+        return var_to_qvar[symbol] # If it is mapped then it was quantified above. Return its quoted version.
     
     ## Function or predicate with no arguments case
     if len(struct) == 1 and re.match(r'^[a-z_]\w*$', symbol):
@@ -237,6 +238,8 @@ def _quote_from_struct(struct : List, var_to_qvar : Dict[str, str]) -> str:
         assert len(struct) == 3, f"Quantification {symbol} must have exactly two arguments"
         _, variable, body = struct
         quoted_symbol = get_special_function("q_Forall") 
+        fresh_var = next_quoted_var(var_to_qvar.keys())
+        var_to_qvar[variable[0]] = fresh_var
         variable = _quote_from_struct(variable, var_to_qvar)
         body = _quote_from_struct(body, var_to_qvar)
         return f"{quoted_symbol}({variable}, {body})"
@@ -246,6 +249,8 @@ def _quote_from_struct(struct : List, var_to_qvar : Dict[str, str]) -> str:
         assert len(struct) == 3, f"Quantification {symbol} must have exactly two arguments"
         _, variable, body = struct
         quoted_symbol = get_special_function("q_Forall") 
+        fresh_var = next_quoted_var(var_to_qvar.keys())
+        var_to_qvar[variable[0]] = fresh_var
         neg_symbol = get_special_function("q_Neg")
         body = _quote_from_struct(body, var_to_qvar)
         variable = _quote_from_struct(variable, var_to_qvar)
