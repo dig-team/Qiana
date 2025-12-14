@@ -102,19 +102,19 @@ class QianaPipeline:
         # self.qianaClosure : str = os.linesep.join(qianaClosure(input, variableNumber))
         self.qianaClosure = input + os.linesep + os.linesep.join(getAllSchemesInstances(schemeLines, signature))
 
-    def run_compute(self, timeout : int = 5, compute_steps : bool = True) -> None:
+    def run_compute(self, timeout : int = 5, compute_steps : bool = True, nbr_cores : int = 1) -> None:
         """Run the solver on the already computed qiana closure.
 
         Updates the internal state with the result.
 
         Args:
             timeout: The timeout value for the solver in seconds. Defaults to 5.
-            compute_steps: Whether to compute the reasoning steps or not when
-                a contradiction is found. Defaults to True.
+            compute_steps: Whether to compute the reasoning steps or not when a contradiction is found. Defaults to True.
+            nbr_cores: the number of cores to be used when running the solver. Set to 0 for the maximal number. Defaults to 1.
         """
-        self._callSolver(timeout, compute_steps)
+        self._callSolver(timeout, compute_steps, nbr_cores)
 
-    def run_pipeline(self, input: str, quotedVariableNumber: int | None = 5, simplified_input : bool = False, expand_macros : bool = False, timeout: int = 5) -> str:
+    def run_pipeline(self, input: str, quotedVariableNumber: int | None = 5, simplified_input : bool = False, expand_macros : bool = False, timeout: int = 5, nbr_cores: int = 1) -> str:
         """Run the entire pipeline: compute the qiana closure, call the solver, and return the result.
 
         Equivalent to running compute_qiana_closure(), run_compute(), and
@@ -131,13 +131,14 @@ class QianaPipeline:
             expand_macros: If True, the qiana specific macros will be expanded
                 before computing the qiana closure. Defaults to False.
             timeout: The timeout value for the solver in seconds. Defaults to 5.
+            nbr_cores: the number of cores to be used when running the solver. Set to 0 for the maximal number. Defaults to 1.
 
         Returns:
             Either "sat", "unsat", "unknown", or "timeout" depending on the
             result of the solver.
         """
         self.compute_qiana_closure(input, quotedVariableNumber, simplified_input, expand_macros)
-        self._callSolver(timeout)
+        self._callSolver(timeout, nbr_cores)
         return self.simpleResult
 
     def get_solver_result(self) -> SolverCall:
@@ -199,6 +200,7 @@ class QianaPipeline:
         the html representation of the reasoning steps performed to find a
         contradiction on the qiana closure of input. Uses the timeout value
         from the settings.
+        Remark that the GUI uses all available cores when running the solver.
 
         Args:
             input: The tptp representation of a set of formulas (not
@@ -207,9 +209,9 @@ class QianaPipeline:
         self.compute_qiana_closure(input)
         from qiana.gui import Settings
         timeout = Settings.getTimeOutValue()
-        self._callSolver(timeout)
+        self._callSolver(timeout, True, 0)
 
-    def _callSolver(self, timeout: int, get_reasonin_steps : bool) -> None:
+    def _callSolver(self, timeout: int, get_reasonin_steps : bool, nbr_cores : int) -> None:
         """Call the solver and store the result in self.reasoningSteps.
 
         Assumes the qiana closure has already been computed and stored in
@@ -217,14 +219,14 @@ class QianaPipeline:
 
         Args:
             timeout: The timeout value for the solver.
-            get_reasonin_steps: Whether to compute the reasoning steps or not
-                when a contradiction is found.
+            get_reasonin_steps: Whether to compute the reasoning steps or not when a contradiction is found.
+            nbr_cores: the number of cores to be used when running the solver. Set to 0 for the maximal number.
 
         Raises:
             ValueError: If the qiana closure has not been computed yet.
         """
         if not self.qianaClosure: raise ValueError("Qiana closure has not been computed yet. Please call computeQianaClosure() before running the solver.")
-        self.solver_call : SolverCall = SolverCall.call_solver(self.qianaClosure, timeout, get_reasonin_steps)
+        self.solver_call : SolverCall = SolverCall.call_solver(self.qianaClosure, timeout, get_reasonin_steps, nbr_cores)
         self.foundContradiction = self.solver_call.simpleResult == "unsat"
         self.simpleResult = self.solver_call.simpleResult
         self.reasoningSteps = self.solver_call.reasoningSteps

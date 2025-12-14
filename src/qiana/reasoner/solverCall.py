@@ -22,16 +22,17 @@ class SolverCall:
     """Any error message from the solver, if applicable. If an error occures not ouput by the solver, an exception is raised instead of this being set."""
 
     @classmethod
-    def call_solver(cls, formulas: str, timeout: int, compute_steps : bool = True) -> "SolverCall":
+    def call_solver(cls, formulas: str, timeout: int, compute_steps : bool = True, nbr_cores : int = 1) -> "SolverCall":
         """
         Call Vampire and store the result in the class
         @param formulas: str - the tptp representation of a set of formulas
         @param timeout: int - the timeout value for the solver
         @param compute_steps: bool - whether to compute the reasoning steps or not, if a contradiction is found
+        @param nbr_cores: int - the number of cores to be used when running the solver. Set to 0 for the maximal number. Defaults to 1.
         """
         vampirepath = os.path.join(os.path.dirname(__file__), "vampire")
 
-        args = [vampirepath, "--mode",  "portfolio", "--schedule", "casc", "--output_mode", "smtcomp", "--time_limit", str(timeout)+"s"]
+        args = [vampirepath, "--mode",  "portfolio", "--schedule", "casc", "--output_mode", "smtcomp", "--time_limit", str(timeout)+"s", "--cores", str(nbr_cores)]
         result = subprocess.run(args, input=formulas, text=True, capture_output=True)
         if result.stdout == "sat\n":
             simpleResult = "sat"

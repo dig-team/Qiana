@@ -1,4 +1,3 @@
-
 import argparse
 import sys
 from os.path import dirname
@@ -26,6 +25,7 @@ def main():
     parser.add_argument('-m', '--outputMode', type=str, help='Set how to present the output of the solver. Options are sat, raw, and proofTree. Incompatible with the -c option.', required=False)
     parser.add_argument('--simplifiedInput', action='store_true', help='If set, the input will be treated as simplified syntax (no headers required, only TPTP bodies separated by dots). This implies --expand macros.', required=False)
     parser.add_argument('--expandMacros', action='store_true', help='If set, the qiana specific macros will be expanded before computing the qiana closure.', required=False)
+    parser.add_argument('--cores', type=int, help='Number of CPU cores to use when calling the solver. Default is 1. Use 0 to use all available cores.', required=False)
     
     # Positional arguments
     parser.add_argument('input_file', nargs='?', help='Input file to process. If not provided, reads from stdin.')
@@ -54,13 +54,14 @@ def main():
     timeout = args.timeout if args.timeout else 5
     simplified_input = args.simplifiedInput if args.simplifiedInput else False
     expand_macros = simplified_input or (args.expandMacros if args.expandMacros else False)
+    nbr_cores = args.cores if args.cores is not None else 1
 
     pipeline = QianaPipeline()
     pipeline.compute_qiana_closure(input_content, varNum, simplified_input, expand_macros)
     if args.closure:
         output = pipeline.get_qiana_closure()
     else:
-        pipeline.run_compute(timeout)
+        pipeline.run_compute(timeout=timeout, nbr_cores=nbr_cores)
         outputMode = args.outputMode if args.outputMode else "raw"
         if outputMode == "sat": output = pipeline.simpleResult
         elif outputMode == "raw": output = pipeline.vampireOutput
