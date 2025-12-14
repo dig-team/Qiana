@@ -41,10 +41,11 @@ After installation, you can import Qiana in your Python code:
 from qiana import QianaPipeline, run_qiana
 ```
 
-If you prefer the old method, you can still drop the directory ```src/qiana``` in your own ```src``` dir and import Qiana with 
-```from qiana import QianaPipeline, run_qiana```.
+You can also use Qiana as a package without installing it by ensuring the content of "src/qiana" is in your PYTHONPATH; if using classic package structure, you can copy the "qiana" directory to the "src" directory of your own package.
 
-See the file ```docs/HACK.md``` or the docstring of these imports for more.
+See the file ```docs/HACK.md``` or the documentation for more information on how to use Qiana as a Python package.
+To open the documentation, open the file ```docs/index.html``` in your browser.
+For entry points on the topic, look at the documentation of QianaPipeline and run_qiana.
 
 ## Graphical User Interface
 The GUI of Qiana is only meant for quick tests and as a demonstration. It can be quite brittle.
@@ -155,7 +156,7 @@ fof(trivial_arity_2, axiom, ![X1] : ((p(f(x1,X1),f(X1,X1))) => (p(f(x1,X1),f(X1,
 ```
 
 # Modifying the code
-If you want to read or update the code of Qiana, or even if you want to use it as a Python package rather than a standalone utility, read the file ```docs/HACK.md```.
+If you want to read or update the code of Qiana, or even if you want to use it as a Python package rather than a standalone utility, read the file ```docs/HACK.md``` and the documentation located in the ```docs``` directory.
 
 # Citing Qiana
 If you use Qiana in scientific work, please cite [our article](https://suchanek.name/work/publications/kr-2024.pdf)

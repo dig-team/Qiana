@@ -46,10 +46,12 @@ class Signature:
         return self.baseFunctions.keys()
     
     def getAllFunctions(self) -> List[str]:
-        """
-        Litteraly returns anything that is a function in the signature, no exceptions
+        """Return all functions in the signature. Not just base functions but all functions without exceptions.
 
-        @return: List of all functions in the signature. Should be equal to all base functions + all quoted functions + all quoted predicates + special functions + quotedVariables
+        Returns:
+            List of all functions in the signature. Should be equal to all
+            base functions + all quoted functions + all quoted predicates +
+            special functions + quotedVariables.
         """
         return list(self.baseFunctions.keys()) + \
             [quoteSymbol(var) for var in self.baseFunctions] + \
@@ -81,9 +83,13 @@ class Signature:
                 formula = ""
 
     def extendFromTptp(self, tptpFormula: str) -> None:
-        """
-        Read the body of a TPTP formula and extend the signature with the functions and predicates found in the formula.
-        @param tptpFormula: The body of a TPTP formula, example : "![X1] : p(f(X1),X1)"
+        """Read the body of a TPTP formula and extend the signature.
+
+        Extends the signature with the functions and predicates found in the
+        formula.
+
+        Args:
+            tptpFormula: The body of a TPTP formula, example: "![X1] : p(f(X1),X1)"
         """
         for symbol, (arity, isFunction) in parseSymbols(tptpFormula).items():
             if symbol[0].isupper(): continue # We don't want to add variables

@@ -3,9 +3,18 @@ from typing import List, Dict, Tuple
 import re
 
 def parseSymbols(tptp : str) -> Dict[str,Tuple[int, bool]]:
-    """
-    Parse a tptp formula into a dictionary of symbols to their arity and whether they are functions (if not, it means they are predicats). Note that variables are included in the output as functions and need to be filtered out if necessary.
-    @param tptp: The tptp formula to parse
+    """Parse a tptp formula into a dictionary of symbols.
+
+    Returns a dictionary mapping symbols to their arity and whether they are
+    functions (if not, it means they are predicates). Note that variables are
+    included in the output as functions and need to be filtered out if
+    necessary.
+
+    Args:
+        tptp: The tptp formula to parse.
+
+    Returns:
+        A dictionary mapping symbol names to tuples of (arity, is_function).
     """
     return _goThroughStruct(parseStruct(tptp), False)
 
@@ -31,7 +40,11 @@ def _goThroughStruct(struct : List[str | List], isATerm : bool) -> Dict[str,Tupl
 def parseStruct(tptp : str) -> List[str | List]:
     """
     Derive the syntactic tree of a tptp formula. The first element of the list is the top level symbol, the rest are its arguments, which can be either symbols or sub-structures.
-    Example : "![X] : (p(X) => q(X,X))" returns ["!", ["X"], ["=>", ["p", ["X"]], ["q", ["X", "X"]]]]
+    The resulting structure of nested lists and strings can be refered to as a "formula struct" or "parsed struct" in various places in the code and documentation.
+
+    Example: 
+        >>> "![X] : (p(X) => q(X,X))"
+        ["!", ["X"], ["=>", ["p", ["X"]], ["q", ["X", "X"]]]]
     """
     topLevel : List = _parseTopLevel(tptp)
     symbol, args = topLevel[0], topLevel[1:]
@@ -50,8 +63,12 @@ def _parseTopLevel(tptp : str) -> List[str]:
     """
     Parse a top level tptp formula into a list of strings, for each toplevel symbol or subterm. 
 
-    Example: "p(f(X1), g(X2))" returns ["p", "f(X1)", "g(X2)"] 
-             "(p(X1)) => (q(X2))") returns ["=>", "(p(X1))", "(q(X2))"]
+    Example: 
+    >>> "p(f(X1), g(X2))" 
+    ["p", "f(X1)", "g(X2)"] 
+    
+    >>> "(p(X1)) => (q(X2))") 
+    ["=>", "(p(X1))", "(q(X2))"]
     """
     assert tptp.count("(")  == tptp.count(")")
     tptp = re.sub(r'\s+', ' ', tptp)
@@ -133,7 +150,9 @@ def _findBalancedBinaryOperator(tptp: str) -> Tuple[str, str, str] | None:
 def _splitOnCommas(tptp : str) -> List[str]:
     """
     Take the list of arguments of a function or predicate and split it into a list of strings.
-    Example: f(a,b),g(c) => ["f(a,b)", "g(c)"]
+    Example: 
+    >>> f(a,b),g(c)
+    ["f(a,b)", "g(c)"]
     """
     splittingIndexes = []
     parenthesisDepth = 0

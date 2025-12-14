@@ -20,15 +20,25 @@ def applyMacros(text: str) -> str:
             continue
         
         # Apply macro transformation to non-comment lines
-        processed_line = _apply_macro_transformation(line)
+        processed_line = _apply_macro_transformations(line)
         processed_lines.append(processed_line)
     
     return '\n'.join(processed_lines)
 
-def _apply_macro_transformation(line: str) -> str:
+def _apply_macro_transformations(line: str) -> str:
     """
-    Apply macro transformation to a single line, working from inside out.
-    Transforms !name(x,y) to ist(name(x),{_quote(y)})
+    Apply all macro transformations to a single line, working from inside out.
+    Replaces all instance of a "bang macro" with its extended form, where a bang macro is of the form !name(x,y), name being an identifier, x being a term, and y being a formula.
+    No verification is performed to ensure the nature of x and y.
+    All instances of this form are replaced by ist(name(x), z), with z being the quotation of y.
+
+    Nested macros are handled correctly by working from inside out. 
+    However quantification accross levels of quotation is not supported.
+
+    Examples:
+
+    >>> _apply_macro_transformations("!believes(alice,p(c,d)))")
+    "ist(believes(alice),q_p(q_c,q_d))"
     """
     import re
     
@@ -39,14 +49,14 @@ def _apply_macro_transformation(line: str) -> str:
         # Find the rightmost !name(x,y) pattern
         pattern_match = _find_bang_pattern(line)
         if not pattern_match: 
-            break
+            break # No more patterns to replace
         full_match, name, args = pattern_match
         
         # Split arguments by comma, but be careful with nested structures
         args_list = _split_arguments(args)
         
         if len(args_list) >= 2:
-            # Take first argument as x, and the rest as y (joined by comma if multiple)
+            # Take first argument as x, and the rest as y (joined by commas if multiple)
             x = args_list[0].strip()
             y = ', '.join(args_list[1:]).strip()
             
@@ -62,10 +72,12 @@ def _find_bang_pattern(line: str) -> Tuple[str, str, str] | None:
     """
     Find the rightmost pattern of the form !name(x,y) in the line.
     Returns a tuple of (full_match, name, args_list) or None if no match.
+
     Example:
-    On "fof(test,axiom, !believes(alice,p(c,d))) return ("!believes(alice,p(c,d))", "believes", "alice,p(c,d)")
+        >>> "fof(test,axiom, !believes(alice,p(c,d))) i
+        ("!believes(alice,p(c,d))", "believes", "alice,p(c,d)")
     """
-    pattern = r'!([a-zA-Z_][a-zA-Z0-9_]*)'  # Match ! followed by an identifier and parentheses with content
+    pattern = r'!([a-zA-Z_][a-zA-Z0-9_]*)'  # Match ! followed by an identifier.
     matches = list(re.finditer(pattern, line))
     if not matches: return None
     match =  matches[-1]  # Return the rightmost match
@@ -127,7 +139,11 @@ def _quote(text: str) -> str:
 def _formula_from_struct(struct : List[str | List]) -> str:
     """
     Take as input a formula represented as a nested list of lists and strings (as produced by tptpParsing.parseStruct) and outputs a matching TPTP formula.
-    Example: ["f", "a", "b"] => "f(a,b)"
+    See tptpParsing.parseStruct for more details on the input format.
+
+    Example: 
+        >>> ["f", "a", "b"] 
+        "f(a,b)"
     """
     assert len(struct) > 0, "Input structure cannot be empty" 
     assert isinstance(struct[0], str), "First element of structure must be a string representing the symbol"
@@ -165,9 +181,15 @@ def _formula_from_struct(struct : List[str | List]) -> str:
     return f"{symbol}({', '.join(_formula_from_struct(arg) for arg in struct[1:])})" # We know that struct[1:] is not empty here because we handled the leaf case above
     
 def _quote_from_struct(struct : List, var_to_qvar : Dict[str, str]) -> str:
-    """
-    @param qvars : List of quoted variables not yet in use.
-    @param var_to_qvar : Dict mapping variable names to their quoted versions.
+    """Convert a parsed structure to its quoted representation.
+    See tptpParsing.parseStruct for more details on the input format.
+
+    Args:
+        struct: A parsed structure representing a formula.
+        var_to_qvar: Dict mapping variable names to their quoted versions. This is increased when entering quantifications, hence the variables within the scope of a quantification will have their mapping here. Variables not in this dict are considered free variables from a higher scope.
+
+    Returns:
+        The quoted string representation of the structure.
     """
     if var_to_qvar is None : var_to_qvar = {}
     assert len(struct) > 0, "Input structure cannot be empty"
@@ -186,9 +208,10 @@ def _quote_from_struct(struct : List, var_to_qvar : Dict[str, str]) -> str:
     ## Variable case
     if len(struct) == 1 and re.match(r'^[A-Z]\w*$', symbol):
         if symbol not in var_to_qvar:
-            fresh_var = next_quoted_var(var_to_qvar.keys())
-            var_to_qvar[symbol] = fresh_var
-        return var_to_qvar[symbol]
+            # It is not quantified in this scope, we treat is as a free variable from a higher scope
+            q_Quote = get_special_function("q_Quote")
+            return f"{q_Quote}({symbol})"
+        return var_to_qvar[symbol] # If it is mapped then it was quantified above. Return its quoted version.
     
     ## Function or predicate with no arguments case
     if len(struct) == 1 and re.match(r'^[a-z_]\w*$', symbol):
@@ -215,6 +238,8 @@ def _quote_from_struct(struct : List, var_to_qvar : Dict[str, str]) -> str:
         assert len(struct) == 3, f"Quantification {symbol} must have exactly two arguments"
         _, variable, body = struct
         quoted_symbol = get_special_function("q_Forall") 
+        fresh_var = next_quoted_var(var_to_qvar.keys())
+        var_to_qvar[variable[0]] = fresh_var
         variable = _quote_from_struct(variable, var_to_qvar)
         body = _quote_from_struct(body, var_to_qvar)
         return f"{quoted_symbol}({variable}, {body})"
@@ -224,6 +249,8 @@ def _quote_from_struct(struct : List, var_to_qvar : Dict[str, str]) -> str:
         assert len(struct) == 3, f"Quantification {symbol} must have exactly two arguments"
         _, variable, body = struct
         quoted_symbol = get_special_function("q_Forall") 
+        fresh_var = next_quoted_var(var_to_qvar.keys())
+        var_to_qvar[variable[0]] = fresh_var
         neg_symbol = get_special_function("q_Neg")
         body = _quote_from_struct(body, var_to_qvar)
         variable = _quote_from_struct(variable, var_to_qvar)

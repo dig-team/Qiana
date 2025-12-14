@@ -1,4 +1,3 @@
-
 import argparse
 import sys
 from os.path import dirname
@@ -10,6 +9,9 @@ from qiana.pipeline import QianaPipeline
 def main():
     """
     Main function for the Qiana CLI.
+    This functions is the entry point when building Qiana as a command line tool.
+    It parses command line arguments and performs the requested operations (computing the Qiana closure with or without running the solver) with a variety of input and output options.
+    See the help message for more details ("qiana -h" with Qiana installed as a CLI tool).
     """
     parser = argparse.ArgumentParser(description='Simple CLI to obtain the Qiana closure of a set of formulas or to pass said closure through the Vampire (https://vprover.github.io/) solver. By Simon Coumes, Fabian Suchanek, and Pierre-Henri Paris.')
 
@@ -17,12 +19,13 @@ def main():
 
     # Main arguments
     parser.add_argument('-o', '--outputFile', type=str, help='Target output file. If not set, output goes to stdout', required=False)
-    parser.add_argument('-t', '--timeout', type=int, help='Maximum time before timeout when calling solver.', required=False)
+    parser.add_argument('-t', '--timeout', type=int, help='Maximum time before timeout when calling solver (in seconds). Default value is 5.', required=False)
     parser.add_argument('-c', '--closure', action='store_true', help='Only compute the qiana closure of the input. If false, contradictions will be sought and a solver called.', required=False)
     parser.add_argument('-n', '--numberVars', type=int, help='Pick the number of quoted variables. Default value is 5.', required=False)
-    parser.add_argument('-m', '--outputMode', type=str, help='Set how to present the output of the solver. Options are sat, raw, and proofTree. Incompatible with the -c option.', required=False)
+    parser.add_argument('-m', '--outputMode', type=str, help='Set how to present the output of the solver. Options are sat, raw, and proofTree. Incompatible with the -c option. Default value is raw, returning the raw solver output which can be empty.', required=False)
     parser.add_argument('--simplifiedInput', action='store_true', help='If set, the input will be treated as simplified syntax (no headers required, only TPTP bodies separated by dots). This implies --expand macros.', required=False)
     parser.add_argument('--expandMacros', action='store_true', help='If set, the qiana specific macros will be expanded before computing the qiana closure.', required=False)
+    parser.add_argument('--cores', type=int, help='Number of CPU cores to use when calling the solver. Default is 1. Use 0 to use all available cores.', required=False)
     
     # Positional arguments
     parser.add_argument('input_file', nargs='?', help='Input file to process. If not provided, reads from stdin.')
@@ -51,13 +54,14 @@ def main():
     timeout = args.timeout if args.timeout else 5
     simplified_input = args.simplifiedInput if args.simplifiedInput else False
     expand_macros = simplified_input or (args.expandMacros if args.expandMacros else False)
+    nbr_cores = args.cores if args.cores is not None else 1
 
     pipeline = QianaPipeline()
     pipeline.compute_qiana_closure(input_content, varNum, simplified_input, expand_macros)
     if args.closure:
         output = pipeline.get_qiana_closure()
     else:
-        pipeline.run_compute(timeout)
+        pipeline.run_compute(timeout=timeout, nbr_cores=nbr_cores)
         outputMode = args.outputMode if args.outputMode else "raw"
         if outputMode == "sat": output = pipeline.simpleResult
         elif outputMode == "raw": output = pipeline.vampireOutput

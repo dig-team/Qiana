@@ -79,3 +79,20 @@ contemporary(alice,rhaze).
     pipeline = QianaPipeline()
     pipeline.compute_qiana_closure(input_text, quotedVariableNumber=5, simplified_input=True, expand_macros=True)
     # text = pipeline.getQianaClosure()
+
+def test_nbr_cores():
+    """
+    Check that specifying the number of cores works correctly.
+    """
+    input_text = """
+fof(ax1, axiom, love(romeo,juliet)).
+fof(ax2, axiom, drink(juliet,potion)).
+fof(ax3, axiom, drink(juliet,potion) => ![C] : ist(C, q_dead(q_juliet))).
+fof(ax4, axiom, ist(bel(romeo),q_dead(q_juliet)) => die(romeo)).
+fof(concl, conjecture, die(romeo)).
+    """
+    from qiana.pipeline import QianaPipeline
+    pipeline = QianaPipeline()
+    pipeline.compute_qiana_closure(input_text, quotedVariableNumber=5, simplified_input=False, expand_macros=False)
+    pipeline.run_compute(timeout=10, nbr_cores=0)
+    pipeline.run_compute(timeout=10, nbr_cores=2)

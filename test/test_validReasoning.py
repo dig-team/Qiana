@@ -132,7 +132,7 @@ def test_truth():
     def run_assert(tptp, expect_contra : bool):
         pipeline = QianaPipeline()
         pipeline.compute_qiana_closure(tptp)
-        pipeline.run_compute(timeout=180) # Some of these take a while
+        pipeline.run_compute(timeout=180, nbr_cores=0) # Some of these take a while
         assert pipeline.contradiction() == expect_contra
 
     # tptp = """

@@ -1,3 +1,13 @@
+# Generating the documentation
+The documentation is generated using pdoc.
+Install pdoc and generate the doc with the following command run from the root directory (assuming bash and using firefox as browser):
+
+```bash
+pip install pdoc
+pdoc src/qiana --docformat google -o docs
+firefox docs/index.html
+```
+
 # Structure
 Most of the important functions in the code have docstrings, which form most of the documentation.
 This file contains some usual trivia information on the code. Including the fact that the entry points to the code are ```src/qiana/pipeline.py``` and ```src/qiana/cli.py``` and the following outline of the structure:
@@ -16,6 +26,16 @@ src/qiana:
 
 # Testing
 The tests are meant to be run with Pytest. Give the `test` directory as input to pytest and ensure the `qiana` package located in `src/qiana` can be imported (this can be done by installing the package or setting the current working directory to `src`).
+
+If using VScode the following test configuration can directly be used in the file "settings.json" within the ".vscode" folder.
+```json
+{
+    "python.testing.pytestArgs": ["${workspaceFolder}/test"],
+    "python.testing.unittestEnabled": false,
+    "python.testing.pytestEnabled": true,
+    "python.testing.cwd": "${workspaceFolder}/src",
+}
+```
 
 # Writting new schemes
 The scheme language used to generate all the axioms of Qiana on a given signature is described bellow. For a real example, see ```src/qianaExtension/qianaAxio.schemes```
